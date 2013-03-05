@@ -1,0 +1,19 @@
+extends ../layout
+
+block body
+	#container-inner
+		form(method="POST", action="/users/import", enctype="multipart/form-data").form-horizontal
+			fieldset
+				legend #{title}
+		
+				.control-group
+					label.control-label(for="csv") CSV File:
+					.controls
+						input#csv.span5(type="file", placeholder="", name="csv")
+						p.help-inline Choose a CSV formatted file.
+		
+		
+			.form-actions
+				button.btn.btn-primary(type="submit") Submit
+				|  
+				a.btn(href="/users") Cancel

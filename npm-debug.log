@@ -1,0 +1,27 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/Cellar/node/0.8.18/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'start' ]
+2 info using npm@1.2.2
+3 info using node@v0.8.18
+4 verbose read json /Users/bmschell/Projects/MLS/experimonth.lifeandscience.org/package.json
+5 error Error: Invalid name: "Experimonth Registration System"
+5 error     at validName (/usr/local/Cellar/node/0.8.18/lib/node_modules/npm/node_modules/read-package-json/read-json.js:563:40)
+5 error     at final (/usr/local/Cellar/node/0.8.18/lib/node_modules/npm/node_modules/read-package-json/read-json.js:340:27)
+5 error     at /usr/local/Cellar/node/0.8.18/lib/node_modules/npm/node_modules/read-package-json/read-json.js:140:33
+5 error     at cb (/usr/local/Cellar/node/0.8.18/lib/node_modules/npm/node_modules/slide/lib/async-map.js:48:11)
+5 error     at /usr/local/Cellar/node/0.8.18/lib/node_modules/npm/node_modules/read-package-json/read-json.js:320:48
+5 error     at fs.js:117:20
+5 error     at /usr/local/Cellar/node/0.8.18/lib/node_modules/npm/node_modules/graceful-fs/graceful-fs.js:53:5
+5 error     at /usr/local/Cellar/node/0.8.18/lib/node_modules/npm/node_modules/graceful-fs/graceful-fs.js:62:5
+5 error     at Object.oncomplete (fs.js:297:15)
+6 error If you need help, you may report this log at:
+6 error     <http://github.com/isaacs/npm/issues>
+6 error or email it to:
+6 error     <npm-@googlegroups.com>
+7 error System Darwin 12.2.0
+8 error command "/usr/local/Cellar/node/0.8.18/bin/node" "/usr/local/bin/npm" "start"
+9 error cwd /Users/bmschell/Projects/MLS/experimonth.lifeandscience.org
+10 error node -v v0.8.18
+11 error npm -v 1.2.2
+12 verbose exit [ 1, true ]

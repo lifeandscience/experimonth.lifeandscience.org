@@ -1,0 +1,32 @@
+extends ../../layout
+
+block body
+	#container-inner
+		form(method="POST")#playerForm.form-horizontal
+			fieldset
+				legend #{title}
+						
+				.control-group
+					label.control-label(for="text") Question Text:
+					.controls
+						input#text.span5(type="text", placeholder="How much wood would a woodchuck chuck?", name="text", value=question.text)
+						p.help-block The text of this question (how the user will be prompted).
+						
+				.control-group
+					label.control-label(for="type") Type:
+					.controls
+						select#type.span5(name="type")
+							option(value='multiple-choice', selected=(question.type == 'multiple-choice')) Multiple-Choice
+							option(value='open', selected=(question.type == 'open')) Open-ended
+						p.help-block The type of question this is. If you pick "Multiple-Choice", you _must_ fill in the 'Choices' box as indicated or weird things will happen.
+				
+				.control-group
+					label.control-label(for="choices_string") Choices:
+					.controls
+						input#choices_string.span5(type="text", placeholder="ten wood, 20 wood, 30, more", name="choices_string", value=question.choices_string)
+						p.help-block What are the choices in the case of a multiple-choice question? Supply these as a comma-separated string.
+		
+			.form-actions
+				button.btn.btn-primary(type="submit") Submit
+				|  
+				a.btn(href="/profile/questions") Cancel

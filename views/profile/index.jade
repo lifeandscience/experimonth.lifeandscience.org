@@ -1,0 +1,127 @@
+extends ../layout
+
+//include ../games/mixins
+include ../notifications
+
+block body
+	#container-inner.user-profile
+		console.log(locals)
+		u = locals.user(2);
+		- if(!u)
+			h1 Please provide your email address:
+			form.form-horizontal(action='/auth/addEmail', method='POST')
+				#login.control-group
+					label.control-label(for='email') Email: 
+					.controls
+						.input-prepend
+							span.add-on
+								i.icon-envelope
+							input(type='text', name='email', placeholder='email@email.com', tabindex=1)
+				#submit.control-group
+					.controls
+						input.btn(type='submit', value='Submit!', tabindex=3) Submit
+		- else 
+			- if(u.email)
+				img(src='http://www.gravatar.com/avatar/'+u.email_hash)
+			h1 Welcome to your profile!
+
+			h2 Notifications
+			mixin do_notifications()
+			
+			//h1 Current Games
+			//mixin do_games(games, true, false)
+			
+			//h1 Past Games
+			//mixin do_games(games, true, true)
+			
+			h2
+				| Your Experimonths 
+				a.btn(href="/experimonths") Enroll in More!
+			- if(experimonths && experimonths.length > 0)
+				ul
+					- each experimonth, i in experimonths
+						li(class='experimonth')
+							| #{moment(experimonth.startDate).utc().format('YYYY-MM-DD')} - #{moment(experimonth.endDate).utc().format('YYYY-MM-DD')}
+			
+			// h2 Opt Out
+			// p If you'd prefer, you can opt-out of your data being used in the analysis of the results of each Experimonth.
+			// form(method="POST", action="/users/opt_out")#opt_out
+			//	.control-group
+			//		.controls
+			//			label.checkbox
+			//				input(type="checkbox", name="opt_out", checked=u.opt_out)
+			//				| Opt-Out
+			//			button.btn.btn-primary(type="submit") Submit
+			
+			h2 Tell us more about you!
+			h2 Basic Info
+			form(method="POST", action="/users/edit/#{u._id}")#userForm
+				.control-group
+					label.control-label(for="email") Email Address:
+					.controls
+						input#email.span5.disabled(type="text", placeholder="", name="email", value=u.email, disabled="disabled")
+
+				.control-group
+					label.control-label(for="name") Name:
+					.controls
+						input#name.span5(type="text", placeholder="", name="name", value=u.name)
+		
+				.control-group
+					label.control-label(for="twitter") Twitter (url):
+					.controls
+						input#twitter.span5(type="text", placeholder="", name="twitter", value=u.twitter)
+		
+				.control-group
+					label.control-label(for="facebook") Facebook (url):
+					.controls
+						input#facebook.span5(type="text", placeholder="", name="facebook", value=u.facebook)
+		
+				.control-group
+					label.control-label(for="flickr") Flickr (url):
+					.controls
+						input#flickr.span5(type="text", placeholder="", name="flickr", value=u.flickr)
+		
+				.control-group
+					label.control-label(for="tubmlr") Tumblr (url):
+					.controls
+						input#tubmlr.span5(type="text", placeholder="", name="tubmlr", value=u.tubmlr)
+		
+				.control-group
+					label.control-label(for="youtube") YouTube (url):
+					.controls
+						input#youtube.span5(type="text", placeholder="", name="youtube", value=u.youtube)
+		
+				//.control-group
+				//	label.control-label(for="score") Score:
+				//	.controls
+				//		input#score.span5(type="text", placeholder="", name="score", value=u.score, disabled="disabled")
+				//		p.help-block Your Score.
+
+				.control-group
+					.controls
+						button.btn.btn-primary(type="submit") Save
+			
+			h3 Additional Info
+			div#myCarousel.carousel.slide(data-interval="false")
+				.carousel-inner
+					haveDoneAQuestion = questions && questions.length > 0;
+					- if(questions && questions.length > 0)
+						answer = null
+						- each question, i in questions
+							active = (i == 0)
+							include mixins
+							//mixin do_question(question, null, i == 0)
+					- if(answers && answers.length > 0)
+						- each answer, i in answers
+							active = (!haveDoneAQuestion && i == 0)
+							question = answer.question
+							include mixins
+							//mixin do_question(answer.question, answer, !haveDoneAQuestion && i == 0)
+				a.carousel-control.left(href="#myCarousel", data-slide="prev") &lsaquo;
+				a.carousel-control.right(href="#myCarousel", data-slide="next") &rsaquo;
+			h6 User
+			pre !{u}
+			h6 Answers
+			pre !{answers}
+			h6 Questions
+			pre !{questions}

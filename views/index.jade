@@ -1,0 +1,10 @@
+extends layout
+
+block body
+	h1= title
+	p 
+		| Welcome to #{title}. You may wish to 
+		a(href='/login') login
+		|  or visit your 
+		a(href='/profile') profile
+		| .

@@ -1,0 +1,46 @@
+extends ../layout
+
+block body
+	#container-inner
+		h1 #{title}
+		
+		table.table.tablesorter
+			thead
+				tr
+					th Start Date
+					th End Date
+					th Players
+					th Open?
+					th Actions
+			tbody
+				each experimonth, i in experimonths
+					tr
+						td #{moment(experimonth.startDate).utc().format('YYYY-MM-DD')}
+						td #{moment(experimonth.endDate).utc().format('YYYY-MM-DD')}
+						td #{experimonth.users.length} / #{experimonth.userLimit}
+						td #{experimonth.open ? 'yes' : 'no'}
+						td
+							a.btn(href="/experimonths/view/#{experimonth._id}") View
+							|  
+							a.btn(href="/experimonths/edit/#{experimonth._id}") Edit
+							//|  
+							//a.btn.btn-danger(href="/experimonths/delete/#{experimonth._id}") Delete
+							u = user(2)
+							- if(u)
+								|  
+								- if(experimonth.users.indexOf(u._id.toString()) == -1)
+									a.btn.btn-primary(href="/experimonths/enroll/#{experimonth._id}") Enroll!
+								- else
+									a.btn.btn-warning(href="/experimonths/unenroll/#{experimonth._id}") Un-enroll
+		//- if(pages > 1)
+		//	.pagination
+		//		ul
+		//			- if(page > 0)
+		//				li
+		//					a(href=baseurl+'/'+(page-1)) Prev
+		//			- for(var i=0; i<pages; i++)
+		//				li(class=(i == page ? 'active' : null))
+		//					a(href=baseurl+'/'+i) #{i+1}
+		//			- if(page < pages-1)
+		//				li
+		//					a(href=baseurl+'/'+(page+1)) Next

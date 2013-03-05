@@ -1,0 +1,57 @@
+extends ../layout
+
+block body
+	#container-inner
+		form(method="POST")#userForm.form-horizontal
+			fieldset
+				legend #{title}
+				console.log(user)
+						
+				.control-group
+					label.control-label(for="email") Email Address:
+					.controls
+						input#email.span5(type="text", placeholder="", name="email", value=user.email)
+						p.help-block Your email address.
+		
+				.control-group
+					label.control-label(for="name") Name:
+					.controls
+						input#name.span5(type="text", placeholder="", name="name", value=user.name)
+						p.help-block The name of the user.
+		
+				.control-group
+					label.control-label(for="twitter") Twitter (url):
+					.controls
+						input#twitter.span5(type="text", placeholder="", name="twitter", value=user.twitter)
+		
+				.control-group
+					label.control-label(for="facebook") Facebook (url):
+					.controls
+						input#facebook.span5(type="text", placeholder="", name="facebook", value=user.facebook)
+		
+				.control-group
+					label.control-label(for="flickr") Flickr (url):
+					.controls
+						input#flickr.span5(type="text", placeholder="", name="flickr", value=user.flickr)
+		
+				.control-group
+					label.control-label(for="tubmlr") Tumblr (url):
+					.controls
+						input#tubmlr.span5(type="text", placeholder="", name="tubmlr", value=user.tubmlr)
+		
+				.control-group
+					label.control-label(for="youtube") YouTube (url):
+					.controls
+						input#youtube.span5(type="text", placeholder="", name="youtube", value=user.youtube)
+		
+				//.control-group
+				//	label.control-label(for="score") Score:
+				//	.controls
+				//		input#score.span5(type="text", placeholder="", name="score", value=user.score, disabled="disabled")
+				//		p.help-block Your Score.
+			
+		
+			.form-actions
+				button.btn.btn-primary(type="submit") Submit
+				|  
+				a.btn(href="/users") Cancel

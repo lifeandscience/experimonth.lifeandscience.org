@@ -1,0 +1,22 @@
+//mixin do_question(question, answer, active)
+.item.question(class=(active ? 'active' : ''))
+	form(method="POST", action="/profile/questions/answer/#{question._id}")
+		- if(answer)
+			input(type="hidden", name="answerid", value=answer._id)
+		.control-group
+			label.control-label(for="value") Q: #{question.text}
+			- if(question.type == 'open')
+				.controls
+					input(type="text", name="value", value=(answer ? answer.value : false))
+			- else if(question.type == 'multiple-choice')
+				.controls
+					- for choice, j in question.choices
+						label.radio
+							input(type="radio", name="value", value=choice, checked=(answer && choice == answer.value))
+							| #{choice}
+		.control-group
+			.controls
+				label.checkbox
+					input(type="checkbox", name="no_answer", checked=(answer && answer.no_answer))
+					| Choose not to answer
+				button.btn.btn-primary(type="submit") Submit

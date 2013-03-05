@@ -1,0 +1,33 @@
+extends ../layout
+
+block body
+	#container-inner
+		h1 #{title}
+		h3 Start Date: #{moment(experimonth.startDate).utc().format('YYYY-MM-DD')}
+		h3 End Date: #{moment(experimonth.endDate).utc().format('YYYY-MM-DD')}
+
+		h2 Players (#{experimonth.users.length} / #{experimonth.userLimit}):
+		table.table.tablesorter
+			thead
+				tr
+					th ID
+					th Name
+					th Last Played
+			tbody
+				each user, i in experimonth.users
+					tr
+						td #{user._id}
+						td #{user.name}
+						td #{moment(user.lastPlayed).format('YYYY-MM-DD hh:mm A')}
+		//- if(pages > 1)
+		//	.pagination
+		//		ul
+		//			- if(page > 0)
+		//				li
+		//					a(href=baseurl+'/'+(page-1)) Prev
+		//			- for(var i=0; i<pages; i++)
+		//				li(class=(i == page ? 'active' : null))
+		//					a(href=baseurl+'/'+i) #{i+1}
+		//			- if(page < pages-1)
+		//				li
+		//					a(href=baseurl+'/'+(page+1)) Next

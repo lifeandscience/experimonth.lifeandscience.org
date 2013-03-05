@@ -1,0 +1,81 @@
+extends ../layout
+
+block body
+	#container-inner
+		form(method="POST")#userForm.form-horizontal
+			fieldset
+				legend #{title}
+						
+				.control-group
+					label.control-label(for="name") Name:
+					.controls
+						input#name.span5(type="text", placeholder="Frenemy", name="name", value=experimonth.name)
+						p.help-block The name of this Experimonth.
+						
+				.control-group
+					label.control-label(for="description") Description:
+					.controls
+						textarea#description.span5(placeholder="A nifty description", name="description") !{experimonth.description}
+						p.help-block The description of this Experimonth.
+
+				.control-group
+					label.control-label(for="type") Type:
+					.controls
+						label.checkbox
+							input#open(type="checkbox", name="type[]", value="daily", checked=(experimonth.type && experimonth.type.indexOf('daily') != -1))
+							|  Daily
+						label.checkbox
+							input#open(type="checkbox", name="type[]", value="weekly", checked=(experimonth.type && experimonth.type.indexOf('weekly') != -1))
+							|  Weekly
+						
+				.control-group
+					label.control-label(for="image") Image (URL):
+					.controls
+						input#image.span5(type="text", placeholder="Frenemy", name="image", value=experimonth.image)
+						p.help-block The image for this Experimonth.
+						
+				.control-group
+					label.control-label(for="survey") Survey / Consent Text:
+					.controls
+						textarea#survey.span5(placeholder="'Can we use your data?'-like text", name="survey") !{experimonth.survey}
+						p.help-block The survey / consent text for this Experimonth.
+						
+				.control-group
+					label.control-label(for="startDate") Start Date:
+					.controls
+						input#startDate.span5(type="date", placeholder="", name="startDate", value=moment(experimonth.startDate).utc().format('YYYY-MM-DD'))
+						p.help-block The start date for this Experimonth.
+						
+				.control-group
+					label.control-label(for="endDate") End Date:
+					.controls
+						input#endDate.span5(type="date", placeholder="", name="endDate", value=moment(experimonth.endDate).utc().format('YYYY-MM-DD'))
+						p.help-block The end date for this Experimonth.
+				
+				.control-group
+					label.control-label(for="userLimit") Player Limit:
+					.controls
+						input#userLimit.span5(type="text", placeholder="100", name="userLimit", value=experimonth.userLimit)
+						p.help-block How many users will this Experimonth allow for?
+		
+				.control-group
+					.controls
+						label.checkbox(for="open")
+							input#open(type="checkbox", name="open", checked=experimonth.open)
+							|  Open?
+						p.help-block Is this Experimonth presently open for enrollment?
+
+				.control-group
+					label.control-label(for="conditions") Conditions:
+					.controls
+						- if(questions && questions.length)
+							each question, i in questions
+								label.checkbox
+									input(type="checkbox", name="conditions", value=question._id, checked=(experimonth.conditions && experimonth.conditions.indexOf(question._id) != -1))
+									|  #{question.text}
+						p.help-block What conditions should be used for this Experimonth?
+		
+			.form-actions
+				button.btn.btn-primary(type="submit") Submit
+				|  
+				a.btn(href="/users") Cancel

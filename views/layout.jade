@@ -1,0 +1,75 @@
+mixin do_nav(nav)
+	each n in nav
+		if n.header
+			li.nav-header #{n.header}
+		else if n.children
+			li.dropdown(class=(n.link == locals.url ? 'active' : ''))
+				a.dropdown-toggle(href=n.link, data-toggle="dropdown")
+					| #{n.name}
+					b.caret
+				ul.dropdown-menu
+					mixin do_nav(n.children)
+		else
+			li(class=(n.link == locals.url ? 'active' : '')): a(href=n.link) #{n.name}
+	
+doctype 5
+html
+	head
+		title= title
+		link(rel='stylesheet', href='//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css')
+		link(rel='stylesheet', href='/css/style.css')
+	body
+		block messages
+			errorMessages = locals.flash('error')
+			successMessages = locals.flash('info')
+			questionMessages = locals.flash('question')
+			if (errorMessages && errorMessages.length > 0) || (successMessages && successMessages.length > 0) || (questionMessages && questionMessages.length > 0)
+				div.container.alerts
+					if questionMessages
+						each message in questionMessages
+							div.alert.alert-block.alert-error
+								| !{message}
+					if errorMessages
+						each message in errorMessages
+							div.alert.alert-error
+								button.close(type="button", data-dismiss="alert") &times;
+								| !{message}
+					if successMessages
+						each message in successMessages
+							div.alert.alert-success
+								button.close(type="button", data-dismiss="alert") &times;
+								| !{message}
+		block nav
+			.navbar.navbar-fixed-top
+				.navbar-inner
+					.container
+						a.btn.btn-navbar(data-toggle="collapse",data-target=".nav-collapse")
+							span.icon-bar
+							span.icon-bar
+							span.icon-bar
+						a.brand(href="/home") Experimonth
+						.nav-collapse
+							if locals.nav && locals.nav.length
+								ul.nav
+									mixin do_nav(locals.nav)
+							if locals.rightNav && locals.rightNav.length
+								ul.nav.pull-right
+									mixin do_nav(locals.rightNav)
+							if user(0)
+								ul.nav.pull-right
+									li.dropdown
+										- if(locals.notifications && locals.notifications.length > 0)
+											a#notificationsPopoverTrigger(href='#')
+												span.badge.badge-info !{notifications.length}
+												//b.caret
+											div#notificationsPopover.hide
+												include ./notifications.jade
+												mixin do_notifications()
+										- else
+											a(href='/profile')
+												span.badge.badge-info 0
+		.container
+			block body
+		script(src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js')
+		script(src='//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js')
+		script(src='/js/app.js')

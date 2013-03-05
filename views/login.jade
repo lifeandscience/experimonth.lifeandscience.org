@@ -1,0 +1,65 @@
+extends layout
+
+block body
+	#container-inner
+		- if ('undefined' !== typeof errors && errors.length)
+			ul#errors
+				- each error in errors
+					li.error= error
+					h1 Please login:
+		ul.login-buttons.unstyled
+			li
+				a.btn-auth.btn-facebook(href="/auth/facebook") Login with Facebook
+			li
+				a.btn-auth.btn-twitter(href="/auth/twitter") Login with Twitter
+		
+		h1 Don't use one of the above services? 
+		p Login with your username and password.
+		form.form-horizontal(action='/auth/local/login', method='POST')
+			#login.control-group
+				label.control-label(for='email') Email: 
+				.controls
+					.input-prepend
+						span.add-on
+							i.icon-envelope
+						input(type='text', name='email', placeholder='email@email.com', tabindex=1)
+			#password.control-group
+				label.control-label(for='password') Password: 
+				.controls
+					input(type='password', name='password', placeholder='password', tabindex=2)
+			#submit.control-group
+				.controls
+					input.btn(type='submit', value='Log Me In!', tabindex=3) Login
+			//#login
+			//	// TODO: EVERYAUTH
+			//	label(for=everyauth.password.loginFormFieldName) Login
+			//	input(type='text', name=everyauth.password.loginFormFieldName, value=email)
+			//#password
+			//	// TODO: EVERYAUTH
+			//	label(for=everyauth.password.passwordFormFieldName) Password
+			//	input(type='password', name=everyauth.password.passwordFormFieldName)
+			//#submit
+			//	input(type='submit') Login
+
+		h1 Need an account? 
+		p Register here.
+		form.form-horizontal(action='/auth/local/register', method='POST')
+			#login.control-group
+				label.control-label(for='email') Email: 
+				.controls
+					.input-prepend
+						span.add-on
+							i.icon-envelope
+						input(type='text', name='email', placeholder='email@email.com', tabindex=4)
+			#password.control-group
+				label.control-label(for='password') Password: 
+				.controls
+					input(type='password', name='password', placeholder='password', tabindex=5)
+			#confirm-password.control-group
+				label.control-label(for='confirm-password') Confirm Password: 
+				.controls
+					input(type='password', name='confirm-password', placeholder='confirm password', tabindex=6)
+			#submit.control-group
+				.controls
+					input.btn(type='submit', tabindex=7) Register
+// http://localhost:5000/login

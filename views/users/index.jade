@@ -1,0 +1,41 @@
+extends ../layout
+
+block body
+	#container-inner
+		h1 #{title}
+		
+		table.table.tablesorter
+			thead
+				tr
+					th Email
+					th Score
+					th Last Played
+					th Actions
+			tbody
+				each user, i in users
+					tr
+						td #{user.email}
+						td #{user.score}
+						td #{moment(user.lastPlayed).format('YYYY-MM-DD hh:mm A')}
+						td
+							a.btn(href="/users/edit/#{user._id}") Edit
+							| 
+							//a.btn.btn-danger(href="/users/delete/#{user._id}") Delete
+							//| 
+							- if(user.role == 10)
+								a.btn.btn-success(href="/users/demote/#{user._id}")
+									i.icon-chevron-down.icon-white
+									|  Demote
+							- else
+								a.btn.btn-danger(href="/users/promote/#{user._id}")
+									i.icon-chevron-up.icon-white
+									|  Promote
+							| 
+							- if(user.active)
+								a.btn.btn-warning(href="/users/deactivate/#{user._id}")
+									i.icon-remove.icon-white
+									|  De-activate
+							- else
+								a.btn.btn-primary(href="/users/activate/#{user._id}")
+									i.icon-ok.icon-white
+									|  Activate
