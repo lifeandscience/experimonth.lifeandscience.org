@@ -9,6 +9,8 @@ block body
 				tr
 					th Start Date
 					th End Date
+					th Kind
+					th Type
 					th Players
 					th Open?
 					th Actions
@@ -17,6 +19,12 @@ block body
 					tr
 						td #{moment(experimonth.startDate).utc().format('YYYY-MM-DD')}
 						td #{moment(experimonth.endDate).utc().format('YYYY-MM-DD')}
+						td #{experimonth.kind && experimonth.kind.name ? experimonth.kind.name : ''}
+						td
+							if experimonth.type && experimonth.type.length
+								ul.unstyled
+									each type in experimonth.type
+										li #{type}
 						td #{experimonth.users.length} / #{experimonth.userLimit}
 						td #{experimonth.open ? 'yes' : 'no'}
 						td

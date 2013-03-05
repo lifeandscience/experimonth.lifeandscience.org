@@ -1,0 +1,28 @@
+extends ../../layout
+
+block body
+	#container-inner
+		h1 #{title}
+		
+		table.table.tablesorter
+			thead
+				tr
+					th Name
+					th URL
+					th 
+						em OR
+					th Instructions
+					th Actions
+			tbody
+				each experimonthKind, i in experimonthKinds
+					tr
+						td #{experimonthKind.name}
+						td #{experimonthKind.url}
+						td 
+						td #{experimonthKind.instructions}
+						td
+							a.btn(href="/experimonths/kinds/view/#{experimonthKind._id}") View
+							|  
+							a.btn(href="/experimonths/kinds/edit/#{experimonthKind._id}") Edit
+							//|  
+							//a.btn.btn-danger(href="/experimonths/kinds/delete/#{experimonth._id}") Delete

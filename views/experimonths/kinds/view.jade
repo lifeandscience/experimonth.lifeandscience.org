@@ -1,0 +1,11 @@
+extends ../../layout
+
+block body
+	#container-inner
+		h1 #{title}
+		h3 #{experimonthKind.name}
+		if experimonthKind.url
+			h3
+				a(href=experimonthKind.url) #{experimonthKind.url}
+		else if experimonthKind.instructions
+			p !{experimonthKind.instructions}

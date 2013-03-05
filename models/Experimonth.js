@@ -2,10 +2,12 @@ var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , util = require('util');
 
-var CodebaseSchema = new Schema({
+var ExperimonthKindSchema = new Schema({
 	name: String
+  , url: {type: String}
+  , instructions: {type: String}
 });
-var Codebase = mongoose.model('Codebase', CodebaseSchema);
+var ExperimonthKind = mongoose.model('ExperimonthKind', ExperimonthKindSchema);
 var ExperimonthSchema = new Schema({
 	startDate: {type: Date, default: function(){ return Date.now(); }}
   , endDate: {type: Date, default: function(){ return Date.now(); }}
@@ -13,7 +15,7 @@ var ExperimonthSchema = new Schema({
   , description: {type: String}
   , type: [{type: String}]
   , image: {type: String}
-  , codebase: {type: Schema.ObjectId, ref: 'Codebase'}
+  , kind: {type: Schema.ObjectId, ref: 'ExperimonthKind'}
   , survey: {type: String} // Maybe another object?
   , userLimit: {type: Number, default: 100}
   , users: [{type: Schema.ObjectId, ref: 'User'}]

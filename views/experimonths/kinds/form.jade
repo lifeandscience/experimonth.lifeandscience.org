@@ -1,0 +1,30 @@
+extends ../../layout
+
+block body
+	#container-inner
+		form(method="POST")#userForm.form-horizontal
+			fieldset
+				legend #{title}
+						
+				.control-group
+					label.control-label(for="name") Name:
+					.controls
+						input#name.span5(type="text", placeholder="Frenemy", name="name", value=experimonthKind.name)
+						p.help-block The name of this Experimonth.
+						
+				.control-group
+					label.control-label(for="instructions") Description:
+					.controls
+						textarea#instructions.span5(placeholder="Instructions", name="instructions") !{experimonthKind.instructions}
+						p.help-block The instructions for this Experimonth.
+						
+				.control-group
+					label.control-label(for="url") URL:
+					.controls
+						input#url.span5(type="text", placeholder="A URL", name="url", value=experimonthKind.url)
+						p.help-block The url for this Experimonth.
+		
+			.form-actions
+				button.btn.btn-primary(type="submit") Submit
+				|  
+				a.btn(href="/users") Cancel

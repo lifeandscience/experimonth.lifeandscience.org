@@ -5,12 +5,13 @@ var util = require('util')
   , auth = require('../auth')
   , mongoose = require('mongoose')
   , Experimonth = mongoose.model('Experimonth')
+  , ExperimonthKind = mongoose.model('ExperimonthKind')
   , ProfileQuestion = mongoose.model('ProfileQuestion')
   , moment = require('moment');
 
 module.exports = function(app){
 	app.get('/experimonths', auth.authorize(2), function(req, res){
-		Experimonth.find().exec(function(err, experimonths){
+		Experimonth.find().populate('kind').exec(function(err, experimonths){
 			res.render('experimonths', {title: 'Upcoming Experimonths', experimonths: experimonths, moment: moment});
 		});
 	});
@@ -148,7 +149,7 @@ module.exports = function(app){
 	var as = 'experimonth'
 	  , populate = []
 	  , template = 'experimonths/form'
-	  , varNames = ['name', 'description', 'type', 'image', 'startDate', 'endDate', 'userLimit', 'open', 'conditions']
+	  , varNames = ['name', 'description', 'type', 'image', 'startDate', 'endDate', 'userLimit', 'open', 'conditions', 'kind']
 	  , redirect = '/experimonths'
 	  , formValidate = form(
 			field('name').trim()
@@ -160,6 +161,7 @@ module.exports = function(app){
 		  , field('userLimit').trim().isNumeric()
 		  , field('open').trim()
 		  , field('conditions').array().trim()
+		  , field('kind').trim()
 		)
 	  , beforeRender = function(req, res, item, callback){
 	/*
@@ -168,14 +170,21 @@ module.exports = function(app){
 			}
 			item.action = '/confessional';
 	*/
-			ProfileQuestion.find({published: true}).exec(function(err, questions){ 
+			ExperimonthKind.find().exec(function(err, kinds){
 				if(err){
-					console.log('error finding questions to use as conditions: ', err);
-					questions = [];
+					console.log('error finding kinds to use as kinds: ', err);
+					kinds = [];
 				}
-				item.questions = questions;
-				return callback(item);
-			})
+				item.kinds = kinds;
+				ProfileQuestion.find({published: true}).exec(function(err, questions){ 
+					if(err){
+						console.log('error finding questions to use as conditions: ', err);
+						questions = [];
+					}
+					item.questions = questions;
+					return callback(item);
+				});
+			});
 		}
 	  , beforeSave = function(req, res, item, complete){
 	/*
@@ -205,5 +214,44 @@ module.exports = function(app){
 	
 	app.get('/experimonths/edit/:id', auth.authorize(2, 10), utilities.doForm(as, populate, 'Edit Experimonth', Experimonth, template, varNames, redirect, beforeRender, null, layout));
 	app.post('/experimonths/edit/:id', auth.authorize(2, 10), formValidate, utilities.doForm(as, populate, 'Add Experimonth', Experimonth, template, varNames, redirect, beforeRender, beforeSave, layout));
+	
+	
+	app.get('/experimonths/kinds', auth.authorize(2), function(req, res){
+		ExperimonthKind.find().exec(function(err, experimonthKinds){
+			res.render('experimonths/kinds', {title: 'Kinds of Experimonths', experimonthKinds: experimonthKinds, moment: moment});
+		});
+	});
+	
+	app.get('/experimonths/kinds/view/:id', auth.authorize(2), function(req, res){
+		ExperimonthKind.findById(req.param('id')).exec(function(err, experimonthKind){
+			if(err || !experimonthKind){
+				req.flash('error', 'Kind of Experimonth with ID of '+req.param('id')+' was not found.');
+				res.redirect('back');
+				return;
+			}
+			res.render('experimonths/kinds/view', {title: 'Kind of Experimonth: '+req.param('id'), experimonthKind: experimonthKind, moment: moment});
+		});
+	});
+	
+	// (as, populate, title, object, template, varNames, redirect, beforeRender, beforeSave)
+	as = 'experimonthKind';
+	populate = [];
+	template = 'experimonths/kinds/form';
+	varNames = ['name', 'url', 'instructions'];
+	redirect = '/experimonths/kinds';
+	formValidate = form(
+		field('name').trim()
+	  , field('url').trim()
+	  , field('instructions').trim()
+	);
+	beforeRender = null;
+	beforeSave = null;
+	layout = 'layout';
+	
+	app.get('/experimonths/kinds/add', auth.authorize(2, 10), utilities.doForm(as, populate, 'Add Kind of Experimonth', ExperimonthKind, template, varNames, redirect, beforeRender, null, layout));
+	app.post('/experimonths/kinds/add', auth.authorize(2, 10), formValidate, utilities.doForm(as, populate, 'Add Kind of Experimonth', ExperimonthKind, template, varNames, redirect, beforeRender, beforeSave, layout));
+	
+	app.get('/experimonths/kinds/edit/:id', auth.authorize(2, 10), utilities.doForm(as, populate, 'Edit Kind of Experimonth', ExperimonthKind, template, varNames, redirect, beforeRender, null, layout));
+	app.post('/experimonths/kinds/edit/:id', auth.authorize(2, 10), formValidate, utilities.doForm(as, populate, 'Add Kind of Experimonth', ExperimonthKind, template, varNames, redirect, beforeRender, beforeSave, layout));
 
 };

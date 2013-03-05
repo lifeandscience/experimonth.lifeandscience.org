@@ -206,6 +206,17 @@ module.exports = {
 								'name': 'Add'
 							  , 'link': '/experimonths/add'
 							}
+						  , {
+								'header': 'Kinds'
+							}
+						  , {
+								'name': 'List'
+							  , 'link': '/experimonths/kinds'
+							}
+						  , {
+								'name': 'Add'
+							  , 'link': '/experimonths/kinds/add'
+							}
 						]
 					});
 					res.locals.nav.push({
