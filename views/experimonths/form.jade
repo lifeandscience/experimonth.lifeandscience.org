@@ -43,13 +43,19 @@ block body
 				.control-group
 					label.control-label(for="startDate") Start Date:
 					.controls
-						input#startDate.span5(type="date", placeholder="", name="startDate", value=moment(experimonth.startDate).utc().format('YYYY-MM-DD'))
+						.datepicker.input-append
+							input#startDate.span5(type="text", placeholder="", name="startDate", value=moment(experimonth.startDate).utc().format('MM/DD/YYYY'), data-format="MM/dd/yyyy")
+							span.add-on
+								i(data-time-icon="icon-time", data-date-icon="icon-calendar")
 						p.help-block The start date for this Experimonth.
 						
 				.control-group
 					label.control-label(for="endDate") End Date:
 					.controls
-						input#endDate.span5(type="date", placeholder="", name="endDate", value=moment(experimonth.endDate).utc().format('YYYY-MM-DD'))
+						.datepicker.input-append
+							input#endDate.span5(type="text", placeholder="", name="endDate", value=moment(experimonth.endDate).utc().format('MM/DD/YYYY'), data-format="MM/dd/yyyy")
+							span.add-on
+								i(data-time-icon="icon-time", data-date-icon="icon-calendar")
 						p.help-block The end date for this Experimonth.
 				
 				.control-group

@@ -11,4 +11,8 @@ jQuery(function(){
 			popover.removeClass('hide');
 		});
 	}
+
+	jQuery('.datepicker').datetimepicker({
+		pickTime: false
+	});
 });
