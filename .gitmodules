@@ -1,3 +1,6 @@
 [submodule "public/bootstrap-datetimepicker"]
 	path = public/bootstrap-datetimepicker
 	url = git://github.com/tarruda/bootstrap-datetimepicker.git
+[submodule "public/css3-social-signin-buttons"]
+	path = public/css3-social-signin-buttons
+	url = git://github.com/necolas/css3-social-signin-buttons.git
