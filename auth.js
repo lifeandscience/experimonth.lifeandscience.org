@@ -349,17 +349,19 @@ module.exports = {
 			}
 			email = new Buffer(email, 'base64').toString('utf8');
 			activationCode = new Buffer(activationCode, 'base64').toString('utf8');
-			User.findOne({email: email}, function(err, user){
+			User.findOne({email: email, activationCode: activationCode}, function(err, user){
 				if(err || !user){
-					req.flash('error', 'Missing parameters');
+					req.flash('error', 'Missing or invalid parameters');
 					res.redirect('/login');
 					return;
 				}
+/*
 				if(user.activationCode != activationCode){
 					req.flash('error', 'Invalid activation code!');
 					res.redirect('/login');
 					return;
 				}
+*/
 				if(user.state > 1){
 					req.flash('info', 'You may now login below.');
 					res.redirect('/login');
@@ -373,10 +375,14 @@ module.exports = {
 						if(req.user){
 							req.flash('info', 'Your email address was confirmed!');
 							res.redirect('/profile');
-							return;
+						}else{
+							req.flash('info', 'Your email address was confirmed! You may now login.');
+							res.redirect('/login');
 						}
-						req.flash('info', 'Your email address was confirmed! You may now login.');
-						res.redirect('/login');
+						
+						// TODO: Merge multiple accounts?
+						// We should check if there are multiple users with the same account (e.g. a user logged in with FB and Twitter with the same email address)
+						// And merge them?
 						return;
 					});
 				});

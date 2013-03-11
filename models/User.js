@@ -122,45 +122,75 @@ UserSchema.static('authenticate', function(email, password, callback) {
 });
 UserSchema.static('facebookAuthenticate', function(profile, callback){
 	console.log('fbAuth', profile);
-/* 	if(profile.emails && profile.emails.length > 0){} */
-/* 	var email = profile.emails[0].value; */
-/* 	this.findOne({email: email}, function(err, user){ */
-	this.findOne({fbid: profile.id}, function(err, user){
-		if(err){ return callback(err); }
-		if(user){ return callback(null, user); }
+	
+	var t = this
+	  , checkUser = function(user){
+			if(!user.fbid){
+				user.fbid = profile.id;
+				user.fb = profile;
+				user.markModified('fb');
+				if(!user.email && profile.emails && profile.emails.length > 0){
+					var email = profile.emails[0].value;
+					user.email = email;
+					user.state = 3;
+				}
+				user.save(function(err){
+					if(err){ return callback(err); }
+					callback(null, user);
+				});
+			}else{
+				callback(null, user);
+			}
+		}
+	  , findById = function(){
+			t.findOne({fbid: profile.id}, function(err, user){
+				if(err){ return callback(err); }
+				if(user){ return checkUser(user); }
 
-		// Register new user!
-		user = new User();
-		if(profile.displayName){
-			user.name = profile.displayName;
-		}
-		if(profile.gender){
-			user.gender = profile.gender;
-		}
-		if(profile._json.timezone){
-			user.timezone = profile._json.timezone;
-		}
-		user.fbid = profile.id;
-		var message = 'Thanks for signing up! Please fill out your profile.';
-		if(profile.emails && profile.emails.length > 0){
-			var email = profile.emails[0].value;
-			user.email = email;
-			user.state = 3;
-		}else{
-			user.state = 1;
-			message = 'Thanks for signing up! Please supply your email address.';
-		}
-		user.fb = profile;
-		user.markModified('fb');
-		user.save(function(err){
+				// Register new user!
+				user = new User();
+				if(profile.displayName){
+					user.name = profile.displayName;
+				}
+				if(profile.gender){
+					user.gender = profile.gender;
+				}
+				if(profile._json.timezone){
+					user.timezone = profile._json.timezone;
+				}
+				user.fbid = profile.id;
+				var message = 'Thanks for signing up! Please fill out your profile.';
+				if(profile.emails && profile.emails.length > 0){
+					var email = profile.emails[0].value;
+					user.email = email;
+					user.state = 3;
+				}else{
+					user.state = 1;
+					message = 'Thanks for signing up! Please supply your email address.';
+				}
+				user.fb = profile;
+				user.markModified('fb');
+				user.save(function(err){
+					if(err){ return callback(err); }
+					callback(null, user, message);
+				});
+			});
+		};
+	if(profile.emails && profile.emails.length > 0){
+		var email = profile.emails[0].value;
+		t.findOne({email: email}, function(err, user){
 			if(err){ return callback(err); }
-			callback(null, user, message);
+			if(user){ return checkUser(user); }
+
+			findById();
 		});
-	});
+	}else{
+		findById();
+	}
 });
 UserSchema.static('twitterAuthenticate', function(profile, callback){
 	console.log('twitterAuth', profile);
-	this.findOne({twid: profile.id_str}, function(err, user){
+	this.findOne({twid: profile._json.id_str}, function(err, user){
 		if(err){ return callback(err); }
 		if(user){ return callback(null, user); }
 
@@ -172,7 +202,7 @@ UserSchema.static('twitterAuthenticate', function(profile, callback){
 		if(profile._json.utc_offset){
 			user.timezone = profile._json.utc_offset / (60 * 60);
 		}
-		user.twid = profile.id_str;
+		user.twid = profile._json.id_str;
 		user.state = 1;
 		user.tw = profile;
 		user.markModified('tw');
