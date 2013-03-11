@@ -22,6 +22,7 @@ var ExperimonthSchema = new Schema({
   , users: [{type: Schema.ObjectId, ref: 'User'}]
   , open: {type: Boolean, default: false}
   , conditions: [{type: Schema.ObjectId, ref: 'ProfileQuestion'}]
+  , published: {type: Boolean, default: false}
 });
 
 var Experimonth = mongoose.model('Experimonth', ExperimonthSchema);

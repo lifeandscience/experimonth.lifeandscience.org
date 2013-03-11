@@ -149,7 +149,7 @@ module.exports = function(app){
 	var as = 'experimonth'
 	  , populate = []
 	  , template = 'experimonths/form'
-	  , varNames = ['name', 'description', 'type', 'image', 'startDate', 'endDate', 'userLimit', 'unlimited', 'open', 'conditions', 'kind']
+	  , varNames = ['name', 'description', 'type', 'image', 'startDate', 'endDate', 'userLimit', 'unlimited', 'open', 'conditions', 'kind', 'survey']
 	  , redirect = '/experimonths'
 	  , formValidate = form(
 			field('name').trim()
@@ -163,6 +163,7 @@ module.exports = function(app){
 		  , field('open').trim()
 		  , field('conditions').array().trim()
 		  , field('kind').trim()
+		  , field('survey').trim()
 		)
 	  , beforeRender = function(req, res, item, callback){
 	/*

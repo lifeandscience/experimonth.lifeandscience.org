@@ -25,14 +25,25 @@ block body
 								ul.unstyled
 									each type in experimonth.type
 										li #{type}
-						td #{experimonth.users.length} / #{experimonth.userLimit}
+						td 
+							if experimonth.unlimited
+								|  Unlimited
+							else
+								|  #{experimonth.users.length} / #{experimonth.userLimit}
 						td #{experimonth.open ? 'yes' : 'no'}
 						td
 							a.btn(href="/experimonths/view/#{experimonth._id}") View
 							|  
 							a.btn(href="/experimonths/edit/#{experimonth._id}") Edit
+							u = user(10)
+							if u
+								|  
+								if experimonth.published
+									a.btn.btn-success.disabled(data-bootbox-alert="<p>You may not publish this Experimonth as it has already been published.</p>") Published
+								else
+									a.btn.btn-success(href="/experimonths/publish/#{experimonth._id}", data-bootbox-confirm="<p>Are you sure you want to publish this Experimonth</p><p>Publishing an Experimonth notifies users that a new Experimonth has been published.</p>") Publish
 							//|  
-							//a.btn.btn-danger(href="/experimonths/delete/#{experimonth._id}") Delete
+							//a.btn.btn-danger(href="/experimonths/delete/#{experimonth._id}") Delete	
 							u = user(2)
 							- if(u)
 								|  

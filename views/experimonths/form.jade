@@ -22,10 +22,10 @@ block body
 					label.control-label(for="type") Type:
 					.controls
 						label.checkbox
-							input#open(type="checkbox", name="type[]", value="Daily", checked=(experimonth.type && experimonth.type.indexOf('daily') != -1))
+							input#open(type="checkbox", name="type[]", value="Daily", checked=(experimonth.type && experimonth.type.indexOf('Daily') != -1))
 							|  Daily
 						label.checkbox
-							input#open(type="checkbox", name="type[]", value="Weekly", checked=(experimonth.type && experimonth.type.indexOf('weekly') != -1))
+							input#open(type="checkbox", name="type[]", value="Weekly", checked=(experimonth.type && experimonth.type.indexOf('Weekly') != -1))
 							|  Weekly
 						
 				.control-group
@@ -71,11 +71,14 @@ block body
 				.control-group
 					label.control-label(for="conditions") Conditions:
 					.controls
-						- if(questions && questions.length)
+						if questions && questions.length
 							each question, i in questions
 								label.checkbox
 									input(type="checkbox", name="conditions", value=question._id, checked=(experimonth.conditions && experimonth.conditions.indexOf(question._id) != -1))
 									|  #{question.text}
+						else
+							p.help-block
+								em No Profile Questions created.
 						p.help-block What conditions should be used for this Experimonth?
 
 				.control-group
@@ -86,6 +89,9 @@ block body
 								label.radio
 									input(type="radio", name="kind", value=kind._id, checked=(experimonth.kind && experimonth.kind == kind._id.toString()))
 									|  #{kind.name}
+						else
+							p.help-block
+								em No Experimonth Kinds created.
 						//p.help-block What conditions should be used for this Experimonth?
 		
 			.form-actions
