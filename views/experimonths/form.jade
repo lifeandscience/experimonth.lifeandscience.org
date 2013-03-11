@@ -53,10 +53,13 @@ block body
 						p.help-block The end date for this Experimonth.
 				
 				.control-group
-					label.control-label(for="userLimit") Player Limit:
+					label.control-label(for="userLimit") User Limit:
 					.controls
 						input#userLimit.span5(type="text", placeholder="100", name="userLimit", value=experimonth.userLimit)
-						p.help-block How many users will this Experimonth allow for?
+						label.checkbox(for="unlimited")
+							input#open(type="checkbox", name="unlimited", checked=experimonth.unlimited)
+							|  Unlimited
+						p.help-block How many users will this Experimonth allow for? If the "Unlimited" checkbox is checked, the User Limit box will be ignored.
 		
 				.control-group
 					.controls

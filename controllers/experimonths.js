@@ -49,14 +49,14 @@ module.exports = function(app){
 				res.redirect('back');
 				return;
 			}
-			if(experimonth.users.length >= experimonth.userLimit){
+			if(!experimonth.unlimited && experimonth.users.length >= experimonth.userLimit){
 				req.flash('error', 'Player limit reached for this Experimonth!');
 				res.redirect('back');
 				return;
 			}
 	
 			experimonth.users.push(req.user._id);
-			if(experimonth.users.length == experimonth.userLimit){
+			if(!experimonth.unlimited && experimonth.users.length == experimonth.userLimit){
 				experimonth.open = false;
 			}
 			experimonth.save(function(err){
@@ -149,7 +149,7 @@ module.exports = function(app){
 	var as = 'experimonth'
 	  , populate = []
 	  , template = 'experimonths/form'
-	  , varNames = ['name', 'description', 'type', 'image', 'startDate', 'endDate', 'userLimit', 'open', 'conditions', 'kind']
+	  , varNames = ['name', 'description', 'type', 'image', 'startDate', 'endDate', 'userLimit', 'unlimited', 'open', 'conditions', 'kind']
 	  , redirect = '/experimonths'
 	  , formValidate = form(
 			field('name').trim()
@@ -159,6 +159,7 @@ module.exports = function(app){
 		  , field('startDate').trim().required().isDate()
 		  , field('endDate').trim().required().isDate()
 		  , field('userLimit').trim().isNumeric()
+		  , field('unlimited').trim()
 		  , field('open').trim()
 		  , field('conditions').array().trim()
 		  , field('kind').trim()

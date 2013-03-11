@@ -51,15 +51,10 @@ var shouldNextUserDefend = true
 	  , experimonths: [{type: Schema.ObjectId, ref: 'Experimonth'}]
 	  
 	  , activationCode: String
+	  , fbid: String
 	  , fb: Schema.Types.Mixed // FB Profile
 	  , twid: String
 	  , tw: Schema.Types.Mixed // Twitter Profile
-
-	  , twitter: {type: String}
-	  , facebook: {type: String}
-	  , flickr: {type: String}
-	  , tumblr: {type: String}
-	  , youtube: {type: String}
 	})
   , User = null;
 
@@ -80,7 +75,7 @@ UserSchema.method('generateActivationCode', function(){
 	this.activationCode = bcrypt.genSaltSync(10);
 });
 UserSchema.method('sendActivationEmail', function(){
-	var base_url = (process.env.BASEURL || 'http://localhost:5000')
+	var base_url = (process.env.BASEURL || 'http://app.local:8000')
 	  , activation_url = base_url + '/auth/local/confirm/'+new Buffer(this.email).toString('base64')+'/'+new Buffer(this.activationCode).toString('base64')
 	  , html = confirmEmailTemplate({email: this.email, base_url: base_url, activation_url: activation_url});
 	html = layoutTemplate({title: 'Confirm Your Email Address', body: html, moment: moment});
@@ -126,8 +121,11 @@ UserSchema.static('authenticate', function(email, password, callback) {
 	});
 });
 UserSchema.static('facebookAuthenticate', function(profile, callback){
-	var email = profile.emails[0].value;
-	this.findOne({email: email}, function(err, user){
+	console.log('fbAuth', profile);
+/* 	if(profile.emails && profile.emails.length > 0){} */
+/* 	var email = profile.emails[0].value; */
+/* 	this.findOne({email: email}, function(err, user){ */
+	this.findOne({fbid: profile.id}, function(err, user){
 		if(err){ return callback(err); }
 		if(user){ return callback(null, user); }
 
@@ -142,20 +140,26 @@ UserSchema.static('facebookAuthenticate', function(profile, callback){
 		if(profile._json.timezone){
 			user.timezone = profile._json.timezone;
 		}
-		if(profile._json.link){
-			user.facebook = profile._json.link;
+		user.fbid = profile.id;
+		var message = 'Thanks for signing up! Please fill out your profile.';
+		if(profile.emails && profile.emails.length > 0){
+			var email = profile.emails[0].value;
+			user.email = email;
+			user.state = 3;
+		}else{
+			user.state = 1;
+			message = 'Thanks for signing up! Please supply your email address.';
 		}
-		user.email = email;
-		user.state = 3;
 		user.fb = profile;
 		user.markModified('fb');
 		user.save(function(err){
 			if(err){ return callback(err); }
-			callback(null, user, 'Thanks for signing up! Please fill out your profile.');
+			callback(null, user, message);
 		});
 	});
 });
 UserSchema.static('twitterAuthenticate', function(profile, callback){
+	console.log('twitterAuth', profile);
 	this.findOne({twid: profile.id_str}, function(err, user){
 		if(err){ return callback(err); }
 		if(user){ return callback(null, user); }
@@ -167,9 +171,6 @@ UserSchema.static('twitterAuthenticate', function(profile, callback){
 		}
 		if(profile._json.utc_offset){
 			user.timezone = profile._json.utc_offset / (60 * 60);
-		}
-		if(profile._json.screen_name){
-			user.twitter = 'http://twitter.com/'+profile._json.screen_name;
 		}
 		user.twid = profile.id_str;
 		user.state = 1;

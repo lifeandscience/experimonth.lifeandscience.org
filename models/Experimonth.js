@@ -18,6 +18,7 @@ var ExperimonthSchema = new Schema({
   , kind: {type: Schema.ObjectId, ref: 'ExperimonthKind'}
   , survey: {type: String} // Maybe another object?
   , userLimit: {type: Number, default: 100}
+  , unlimited: {type: Boolean, default: false}
   , users: [{type: Schema.ObjectId, ref: 'User'}]
   , open: {type: Boolean, default: false}
   , conditions: [{type: Schema.ObjectId, ref: 'ProfileQuestion'}]
