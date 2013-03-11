@@ -40,16 +40,15 @@ module.exports = function(app){
 	var as = 'user'
 	  , populate = 'votes'
 	  , template = 'users/form'
-	  , varNames = ['email', 'name', 'twitter', 'facebook', 'flickr', 'tumblr', 'youtube']
+	  , varNames = ['email', 'name', 'zipcode', 'birthday', 'ethnicity', 'gender']
 	  , redirect = 'back'
 	  , formValidate = form(
 			field('email').trim()
 		  , field('name').trim()
-		  , field('twitter').trim()
-		  , field('facebook').trim()
-		  , field('flickr').trim()
-		  , field('tumblr').trim()
-		  , field('youtube').trim()
+		  , field('zipcode').trim()
+		  , field('birthday').trim()
+		  , field('ethnicity').trim()
+		  , field('gender').trim()
 		);
 	
 	/*
@@ -57,8 +56,8 @@ module.exports = function(app){
 	app.get('/users/add', auth.authorize(2, 10), utilities.doForm(as, populate, 'Add New User', User, template, varNames, redirect));
 	app.post('/users/add', auth.authorize(2, 10), formValidate, utilities.doForm(as, populate, 'Add New User', User, template, varNames, redirect));
 	*/
-	app.get('/users/edit/:id', auth.authorize(2, 10), utilities.doForm(as, populate, 'Edit User', User, template, varNames, redirect));
-	app.post('/users/edit/:id', auth.authorize(2, 10), formValidate, utilities.doForm(as, populate, 'Edit User', User, template, varNames, redirect));
+	app.get('/users/edit/:id', auth.authorizeOrSelf(2, 10, 'id'), utilities.doForm(as, populate, 'Edit User', User, template, varNames, redirect));
+	app.post('/users/edit/:id', auth.authorizeOrSelf(2, 10, 'id'), formValidate, utilities.doForm(as, populate, 'Edit User', User, template, varNames, redirect));
 	
 	/*
 	// Saving for now.
@@ -89,7 +88,7 @@ module.exports = function(app){
 		}
 	});
 	*/
-	app.post('/users/opt_out', auth.authorize(2, 10), function(req, res){
+	app.post('/users/opt_out', auth.authorize(2), function(req, res){
 		req.user.opt_out = req.param('opt_out') == 'on';
 		console.log('params: ', req.params);
 		req.user.save(function(err){

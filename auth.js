@@ -443,6 +443,14 @@ module.exports = {
 			});
 		});
 	}
+  , authorizeOrSelf: function(requiredState, requiredRole, userIdParam){
+		return function(req, res, next){
+			if(req.user && req.user._id.toString() == req.params[userIdParam]){
+				return next();
+			}
+			(this.authorize(requiredState, requiredRole))(req, res, next);
+		};
+	}
   , authorize: function(requiredState, requiredRole, message, skipQuestionCount){
 		if(!requiredState){
 			requiredState = 0;

@@ -32,7 +32,6 @@ var shouldNextUserDefend = true
 	  , salt: String
 	  , email: String
 	  
-	  , gender: String
 	  , timezone: {type: Number, default: 0}
 		// STATE
 		//	Replaces "active", known values:
@@ -55,6 +54,11 @@ var shouldNextUserDefend = true
 	  , fb: Schema.Types.Mixed // FB Profile
 	  , twid: String
 	  , tw: Schema.Types.Mixed // Twitter Profile
+	  
+	  , zipcode: String
+	  , birthday: String
+	  , ethnicity: String
+	  , gender: String
 	})
   , User = null;
 
