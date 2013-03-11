@@ -55,11 +55,14 @@ app.configure(function(){
 /* 		res.locals._ = _; */
 		res.locals.flash = req.flash.bind(req);
 		res.locals.moment = moment;
-		res.locals.user = function(minimumState){
+		res.locals.user = function(minimumState, minimumRole){
 			if(minimumState == undefined){
 				minimumState = 0
 			}
-			if(req.user && req.user.state >= minimumState){
+			if(minimumRole == undefined){
+				minimumRole = 0;
+			}
+			if(req.user && req.user.state >= minimumState && req.user.role >= minimumRole){
 				return req.user;
 			}
 			return null;

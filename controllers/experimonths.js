@@ -7,11 +7,16 @@ var util = require('util')
   , Experimonth = mongoose.model('Experimonth')
   , ExperimonthKind = mongoose.model('ExperimonthKind')
   , ProfileQuestion = mongoose.model('ProfileQuestion')
+  , User = mongoose.model('User')
   , moment = require('moment');
 
 module.exports = function(app){
 	app.get('/experimonths', auth.authorize(2), function(req, res){
-		Experimonth.find().populate('kind').exec(function(err, experimonths){
+		var params = {};
+		if(!req.user || req.user.role < 10){
+			params.published = true;
+		}
+		Experimonth.find(params).populate('kind').exec(function(err, experimonths){
 			res.render('experimonths', {title: 'Upcoming Experimonths', experimonths: experimonths, moment: moment});
 		});
 	});
@@ -216,6 +221,48 @@ module.exports = function(app){
 	
 	app.get('/experimonths/edit/:id', auth.authorize(2, 10), utilities.doForm(as, populate, 'Edit Experimonth', Experimonth, template, varNames, redirect, beforeRender, null, layout));
 	app.post('/experimonths/edit/:id', auth.authorize(2, 10), formValidate, utilities.doForm(as, populate, 'Add Experimonth', Experimonth, template, varNames, redirect, beforeRender, beforeSave, layout));
+	
+	
+	
+	app.get('/experimonths/publish/:id', auth.authorize(2, 10), function(req, res){
+		if(!req.param('id')){
+			req.flash('error', 'Missing Experimonth ID.');
+			res.redirect('back');
+			return;
+		}
+		Experimonth.findById(req.param('id')).exec(function(err, experimonth){
+			if(err || !experimonth){
+				req.flash('error', 'Experimonth not found.');
+				res.redirect('back');
+				return;
+			}
+			if(experimonth.published){
+				req.flash('error', 'A published experimonth may not be re-published.');
+				res.redirect('back');
+				return;
+			}
+			experimonth.published = true;
+			experimonth.publishDate = new Date();
+			experimonth.save(function(err){
+				if(err){
+					req.flash('error', 'Error while publishing experimonth: '+err);
+					res.redirect('back');
+					return;
+				}
+				// Send a notification to all existing users that a new question was published.
+				User.notifyAll('Please check out the new Experimonth that was just published!', function(err){
+					if(err){
+						req.flash('error', 'Error notifying users! '+err);
+						res.redirect('back');
+						return;
+					}
+					req.flash('info', 'Experimonth published successfully.');
+					res.redirect('back');
+					return;
+				});
+			});
+		});
+	});
 	
 	
 	app.get('/experimonths/kinds', auth.authorize(2), function(req, res){

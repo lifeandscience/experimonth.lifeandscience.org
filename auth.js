@@ -149,7 +149,6 @@ module.exports = {
 		}
 
 		app.use(function(req, res, next){
-			console.log('setting up nav: ');
 			res.locals.url = req.url;
 			res.locals.nav = [
 			];
@@ -237,12 +236,10 @@ module.exports = {
 						]
 					});
 				}
-				console.log(res.locals.nav);
 				// Check if the user has filled out their profile!
 				checkProfile(req, res, next);
 				return;
 			}
-			console.log(res.locals.nav);
 			next();
 		});
 	}
@@ -456,7 +453,6 @@ module.exports = {
 		return function(req, res, next){
 			if(!req.user || req.user.state < requiredState){
 				if(!message){
-					console.log(req.user);
 					if(req.user && req.user.state == 0){
 						message = 'Please check your email to confirm your address. (<a href="/auth/local/register/resend/'+req.user.email+'">Resend?</a>)';
 					}else{
@@ -464,7 +460,6 @@ module.exports = {
 					}
 				}
 				req.flash('error', message);
-				console.log('going back...');
 				res.redirect(homeRoute);
 				return;
 			}
@@ -492,7 +487,6 @@ module.exports = {
 				next();
 				return;
 			}
-			console.log('calling checkProfile');
 			checkProfile(req, res, next);
 		};
 	}
