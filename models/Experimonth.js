@@ -8,6 +8,7 @@ var ExperimonthKindSchema = new Schema({
   , instructions: {type: String}
 });
 var ExperimonthKind = mongoose.model('ExperimonthKind', ExperimonthKindSchema);
+
 var ExperimonthSchema = new Schema({
 	startDate: {type: Date, default: function(){ return Date.now(); }}
   , endDate: {type: Date, default: function(){ return Date.now(); }}
@@ -20,6 +21,7 @@ var ExperimonthSchema = new Schema({
   , userLimit: {type: Number, default: 100}
   , unlimited: {type: Boolean, default: false}
   , users: [{type: Schema.ObjectId, ref: 'User'}]
+  , enrollments: [{type: Schema.ObjectId, ref: 'ExperimonthEnrollment'}]
   , open: {type: Boolean, default: false}
   , conditions: [{type: Schema.ObjectId, ref: 'ProfileQuestion'}]
   , published: {type: Boolean, default: false}
@@ -28,3 +30,10 @@ var ExperimonthSchema = new Schema({
 
 var Experimonth = mongoose.model('Experimonth', ExperimonthSchema);
 exports = Experimonth;
+
+var ExperimonthEnrollmentSchema = new Schema({
+	experimonth: {type: Schema.ObjectId, ref: 'Experimonth'}
+  , user: {type: Schema.ObjectId, ref: 'User'}
+  , survey: {type: String}
+});
+var ExperimonthEnrollment = mongoose.model('ExperimonthEnrollment', ExperimonthEnrollmentSchema);

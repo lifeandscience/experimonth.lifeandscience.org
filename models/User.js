@@ -48,6 +48,7 @@ var shouldNextUserDefend = true
 	  	//	10: Admin
 	  , role: {type: Number, default: 0}
 	  , experimonths: [{type: Schema.ObjectId, ref: 'Experimonth'}]
+	  , enrollments: [{type: Schema.ObjectId, ref: 'ExperimonthEnrollment'}]
 	  
 	  , activationCode: String
 	  , fbid: String
@@ -213,6 +214,26 @@ UserSchema.static('twitterAuthenticate', function(profile, callback){
 		user.save(function(err){
 			if(err){ return callback(err); }
 			callback(null, user, 'Thanks for signing up! Please supply your email address.');
+		});
+	});
+});
+UserSchema.static('notifyAdmins', function(notification, callback){
+	this.find({role: 10}).exec(function(err, users){
+		if(err || !users || users.length == 0){
+			callback(new Error('Error finding users to notify.'));
+			return;
+		}
+		var count = users.length
+		  , check = function(){
+				console.log('count', count);
+				if(--count == 0){
+					// Done iterating over users
+					callback(null);
+				}
+			};
+		users.forEach(function(user){
+			console.log('notifying: ', user.email);
+			user.notify(notification, check);
 		});
 	});
 });
