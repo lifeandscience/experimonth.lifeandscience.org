@@ -14,7 +14,8 @@ block body
 			tbody
 				each user, i in users
 					tr
-						td #{user.email}
+						td 
+							a(href="/profile/"+user._id) #{user.email}
 						td #{user.score}
 						td #{moment(user.lastPlayed).format('YYYY-MM-DD hh:mm A')}
 						td

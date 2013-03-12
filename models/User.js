@@ -175,9 +175,19 @@ UserSchema.static('facebookAuthenticate', function(profile, callback){
 				}
 				user.fb = profile;
 				user.markModified('fb');
-				user.save(function(err){
+				user.save(function(err, user){
 					if(err){ return callback(err); }
-					callback(null, user, message);
+					
+					if(user.email){
+						User.notifyAdmins('A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user.email+'</a>) registered!', function(){
+							callback(null, user, message);
+						});
+					}else{
+						User.notifyAdmins('A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user._id+'</a>) registered!', function(){
+							callback(null, user, message);
+						});
+					}
+
 				});
 			});
 		};
@@ -211,9 +221,12 @@ UserSchema.static('twitterAuthenticate', function(profile, callback){
 		user.state = 1;
 		user.tw = profile;
 		user.markModified('tw');
-		user.save(function(err){
+		user.save(function(err, user){
 			if(err){ return callback(err); }
-			callback(null, user, 'Thanks for signing up! Please supply your email address.');
+
+			User.notifyAdmins('A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user._id+'</a>) registered!', function(){
+				callback(null, user, 'Thanks for signing up! Please supply your email address.');
+			});
 		});
 	});
 });
@@ -225,14 +238,12 @@ UserSchema.static('notifyAdmins', function(notification, callback){
 		}
 		var count = users.length
 		  , check = function(){
-				console.log('count', count);
 				if(--count == 0){
 					// Done iterating over users
 					callback(null);
 				}
 			};
 		users.forEach(function(user){
-			console.log('notifying: ', user.email);
 			user.notify(notification, check);
 		});
 	});

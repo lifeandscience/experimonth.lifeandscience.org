@@ -309,13 +309,16 @@ module.exports = {
 						res.redirect('/login');
 						return;
 					}
-					// Successful!
-					// They need to activate the account?
-					// Send an email to spur activation
-					user.sendActivationEmail();
 					
-					req.flash('info', 'Registration successful! Please check your email for further instructions.');
-					res.redirect(homeRoute);
+					User.notifyAdmins('A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user.email+'</a>) registered!', function(){
+						// Successful!
+						// They need to activate the account?
+						// Send an email to spur activation
+						user.sendActivationEmail();
+						
+						req.flash('info', 'Registration successful! Please check your email for further instructions.');
+						res.redirect(homeRoute);
+					});
 					return;
 				});
 			});
