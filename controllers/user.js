@@ -37,27 +37,38 @@ module.exports = function(app){
 	*/
 	
 	// (as, populate, title, object, template, varNames, redirect, beforeRender, beforeSave)
-	var as = 'user'
+	var as = 'u'
 	  , populate = 'votes'
 	  , template = 'users/form'
-	  , varNames = ['email', 'name', 'zipcode', 'birthday', 'ethnicity', 'gender']
+	  , varNames = ['email', 'name', 'timezone', 'zipcode', 'birthday', 'ethnicity', 'gender']
 	  , redirect = 'back'
 	  , formValidate = form(
 			field('email').trim()
 		  , field('name').trim()
+		  , field('timezone').trim()
 		  , field('zipcode').trim()
 		  , field('birthday').trim()
 		  , field('ethnicity').trim()
 		  , field('gender').trim()
-		);
+		)
+	  , beforeRender = function(req, res, item, callback){
+	/*
+			if(item.confession && req.params && req.params.number){
+				item.confession.text = 'This is in reply to confession #'+req.params.number+': ';
+			}
+			item.action = '/confessional';
+	*/
+			item.timezones = utilities.getTimezones();
+			return callback(item);
+		};
 	
 	/*
 	// Saving for now.
 	app.get('/users/add', auth.authorize(2, 10), utilities.doForm(as, populate, 'Add New User', User, template, varNames, redirect));
 	app.post('/users/add', auth.authorize(2, 10), formValidate, utilities.doForm(as, populate, 'Add New User', User, template, varNames, redirect));
 	*/
-	app.get('/users/edit/:id', auth.authorizeOrSelf(2, 10, 'id'), utilities.doForm(as, populate, 'Edit User', User, template, varNames, redirect));
-	app.post('/users/edit/:id', auth.authorizeOrSelf(2, 10, 'id'), formValidate, utilities.doForm(as, populate, 'Edit User', User, template, varNames, redirect));
+	app.get('/users/edit/:id', auth.authorizeOrSelf(2, 10, 'id'), utilities.doForm(as, populate, 'Edit User', User, template, varNames, redirect, beforeRender));
+	app.post('/users/edit/:id', auth.authorizeOrSelf(2, 10, 'id'), formValidate, utilities.doForm(as, populate, 'Edit User', User, template, varNames, redirect, beforeRender));
 	
 	/*
 	// Saving for now.

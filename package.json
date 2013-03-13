@@ -23,6 +23,7 @@
     , "passport-local": ">= 0.0.1"
     , "passport-facebook": ">= 0.0.1"
     , "passport-twitter": ">= 0.0.1"
+    , "timezone": ">= 0.0.1"
   },
   "engines": {
     "node": "0.8.x",

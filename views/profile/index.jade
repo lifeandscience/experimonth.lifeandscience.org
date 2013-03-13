@@ -69,7 +69,13 @@ block body
 				.control-group
 					label.control-label(for="timezone") Timezone:
 					.controls
-						input#timezone.span5(type="text", placeholder="", name="timezone", value=u.timezone)
+						select#timezone.span5(name="timezone")
+							each offset, name in timezones
+								option(value=name, selected=(name == u.timezone)) #{name}
+							- for(var i=-12; i<13; i++){
+								option(value=i, selected=(''+i == u.timezone)) #{i}
+							- }
+						//input#timezone.span5(type="text", placeholder="", name="timezone", value=u.timezone)
 		
 				.control-group
 					label.control-label(for="zipcode") Zip Code:

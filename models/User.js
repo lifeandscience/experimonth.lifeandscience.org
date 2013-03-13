@@ -32,7 +32,7 @@ var shouldNextUserDefend = true
 	  , salt: String
 	  , email: String
 	  
-	  , timezone: {type: Number, default: 0}
+	  , timezone: {type: String, default: '0'}
 		// STATE
 		//	Replaces "active", known values:
 		//	 0: Newly-registered

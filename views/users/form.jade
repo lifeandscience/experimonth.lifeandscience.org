@@ -5,44 +5,48 @@ block body
 		form(method="POST")#userForm.form-horizontal
 			fieldset
 				legend #{title}
-				console.log(user)
 						
 				.control-group
 					label.control-label(for="email") Email Address:
 					.controls
-						input#email.span5(type="text", placeholder="", name="email", value=user.email)
+						input#email.span5(type="text", placeholder="", name="email", value=u.email)
 						p.help-block Your email address.
 		
 				.control-group
 					label.control-label(for="name") Name:
 					.controls
-						input#name.span5(type="text", placeholder="", name="name", value=user.name)
+						input#name.span5(type="text", placeholder="", name="name", value=u.name)
 						p.help-block The name of the user.
 		
 				.control-group
 					label.control-label(for="timezone") Timezone:
 					.controls
-						input#timezone.span5(type="text", placeholder="", name="timezone", value=user.timezone)
+						select#timezone.span5(name="timezone")
+							each offset, name in timezones
+								option(value=name, selected=(name == u.timezone)) #{name}
+							- for(var i=-12; i<13; i++){
+								option(value=i, selected=(''+i == u.timezone)) #{i}
+							- }
 		
 				.control-group
 					label.control-label(for="zipcode") Zip Code:
 					.controls
-						input#zipcode.span5(type="text", placeholder="", name="zipcode", value=user.zipcode)
+						input#zipcode.span5(type="text", placeholder="", name="zipcode", value=u.zipcode)
 		
 				.control-group
 					label.control-label(for="birthday") Birthday:
 					.controls
-						input#birthday.span5(type="text", placeholder="", name="birthday", value=user.birthday)
+						input#birthday.span5(type="text", placeholder="", name="birthday", value=u.birthday)
 		
 				.control-group
 					label.control-label(for="ethnicity") Ethnicity:
 					.controls
-						input#ethnicity.span5(type="text", placeholder="", name="ethnicity", value=user.ethnicity)
+						input#ethnicity.span5(type="text", placeholder="", name="ethnicity", value=u.ethnicity)
 		
 				.control-group
 					label.control-label(for="gender") Gender:
 					.controls
-						input#gender.span5(type="text", placeholder="", name="gender", value=user.gender)
+						input#gender.span5(type="text", placeholder="", name="gender", value=u.gender)
 			
 		
 			.form-actions

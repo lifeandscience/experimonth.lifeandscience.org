@@ -447,11 +447,12 @@ module.exports = {
 		});
 	}
   , authorizeOrSelf: function(requiredState, requiredRole, userIdParam){
+		var t = this;
 		return function(req, res, next){
 			if(req.user && req.user._id.toString() == req.params[userIdParam]){
 				return next();
 			}
-			(this.authorize(requiredState, requiredRole))(req, res, next);
+			(t.authorize(requiredState, requiredRole))(req, res, next);
 		};
 	}
   , authorize: function(requiredState, requiredRole, message, skipQuestionCount){

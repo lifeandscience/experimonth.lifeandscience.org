@@ -12,47 +12,6 @@ var util = require('util')
   , ProfileAnswer = mongoose.model('ProfileAnswer');
 
 module.exports = function(app){
-
-	app.get('/profile', auth.authorize(1, 0, null, true), function(req, res){
-		Experimonth.find({_id: {$in: req.user.experimonths}}).exec(function(err, experimonths){
-//			Game.find({_id: {$in: req.user.games}}).exec(function(err, games){
-//				console.log('finding games:', err, games);
-				ProfileAnswer.find({user: req.user._id}).populate('question').exec(function(err, answers){
-					var questions = [];
-					for(var i=0; i<answers.length; i++){
-						questions.push(answers[i].question._id);
-					}
-					ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).exec(function(err, questions){
-						res.render('profile', {title: 'Your Profile', u: req.user, experimonths: experimonths, questions: questions, answers: answers/* , games: games */});
-					});
-				});
-//			});
-		});
-	});
-
-	app.get('/profile/:id', auth.authorize(2, 10), function(req, res){
-		if(!req.param('id')){
-			req.flash('error', 'Missing Profile Question ID.');
-			res.redirect('back');
-			return;
-		}
-		User.findById(req.param('id')).populate('experimonths').exec(function(err, user){
-			if(err || !user){
-				req.flash('error', 'User not found.');
-				res.redirect('back');
-				return;
-			}
-			ProfileAnswer.find({user: user._id}).populate('question').exec(function(err, answers){
-				var questions = [];
-				for(var i=0; i<answers.length; i++){
-					questions.push(answers[i].question._id);
-				}
-				ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).exec(function(err, questions){
-					res.render('profile', {title: 'User Profile', u: user, experimonths: user.experimonths, questions: questions, answers: answers/* , games: games */});
-				});
-			});
-		});
-	});
 	
 	app.get('/profile/questions', auth.authorize(2, 10), function(req, res){
 		// Your profile questions
@@ -250,6 +209,52 @@ module.exports = function(app){
 			req.flash('info', 'Thanks for your answer!');
 			res.redirect('back');
 			return;
+		});
+	});
+
+	app.get('/profile', auth.authorize(1, 0, null, true), function(req, res){
+//		console.log('user.timezone', utilities.getTimezoneFromOffset(req.user.timezone));
+		Experimonth.find({_id: {$in: req.user.experimonths}}).exec(function(err, experimonths){
+//			Game.find({_id: {$in: req.user.games}}).exec(function(err, games){
+//				console.log('finding games:', err, games);
+				ProfileAnswer.find({user: req.user._id}).populate('question').exec(function(err, answers){
+					var questions = [];
+					for(var i=0; i<answers.length; i++){
+						questions.push(answers[i].question._id);
+					}
+					ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).exec(function(err, questions){
+						res.render('profile', {title: 'Your Profile', u: req.user, experimonths: experimonths, questions: questions, answers: answers, timezones: utilities.getTimezones()/* , games: games */});
+					});
+				});
+//			});
+		});
+	});
+
+	app.get('/profile/:id', auth.authorize(2, 10), function(req, res){
+		if(!req.param('id')){
+			req.flash('error', 'Missing Profile Question ID.');
+			res.redirect('back');
+			return;
+		}
+		User.findById(req.param('id')).populate('experimonths').exec(function(err, user){
+			if(err || !user){
+				req.flash('error', 'User not found.');
+				res.redirect('back');
+				return;
+			}
+			ProfileAnswer.find({user: user._id}).populate('question').exec(function(err, answers){
+				var questions = [];
+				for(var i=0; i<answers.length; i++){
+					questions.push(answers[i].question._id);
+				}
+				ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).exec(function(err, questions){
+					var Notification = mongoose.model('Notification');
+					
+					Notification.find({user: user, read: false}, function(err, notifications){
+						res.render('profile', {title: 'User Profile', u: user, experimonths: user.experimonths, questions: questions, answers: answers, userNotifications: notifications, timezones: utilities.getTimezones()/* , games: games */});
+					});
+				});
+			});
 		});
 	});
 };
