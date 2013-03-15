@@ -37,11 +37,24 @@ block body
 			h2
 				| Your Experimonths 
 				a.btn(href="/experimonths") Enroll in More!
-			if experimonths && experimonths.length > 0
-				ul
-					each experimonth, i in experimonths
-						li(class='experimonth')
-							| #{moment(experimonth.startDate).utc().format('YYYY-MM-DD')} - #{moment(experimonth.endDate).utc().format('YYYY-MM-DD')}
+			if enrollments && enrollments.length > 0
+				table.table
+					thead
+						tr
+							th Name
+							th Start Date
+							th End Date
+					tbody
+						each enrollment, i in enrollments
+							if enrollment.experimonth
+								tr(class='experimonth')
+									td 
+										if enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url
+											a(href=enrollment.experimonth.kindPopulated.url) #{enrollment.experimonth.name}
+										else
+											| #{enrollment.experimonth.name}
+									td #{moment(enrollment.experimonth.startDate).utc().format('YYYY-MM-DD')}
+									td #{moment(enrollment.experimonth.endDate).utc().format('YYYY-MM-DD')}
 			
 			// h2 Opt Out
 			// p If you'd prefer, you can opt-out of your data being used in the analysis of the results of each Experimonth.
@@ -75,7 +88,6 @@ block body
 							- for(var i=-12; i<13; i++){
 								option(value=i, selected=(''+i == u.timezone)) #{i}
 							- }
-						//input#timezone.span5(type="text", placeholder="", name="timezone", value=u.timezone)
 		
 				.control-group
 					label.control-label(for="zipcode") Zip Code:

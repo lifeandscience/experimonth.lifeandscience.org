@@ -43,7 +43,6 @@ app.configure(function(){
 		})
 	}));
 	app.use(flash());
-	auth.setup(app);
 	
 	
 	
@@ -76,6 +75,7 @@ app.configure(function(){
 		});
 //		next();
 	});
+	auth.setup(app);
 	
 	
 	

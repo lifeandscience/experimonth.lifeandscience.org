@@ -1,8 +1,10 @@
 mixin do_notifications()
 	if locals.userNotifications
-		notifications = locals.userNotifications
-	if notifications && notifications.length > 0
-		each notification, i in notifications
+		n = locals.userNotifications
+	else if locals.notifications
+		n = locals.notifications
+	if n && n.length > 0
+		each notification, i in n
 			div(class='notification alert alert-'+notification.type+(notification.read ? ' read' : ''))
 				| #{moment(notification.date).format('LLL')} - 
 				| !{notification.text}

@@ -6,6 +6,8 @@ var util = require('util')
   , utilities = require('../utilities')
   , mongoose = require('mongoose')
   , Experimonth = mongoose.model('Experimonth')
+  , ExperimonthKind = mongoose.model('ExperimonthKind')
+  , ExperimonthEnrollment = mongoose.model('ExperimonthEnrollment')
 /*   , Game = mongoose.model('Game') */
   , User = mongoose.model('User')
   , ProfileQuestion = mongoose.model('ProfileQuestion')
@@ -214,18 +216,30 @@ module.exports = function(app){
 
 	app.get('/profile', auth.authorize(1, 0, null, true), function(req, res){
 //		console.log('user.timezone', utilities.getTimezoneFromOffset(req.user.timezone));
-		Experimonth.find({_id: {$in: req.user.experimonths}}).exec(function(err, experimonths){
-//			Game.find({_id: {$in: req.user.games}}).exec(function(err, games){
-//				console.log('finding games:', err, games);
-				ProfileAnswer.find({user: req.user._id}).populate('question').exec(function(err, answers){
-					var questions = [];
-					for(var i=0; i<answers.length; i++){
-						questions.push(answers[i].question._id);
-					}
-					ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).exec(function(err, questions){
-						res.render('profile', {title: 'Your Profile', u: req.user, experimonths: experimonths, questions: questions, answers: answers, timezones: utilities.getTimezones()/* , games: games */});
-					});
-				});
+		ExperimonthEnrollment.find({_id: {$in: req.user.enrollments}}).populate('experimonth').exec(function(err, enrollments){
+				var count = enrollments.length
+				  , done = function(err, kind){
+						if(!err && kind){
+							enrollments[count].experimonth.kindPopulated = kind;
+						}
+						if(--count < 0){
+							return ProfileAnswer.find({user: req.user._id}).populate('question').exec(function(err, answers){
+								var questions = [];
+								for(var i=0; i<answers.length; i++){
+									questions.push(answers[i].question._id);
+								}
+								ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).exec(function(err, questions){
+									res.render('profile', {title: 'Your Profile', u: req.user, enrollments: enrollments, questions: questions, answers: answers, timezones: utilities.getTimezones()/* , games: games */});
+								});
+							});
+						}
+						if(enrollments[count].experimonth.kind){
+							ExperimonthKind.findById(enrollments[count].experimonth.kind).exec(done);
+						}else{
+							done();
+						}
+					};
+				done();
 //			});
 		});
 	});
@@ -236,24 +250,41 @@ module.exports = function(app){
 			res.redirect('back');
 			return;
 		}
-		User.findById(req.param('id')).populate('experimonths').exec(function(err, user){
+		User.findById(req.param('id'))/* .populate('experimonths') */.exec(function(err, user){
 			if(err || !user){
 				req.flash('error', 'User not found.');
 				res.redirect('back');
 				return;
 			}
-			ProfileAnswer.find({user: user._id}).populate('question').exec(function(err, answers){
-				var questions = [];
-				for(var i=0; i<answers.length; i++){
-					questions.push(answers[i].question._id);
-				}
-				ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).exec(function(err, questions){
-					var Notification = mongoose.model('Notification');
-					
-					Notification.find({user: user, read: false}, function(err, notifications){
-						res.render('profile', {title: 'User Profile', u: user, experimonths: user.experimonths, questions: questions, answers: answers, userNotifications: notifications, timezones: utilities.getTimezones()/* , games: games */});
-					});
-				});
+			ExperimonthEnrollment.find({_id: {$in: user.enrollments}}).populate('experimonth').exec(function(err, enrollments){
+				var count = enrollments.length
+				  , done = function(err, kind){
+						if(!err && kind){
+							enrollments[count].experimonth.kindPopulated = kind;
+						}
+						if(--count < 0){
+							return ProfileAnswer.find({user: user._id}).populate('question').exec(function(err, answers){
+								var questions = [];
+								for(var i=0; i<answers.length; i++){
+									questions.push(answers[i].question._id);
+								}
+								ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).exec(function(err, questions){
+									var Notification = mongoose.model('Notification');
+									
+									Notification.find({user: user, read: false}, function(err, notifications){
+										res.render('profile', {title: 'User Profile', u: user, enrollments: user.enrollments, questions: questions, answers: answers, userNotifications: notifications, timezones: utilities.getTimezones()/* , games: games */});
+									});
+								});
+							});
+						}
+						if(enrollments[count].experimonth.kind){
+							ExperimonthKind.findById(enrollments[count].experimonth.kind).exec(done);
+						}else{
+							done();
+						}
+					};
+				done();
+				
 			});
 		});
 	});

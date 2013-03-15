@@ -5,7 +5,8 @@ var mongoose = require('mongoose')
   , passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
   , FacebookStrategy = require('passport-facebook').Strategy
-  , TwitterStrategy = require('passport-twitter').Strategy;
+  , TwitterStrategy = require('passport-twitter').Strategy
+  , OAuth2Provider = require('oauth2-provider').OAuth2Provider;
 
 var homeRoute = '/home'
   , adminEmails = ['ben.schell@gmail.com', 'ben.schell@bluepanestudio.com', 'ben@benschell.org', 'beck@becktench.com'];
@@ -242,6 +243,122 @@ module.exports = {
 			}
 			next();
 		});
+		
+		// Setup oAuth provider
+		// temporary grant storage
+		var myGrants = {};
+		var myOAP = new OAuth2Provider({crypt_key: 'encryption secret', sign_key: 'signing secret'});
+
+		// before showing authorization page, make sure the user is logged in
+		myOAP.on('enforce_login', function(req, res, authorize_url, next) {
+			if(req.user) {
+				console.log('enforced login, and we were already logged in!');
+				next(req.user);
+			} else {
+				console.log('wasn\'t logged in!');
+				res.redirect('login?next='+encodeURIComponent(authorize_url));
+			}
+		});
+		
+		// render the authorize form with the submission URL
+		// use two submit buttons named "allow" and "deny" for the user's choice
+		myOAP.on('authorize_form', function(req, res, client_id, authorize_url) {
+			res.render('authorize', {title: 'Authorize', authorize_url: authorize_url});
+		});
+		
+		// save the generated grant code for the current user
+		myOAP.on('save_grant', function(req, client_id, code, next) {
+			if(!(req.user._id in myGrants)){
+				console.log('haven\'t previously stored grants for this user, so making an object; ', req.user._id);
+				myGrants[req.user._id] = {};
+			}
+		
+			console.log('saving grant code ', code, ' for user ', req.user._id, ' and client ', client_id);
+			myGrants[req.user._id][client_id] = code;
+			next();
+		});
+		
+		// remove the grant when the access token has been sent
+		myOAP.on('remove_grant', function(user_id, client_id, code) {
+			console.log('trying to remove grant code from user ', user_id, ' and client ', client_id);
+			if(myGrants[user_id] && myGrants[user_id][client_id]){
+				console.log('deleting!');
+				delete myGrants[user_id][client_id];
+			}
+		});
+		
+		// find the user for a particular grant
+		myOAP.on('lookup_grant', function(client_id, client_secret, code, next) {
+			// verify that client id/secret pair are valid
+			console.log('looking up grant for client_id ', client_id);
+			if(client_id){
+				var ExperimonthKind = mongoose.model('ExperimonthKind');
+				ExperimonthKind.checkClientSecret(client_id, client_secret, function(err, kind){
+					console.log('looked up kind: ', kind._id);
+					if(err || !kind){
+						// Error!
+						return next(new Error('incorrect client credentials'));
+					}
+					// OK, we have a proper set of client credentials, so check our grants
+					for(var user in myGrants) {
+						var clients = myGrants[user];
+						if(clients[client_id] && clients[client_id] == code){
+							console.log('matched credentials and matched grant code!');
+							return next(null, user);
+						}
+					}
+					console.log('no grant found', client_id, code, myGrants);
+					return next(new Error('no such grant found'));
+				});
+				return;
+			}
+			// We didn't have a client_id for some reason
+			return next(new Error('no such grant found'));
+		});
+		
+		// embed an opaque value in the generated access token
+		myOAP.on('create_access_token', function(user_id, client_id, next) {
+			console.log('creating access token');
+			var data = 'blah'; // can be any data type or null
+		
+			next(data);
+		});
+		
+		// (optional) do something with the generated access token
+		myOAP.on('save_access_token', function(user_id, client_id, access_token) {
+			console.log('saving access token %s for user_id=%s client_id=%s', access_token, user_id, client_id);
+		});
+		
+		// an access token was received in a URL query string parameter or HTTP header
+		myOAP.on('access_token', function(req, token, next) {
+			var TOKEN_TTL = 10 * 60 * 1000; // 10 minutes
+		
+			if(token.grant_date.getTime() + TOKEN_TTL > Date.now()) {
+				req.token_expires = token.grant_date.getTime() + TOKEN_TTL;
+				req.token_user_id = token.user_id;
+				req.token_data = token.extra_data;
+			} else {
+				console.warn('access token for user %s has expired', token.user_id);
+			}
+			console.log('checking access_token');
+		
+			next();
+		});
+		
+		// (optional) client authentication (xAuth) for trusted clients
+		myOAP.on('client_auth', function(client_id, client_secret, username, password, next) {
+			if(client_id == '1' && username == 'guest') {
+				var user_id = '1337';
+		
+				return next(null, user_id);
+			}
+		
+			return next(new Error('client authentication denied'));
+		});
+		
+		app.use(myOAP.oauth());
+		app.use(myOAP.login());
+		
 	}
   , route: function(app){
 		var authenticateOptions = {
@@ -257,6 +374,9 @@ module.exports = {
 				res.redirect('/profile');
 				return;
 			}
+			if(req.param('next')){
+				req.session.redirect_url = req.param('next');
+			}
 			res.render('login', {title: 'Login / Register'});
 		});
 		app.get('/logout', function(req, res){
@@ -265,7 +385,9 @@ module.exports = {
 		});
 		app.get('/auth/finish', function(req, res){
 			if(req.session.redirect_url){
-				return res.redirect(req.session.redirect_url);
+				var url = req.session.redirect_url;
+				delete req.session.redirect_url;
+				return res.redirect(url);
 			}
 			return res.redirect('/profile');
 		});
@@ -443,6 +565,22 @@ module.exports = {
 				req.flash('info', 'Your email was successfully added! Please check your email for further instructions.');
 				res.redirect(homeRoute);
 				return;
+			});
+		});
+		
+		app.get('/profile/get', function(req, res, next){
+			if(!req.token_user_id){
+				return res.json({error: 'No User ID'});
+			}
+			User.findById(req.token_user_id).exec(function(err, user){
+				if(err || !user){
+					console.log('user not found...');
+					return res.json({error: 'User Not Found'});
+				}
+				return res.json({
+					expires: req.token_expires
+				  , user: user
+				});
 			});
 		});
 	}

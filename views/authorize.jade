@@ -1,0 +1,8 @@
+extends layout
+
+block body
+	#container-inner
+		h1= title
+		form(method="POST", action=authorize_url)
+			button.btn.btn-success(name="allow") Allow
+			button.btn.btn-danger(name="deny") Deny
