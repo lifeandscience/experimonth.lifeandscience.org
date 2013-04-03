@@ -197,9 +197,11 @@ module.exports = function(app){
 					return;
 				}
 				if(experimonth.enrollments.indexOf(enrollment._id.toString()) != -1){
+					console.log('removing enrollment from experimonth!');
 					experimonth.enrollments.splice(experimonth.enrollments.indexOf(enrollment._id.toString()), 1);
 				}
 				if(experimonth.users.indexOf(req.user._id.toString()) != -1){
+					console.log('removing user from experimonth!');
 					experimonth.users.splice(experimonth.users.indexOf(req.user._id.toString()), 1);
 				}
 		/*
@@ -226,9 +228,11 @@ module.exports = function(app){
 						return;
 					}
 					if(req.user.experimonths.indexOf(req.param('id')) != -1){
+						console.log('removing experimonth from user!');
 						req.user.experimonths.splice(req.user.experimonths.indexOf(req.param('id')), 1);
 					}
 					if(req.user.enrollments.indexOf(enrollment._id.toString()) != -1){
+						console.log('removing enrollment from user!');
 						req.user.enrollments.splice(req.user.enrollments.indexOf(enrollment._id.toString()), 1);
 					}
 					req.user.save(function(err){

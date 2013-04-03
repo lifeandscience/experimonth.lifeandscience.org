@@ -53,6 +53,10 @@ var ExperimonthSchema = new Schema({
   , publishDate: {type: Date, default: function(){ return Date.now(); }}
 });
 
+ExperimonthSchema.statics.findActiveQuery = function(){
+	var today = new Date();
+	return this.find({startDate: {$lte: today}, endDate: {$gte: today}});
+};
 var Experimonth = mongoose.model('Experimonth', ExperimonthSchema);
 exports = Experimonth;
 

@@ -10,7 +10,7 @@
       "express": "3.1.0"
     , "jade": "*"
     , "less-middleware": "*"
-    , "mongoose": "*"
+    , "mongoose": "~= 3.6"
     , "connect-mongo": ">= 0.0.1"
     , "nodemailer": ">= 0.0.1"
     , "moment": ">= 0.0.1"
@@ -24,7 +24,8 @@
     , "passport-facebook": ">= 0.0.1"
     , "passport-twitter": ">= 0.0.1"
     , "timezone": ">= 0.0.1"
-    , "oauth2-provider": "1.x"
+
+    , "oauth2-provider": "git://github.com/lifeandscience/node-oauth2-provider.git#non_post_auth_flow"
   },
   "engines": {
     "node": "0.8.x",

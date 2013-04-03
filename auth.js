@@ -260,10 +260,46 @@ module.exports = {
 			}
 		});
 		
+/*
 		// render the authorize form with the submission URL
 		// use two submit buttons named "allow" and "deny" for the user's choice
 		myOAP.on('authorize_form', function(req, res, client_id, authorize_url) {
 			res.render('authorize', {title: 'Authorize', authorize_url: authorize_url});
+		});
+*/
+		myOAP.on('check_authorization', function(req, res, client_id, next){
+			// Grants = Enrollment
+			// Find all Experimonths that are under this kind and currently active
+			var Experimonth = mongoose.model('Experimonth');
+			console.log('looking for Experimonth with enrollments that match this user: ', req.user);
+			Experimonth.findActiveQuery().populate({
+				path: 'enrollments'
+			  , match: {
+					user: req.user._id
+				}
+			}).exec(function(err, experimonths){
+				if(err || !experimonths || experimonths.length == 0){
+					req.flash('info', 'This Experimonth is not presently active.');
+					return res.redirect('/profile');
+/*
+					console.log('here: ', 'No experimonths of this kind are presently active!');
+					return next(new Error('No experimonths of this kind are presently active!'));
+*/
+				}
+				// Find an experimonth with enrollments!
+				for(var i in experimonths){
+					if(experimonths[i].enrollments && experimonths[i].enrollments.length > 0){
+						console.log('this user matches!');
+						return next();
+					}
+				}
+				req.flash('info', 'You aren\'t enrolled in that Experimonth.');
+				return res.redirect('/profile');
+/*
+				console.log('no enrollments found!', experimonths);
+				return next(new Error('No enrollments found for this user!'));
+*/
+			});
 		});
 		
 		// save the generated grant code for the current user
@@ -274,7 +310,10 @@ module.exports = {
 			}
 		
 			console.log('saving grant code ', code, ' for user ', req.user._id, ' and client ', client_id);
-			myGrants[req.user._id][client_id] = code;
+			myGrants[req.user._id][client_id] = {
+				code: code
+			  , date: Date.now()
+			};
 			next();
 		});
 		
@@ -299,15 +338,19 @@ module.exports = {
 						// Error!
 						return next(new Error('incorrect client credentials'));
 					}
+
 					// OK, we have a proper set of client credentials, so check our grants
 					for(var user in myGrants) {
 						var clients = myGrants[user];
-						if(clients[client_id] && clients[client_id] == code){
-							console.log('matched credentials and matched grant code!');
-							return next(null, user);
+						if(clients[client_id]){
+							if(clients[client_id].code == code && clients[client_id].date + (1000 * 60 * 10) > Date.now()){
+								// Grant is <10m old
+								delete myGrants[user][client_id];
+								return next(null, user);
+							}
+							delete myGrants[user][client_id];
 						}
 					}
-					console.log('no grant found', client_id, code, myGrants);
 					return next(new Error('no such grant found'));
 				});
 				return;
@@ -370,6 +413,12 @@ module.exports = {
 		  , User = mongoose.model('User');
 		app.get('/login', function(req, res){
 			if(req.user){
+				if(req.session.redirect_url){
+					var url = req.session.redirect_url;
+					delete req.session.redirect_url;
+					return res.redirect(url);
+				}
+
 				req.flash('info', 'You are already logged in!');
 				res.redirect('/profile');
 				return;
