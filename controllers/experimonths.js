@@ -386,6 +386,34 @@ module.exports = function(app){
 		});
 	});
 	
+	app.get('/experimonths/users/:id', auth.clientAuthorize, function(req, res){
+		// Get a list of all users enrolled in this experimonth
+		if(!req.param('id')){
+			res.json(400, {'error': 'Missing Experimonth ID.'});
+			return;
+		}
+		Experimonth.findById(req.param('id')).exec(function(err, experimonth){
+			if(err || !experimonth){
+				return res.json(400, {'error': 'Experimonth not found.'});
+			}
+			
+			var now = new Date();
+			
+			if(!experimonth.published){
+				return res.json(400, {'error': 'Experimonth not published.'});
+			}
+			if(experimonth.startDate > now || experimonth.endDate < now){
+				return res.json(400, {'error': 'Experimonth not current.'});
+			}
+
+			Experimonth.populate(experimonth, {
+				path: 'users'
+			}, function(err, experimonth){
+				return res.json(experimonth.users);
+			});
+		});
+	});
+	
 	
 	app.get('/experimonths/kinds', auth.authorize(2), function(req, res){
 		ExperimonthKind.find().exec(function(err, experimonthKinds){
