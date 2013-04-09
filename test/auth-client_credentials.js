@@ -10,11 +10,13 @@ var credentials = {
 describe('Auth.Client-Credentials',function() {
 	describe('without having logged in', function(){
 		it('attempts client credentials', function(done){
-			OAuth2.ClientCredentials.request('GET', '/client-is-logged-in', null, function(err, body){
-				err.should.have.property('message');
-				var message = err.message;
-				message.should.have.property('status', 401);
-				message.should.have.property('message', 'Unauthorized');
+			OAuth2.ClientCredentials.request('GET', '/client-is-logged-in', null, function(err, res, body){
+				res.should.have.property('statusCode', 401);
+				try {
+					body = JSON.parse(body);
+				}catch(e){}
+				body.should.have.property('error', 'access_denied');
+				body.should.have.property('message', 'Access token required!');
 				done();
 			});
 		});
@@ -24,7 +26,11 @@ describe('Auth.Client-Credentials',function() {
 			OAuth2.ClientCredentials.getToken({}, function(err, result){
 				result.should.have.property('access_token');
 
-				OAuth2.ClientCredentials.request('GET', '/client-is-logged-in', {access_token: result.access_token}, function(err, body){
+				OAuth2.ClientCredentials.request('GET', '/client-is-logged-in', {access_token: result.access_token}, function(err, res, body){
+					res.should.have.property('statusCode', 200);
+					try {
+						body = JSON.parse(body);
+					}catch(e){}
 					body.should.have.property('error', null);
 					body.should.have.property('message', 'You\'ve authenticated successfully!');
 					done();
