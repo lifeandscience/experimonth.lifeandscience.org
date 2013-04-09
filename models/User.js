@@ -31,6 +31,7 @@ var shouldNextUserDefend = true
 	  , hash: String
 	  , salt: String
 	  , email: String
+	  , sms: String
 	  
 	  , timezone: {type: String, default: '0'}
 		// STATE
@@ -60,6 +61,10 @@ var shouldNextUserDefend = true
 	  , birthday: String
 	  , ethnicity: String
 	  , gender: String
+	  
+		// Notification methods
+	  , do_sms_notifications: {type: Boolean, default: false}
+	  , do_email_notifications: {type: Boolean, default: false}
 	})
   , User = null;
 

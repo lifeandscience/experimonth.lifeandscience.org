@@ -1,7 +1,8 @@
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , hashSecret = 'experimonth-ahoy-hoy'
-  , hashSalt = 'asaltvalueshouldbesomerandomtext';
+	// TODO: Perhaps this salt should be stored alongside the hash?
+  , hashSalt = 'asaltvalueshouldbesomerandomtext'; // Do not change this for now
 
 var ExperimonthKindSchema = new Schema({
 	name: String
