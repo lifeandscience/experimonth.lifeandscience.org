@@ -375,28 +375,26 @@ module.exports = {
 		// an access token was received in a URL query string parameter or HTTP header
 		myOAP.on('access_token', function(req, token, next) {
 			var TOKEN_TTL = 10 * 60 * 1000; // 10 minutes
-		
-			if(token.grant_date.getTime() + TOKEN_TTL > Date.now()) {
+			console.log('checking access_token!');
+			if(token.grant_date.getTime() + TOKEN_TTL > Date.now()){
 				req.token_expires = token.grant_date.getTime() + TOKEN_TTL;
 				req.token_user_id = token.user_id;
 				req.token_data = token.extra_data;
-			} else {
-				console.warn('access token for user %s has expired', token.user_id);
+				return next();
 			}
-			console.log('checking access_token');
-		
-			next();
+			
+			console.warn('access token for user %s has expired', token.user_id);
+			delete req.token_expires;
+			delete req.token_user_id;
+			delete req.token_data;
+			res.writeHead(401);
+			return res.end({error: 'access_denied', message: 'Access token expired!'});
 		});
 		
-		// (optional) client authentication (xAuth) for trusted clients
-		myOAP.on('client_auth', function(client_id, client_secret, username, password, next) {
-			if(client_id == '1' && username == 'guest') {
-				var user_id = '1337';
-		
-				return next(null, user_id);
-			}
-		
-			return next(new Error('client authentication denied'));
+		// client credentials grant (section 4.4 of oauth2 spec)
+		myOAP.on('client_credentials_auth', function(client_id, client_secret, next) {
+			// In our case, every client is allowed to do Client Credentials grant
+			return next(null);
 		});
 		
 		app.use(myOAP.oauth());
@@ -411,6 +409,12 @@ module.exports = {
 			  , failureFlash: true
 			}
 		  , User = mongoose.model('User');
+
+		// For Testing purposes, establish a route that determines if the user has supplied proper API credentials
+		app.get('/client-is-logged-in', this.clientAuthorize, function(req, res){
+			res.json({error: null, message: 'You\'ve authenticated successfully!'});
+		});
+
 		app.get('/login', function(req, res){
 			if(req.user){
 				if(req.session.redirect_url){
@@ -688,5 +692,13 @@ module.exports = {
 			}
 			checkProfile(req, res, next);
 		};
+	}
+  , clientAuthorize: function(req, res, next){
+		// Requre Client (API-style) Authentication 
+		if(req.token_expires){
+			// We have an access token!
+			return next();
+		}
+        return res.json(401, {error: 'access_denied', message: 'Access token required!'});
 	}
 };

@@ -27,6 +27,11 @@
 
     , "oauth2-provider": "git://github.com/lifeandscience/node-oauth2-provider.git#non_post_auth_flow"
   },
+  "devDependencies": {
+      "simple-oauth2": "git://github.com/lifeandscience/simple-oauth2.git#add_client_credentials_support"
+    , "should": "~1.2.1"
+    , "mocha": "~1.8.1"
+  },
   "engines": {
     "node": "0.8.x",
     "npm":  "1.1.x"
