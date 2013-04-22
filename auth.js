@@ -614,7 +614,7 @@ module.exports = {
 			});
 		});
 		
-		app.get('/profile/get', this.authorize(2, 10), function(req, res, next){
+		app.get('/profile/get', this.clientAuthorize, function(req, res, next){
 			if(!req.token_user_id){
 				return res.json({error: 'No User ID'});
 			}
