@@ -272,6 +272,7 @@ module.exports = {
 			// Find all Experimonths that are under this kind and currently active
 			var Experimonth = mongoose.model('Experimonth');
 			console.log('looking for Experimonth with enrollments that match this user: ', req.user);
+			console.log('and this experimonth: ', client_id);
 			Experimonth.findActiveQuery().populate({
 				path: 'enrollments'
 			  , match: {
@@ -281,24 +282,16 @@ module.exports = {
 				if(err || !experimonths || experimonths.length == 0){
 					req.flash('info', 'This Experimonth is not presently active.');
 					return res.redirect('/profile');
-/*
-					console.log('here: ', 'No experimonths of this kind are presently active!');
-					return next(new Error('No experimonths of this kind are presently active!'));
-*/
 				}
 				// Find an experimonth with enrollments!
 				for(var i in experimonths){
-					if(experimonths[i].enrollments && experimonths[i].enrollments.length > 0){
+					if(experimonths[i].enrollments && experimonths[i].enrollments.length > 0 && experimonths[i].kind == client_id){
 						console.log('this user matches!');
 						return next();
 					}
 				}
 				req.flash('info', 'You aren\'t enrolled in that Experimonth.');
 				return res.redirect('/profile');
-/*
-				console.log('no enrollments found!', experimonths);
-				return next(new Error('No enrollments found for this user!'));
-*/
 			});
 		});
 		
@@ -621,7 +614,7 @@ module.exports = {
 			});
 		});
 		
-		app.get('/profile/get', function(req, res, next){
+		app.get('/profile/get', this.authorize(2, 10), function(req, res, next){
 			if(!req.token_user_id){
 				return res.json({error: 'No User ID'});
 			}

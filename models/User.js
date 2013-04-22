@@ -50,6 +50,8 @@ var shouldNextUserDefend = true
 	  , role: {type: Number, default: 0}
 	  , experimonths: [{type: Schema.ObjectId, ref: 'Experimonth'}]
 	  , enrollments: [{type: Schema.ObjectId, ref: 'ExperimonthEnrollment'}]
+	  , requiredAnswers: [{type: Schema.ObjectId, ref: 'ProfileAnswer'}]
+	  , optionalAnswers: [{type: Schema.ObjectId, ref: 'ProfileAnswer'}]
 	  
 	  , activationCode: String
 	  , fbid: String

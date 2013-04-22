@@ -13,6 +13,7 @@ describe('API.Users',function(){
 		// TODO: Do setup stuff for testing (setup experimonths, add users, enroll them, etc.)
 
 		OAuth2.ClientCredentials.getToken({}, function(err, result){
+			console.log(err, result);
 			result.should.have.property('access_token');
 			access_token = result.access_token;
 			done();

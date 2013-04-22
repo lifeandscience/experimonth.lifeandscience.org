@@ -25,6 +25,14 @@ block body
 					.controls
 						input#choices_string.span5(type="text", placeholder="ten wood, 20 wood, 30, more", name="choices_string", value=question.choices_string)
 						p.help-block What are the choices in the case of a multiple-choice question? Supply these as a comma-separated string.
+				
+				.control-group
+					label.control-label(for="required") Required:
+					.controls
+						label.checkbox(for="required")
+							input#open(type="checkbox", name="required", checked=question.required)
+							|  Is this profile question required?
+						p.help-block If this profile question is required, users won't be included in gameplay until they've answered this question.
 		
 			.form-actions
 				button.btn.btn-primary(type="submit") Submit

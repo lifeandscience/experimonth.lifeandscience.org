@@ -32,6 +32,7 @@ module.exports = function(app){
 	  , formValidate = form(
 			field('text').trim().required()
 		  , field('type').trim().required()
+		  , field('required').trim()
 		  , field('choices_string').trim()
 		)
 	  , beforeRender = function(req, res, item, callback){
@@ -168,49 +169,71 @@ module.exports = function(app){
 			res.redirect('back');
 			return;
 		}
-		if(req.param('answerid')){
-			ProfileAnswer.findById(req.param('answerid')).exec(function(err, answer){
-				if(err || !answer){
-					req.flash('error', 'Previous answer couldn\'t be retrieved');
-					res.redirect('back');
-					return;
-				}
-				answer.value = req.param('value');
-				answer.no_answer = req.param('no_answer') == 'on';
-				if(answer.no_answer){
-					answer.value = null;
-				}
-				answer.save(function(err){
-					if(err){
-						req.flash('error', 'Error saving existing answer!');
-						res.redirect('back');
-						return;
-					}
-					req.flash('info', 'Thanks for your answer!');
-					res.redirect('back');
-					return;
-				});
-			});
-			return;
-		}
-	
-		var answer = new ProfileAnswer();
-		answer.user = req.user._id;
-		answer.question = req.param('id');
-		answer.value = req.param('value');
-		answer.no_answer = req.param('no_answer') == 'on';
-		if(answer.no_answer){
-			answer.value = null;
-		}
-		answer.save(function(err){
-			if(err){
-				req.flash('error', 'Error saving new answer!');
+		ProfileQuestion.findById(req.param('id')).exec(function(err, question){
+			if(err || !question){
+				req.flash('error', 'Profile Question not found.');
 				res.redirect('back');
 				return;
 			}
-			req.flash('info', 'Thanks for your answer!');
-			res.redirect('back');
-			return;
+
+			if(req.param('answerid')){
+				ProfileAnswer.findById(req.param('answerid')).exec(function(err, answer){
+					if(err || !answer){
+						req.flash('error', 'Previous answer couldn\'t be retrieved');
+						res.redirect('back');
+						return;
+					}
+					answer.value = req.param('value');
+					answer.no_answer = req.param('no_answer') == 'on';
+					if(answer.no_answer){
+						answer.value = null;
+					}
+					answer.save(function(err){
+						if(err){
+							req.flash('error', 'Error saving existing answer!');
+							res.redirect('back');
+							return;
+						}
+						req.flash('info', 'Thanks for your answer!');
+						res.redirect('back');
+						return;
+					});
+				});
+				return;
+			}
+		
+			var answer = new ProfileAnswer();
+			answer.user = req.user._id;
+			answer.question = req.param('id');
+			answer.value = req.param('value');
+			answer.no_answer = req.param('no_answer') == 'on';
+			if(answer.no_answer){
+				answer.value = null;
+			}
+			answer.save(function(err){
+				if(err){
+					req.flash('error', 'Error saving new answer!');
+					res.redirect('back');
+					return;
+				}
+				
+				if(question.required){
+					req.user.requiredAnswers.push(answer);
+				}else{
+					req.user.optionalAnswers.push(answer);
+				}
+				req.user.save(function(err){
+					if(err){
+						req.flash('error', 'Error saving user!');
+						res.redirect('back');
+						return;
+					}
+	
+					req.flash('info', 'Thanks for your answer!');
+					res.redirect('back');
+				});
+				return;
+			});
 		});
 	});
 

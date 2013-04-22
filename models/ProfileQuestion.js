@@ -7,6 +7,7 @@ var ProfileQuestionSchema = new Schema({
   , type: {type: String, enum: ['open', 'multiple-choice'], default: 'open'}
   , choices: [String]
   , published: {type: Boolean, default: false}
+  , required: {type: Boolean, default: false}
   , publishDate: {type: Date, default: function(){ return Date.now(); }}
 });
 ProfileQuestionSchema.virtual('choices_string').get(function(){
