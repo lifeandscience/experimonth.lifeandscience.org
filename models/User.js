@@ -275,7 +275,6 @@ UserSchema.static('notifyAll', function(notification, callback){
 		});
 	});
 });
-
 UserSchema.methods.notifyOfActivation = function(isActivation, cb){
 	util.log('notifying '+this.email+' of deactivation');
 
@@ -311,6 +310,16 @@ UserSchema.methods.notifyOfActivation = function(isActivation, cb){
 };
 UserSchema.virtual('email_hash').get(function(){
 	return crypto.createHash('md5').update(this.email.toLowerCase().trim()).digest('hex');
+});
+
+UserSchema.static('randomAdmin', function(callback) {
+	this.count(function(err, count) {
+		if (err) {
+			return callback(err);
+		}
+		var rand = Math.floor(Math.random() * count);
+		this.findOne().skip(rand).exec(callback);
+	}.bind(this));
 });
 
 User = mongoose.model('User', UserSchema);

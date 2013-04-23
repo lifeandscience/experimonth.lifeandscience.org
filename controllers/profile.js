@@ -27,7 +27,7 @@ module.exports = function(app){
 	var as = 'question'
 	  , populate = []
 	  , template = 'profile/questions/form'
-	  , varNames = ['text', 'type']
+	  , varNames = ['text', 'type', 'required']
 	  , redirect = '/profile/questions'
 	  , formValidate = form(
 			field('text').trim().required()

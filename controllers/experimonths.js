@@ -384,51 +384,7 @@ module.exports = function(app){
 				});
 			});
 		});
-	});
-	
-	app.get('/experimonths/activeByKind/:id', auth.clientAuthorize, function(req, res){
-		// Get a list of all users enrolled in this experimonth
-		if(!req.param('id')){
-			res.json(400, {'error': 'Missing Experimonth ID.'});
-			return;
-		}
-		ExperimonthKind.findById(req.param('id')).exec(function(err, experimonthKind){
-			if(err || !experimonthKind){
-				return res.json(400, {'error': 'Experimonth Kind not found.'});
-			}
-
-			Experimonth.findActiveQuery().where('kind').equals(req.param('id')).populate('users').populate('conditions').exec(function(err, experimonths){
-				// TODO: We should iterate over all users and ensure that they've answered the appropriate number of conditions (ProfileQuestions)
-				
-				// Check all the users to determine if they have their profiles complete.
-				var ProfileQuestion = mongoose.model('ProfileQuestion')
-				  , ProfileAnswer = mongoose.model('ProfileAnswer');
-				ProfileQuestion.count({
-					published: true
-				  , required: true
-				}).exec(function(err, numRequiredQuestions){
-					if(err){
-						console.log('error retrieving questions: ', arguments);
-						next();
-						return;
-					}
-					if(experimonths && experimonths.length){
-						experimonths.forEach(function(experimonth, index){
-							if(experimonth.users && experimonth.users.length){
-								for(var i=experimonth.users.length-1; i>=0; i--){
-									if(user.requiredAnswers.length != numRequiredQuestions){
-										experimonth.users.splice(i, 1);
-									}
-								}
-							}
-						});
-					}
-					return res.json(experimonths);
-				});
-			});
-		});
-	});
-	
+	});	
 	
 	app.get('/experimonths/kinds', auth.authorize(2), function(req, res){
 		ExperimonthKind.find().exec(function(err, experimonthKinds){
