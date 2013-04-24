@@ -7,6 +7,7 @@ var EventSchema = new Schema({
   , name: String
   , value: String
   , experimonth: {type: Schema.ObjectId, ref: 'Experimonth'}
+  , kind: {type: Schema.ObjectId, ref: 'ExperimonthKind'}
   , user: {type: Schema.ObjectId, ref: 'User'}
 });
 

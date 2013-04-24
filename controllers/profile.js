@@ -10,6 +10,7 @@ var util = require('util')
   , ExperimonthEnrollment = mongoose.model('ExperimonthEnrollment')
 /*   , Game = mongoose.model('Game') */
   , User = mongoose.model('User')
+  , Event = mongoose.model('Event')
   , ProfileQuestion = mongoose.model('ProfileQuestion')
   , ProfileAnswer = mongoose.model('ProfileAnswer');
 
@@ -240,6 +241,7 @@ module.exports = function(app){
 	app.get('/profile', auth.authorize(1, 0, null, true), function(req, res){
 //		console.log('user.timezone', utilities.getTimezoneFromOffset(req.user.timezone));
 		ExperimonthEnrollment.find({_id: {$in: req.user.enrollments}}).populate('experimonth').exec(function(err, enrollments){
+			Event.find({user: req.user._id}).populate('kind').populate('experimonth').exec(function(err, events){
 				var count = enrollments.length
 				  , done = function(err, kind){
 						if(!err && kind){
@@ -252,7 +254,7 @@ module.exports = function(app){
 									questions.push(answers[i].question._id);
 								}
 								ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).exec(function(err, questions){
-									res.render('profile', {title: 'Your Profile', u: req.user, enrollments: enrollments, questions: questions, answers: answers, timezones: utilities.getTimezones()/* , games: games */});
+									res.render('profile', {title: 'Your Profile', u: req.user, enrollments: enrollments, questions: questions, answers: answers, timezones: utilities.getTimezones()/* , games: games */, events: events});
 								});
 							});
 						}
@@ -263,7 +265,7 @@ module.exports = function(app){
 						}
 					};
 				done();
-//			});
+			});
 		});
 	});
 

@@ -4,9 +4,12 @@ var auth = require('../auth')
   , ExperimonthKind = mongoose.model('ExperimonthKind')
   , ProfileQuestion = mongoose.model('ProfileQuestion')
   , ProfileAnswer = mongoose.model('ProfileAnswer')
-  , User = mongoose.model('User');
+  , User = mongoose.model('User')
+  , Event = mongoose.model('Event');
 
 module.exports = function(app){
+
+	// EXPERIMONTHS
 	app.get('/api/1/experimonths/activeByKind/:id', auth.clientAuthorize, function(req, res){
 		// Get a list of all users enrolled in this experimonth
 		if(!req.param('id')){
@@ -79,16 +82,90 @@ module.exports = function(app){
 			user: req.param('userID')
 		  , question: req.param('questionID')
 		}).exec(function(err, answers){
-			if(err){
-				res.json(400, {'error': err});
-				return;
-			}
-			if(!answers || answers.length == 0){
-				res.json(null);
-				return;
+			if(err || !answers || answers.length == 0){
+				return res.json(400, {'error': 'Error reading answers.', 'err': err, 'answers': answers});
 			}
 			res.json(answers[0]);
 		});
 		
+	});
+
+
+	// EVENTS
+	app.get('/api/1/events/user/:userid', auth.clientAuthorize, function(req, res){
+		var id = req.param('userid');
+		if(!id){
+			return res.json(400, {'error': 'Missing User ID.'});
+		}
+		Event.find({user: id}).exec(function(err, events){
+			if(err || !events){
+				return res.json(400, {'error': 'Error reading events.', 'err': err, 'events': events});
+			}
+			res.json(events);
+		});
+	});
+	app.get('/api/1/events/experimonth/:emid', auth.clientAuthorize, function(req, res){
+		var id = req.param('emid');
+		if(!id){
+			return res.json(400, {'error': 'Missing Experimonth ID.'});
+		}
+		Event.find({experimonth: id}).exec(function(err, events){
+			if(err || !events){
+				return res.json(400, {'error': 'Error reading events.', 'err': err, 'events': events});
+			}
+			res.json(events);
+		});
+	});
+	app.get('/api/1/events/:userid/:emid', auth.clientAuthorize, function(req, res){
+		var id = req.param('userid');
+		if(!id){
+			return res.json(400, {'error': 'Missing User ID.'});
+		}
+		var emid = req.param('emid');
+		if(!emid){
+			return res.json(400, {'error': 'Missing Experimonth ID.'});
+		}
+		Event.find({user: id, experimonth: emid}).exec(function(err, events){
+			if(err || !events){
+				return res.json(400, {'error': 'Error reading events.', 'err': err});
+			}
+			res.json(events);
+		});
+	});
+	// Post a new event. Requires at least a valid User and Experimonth, but prefers to have:
+	//	- client_id = ExperimonthKind (oAuth client) ID
+	//	- name = the name of the event that occured, optionally namespaced using colons (e.g. 'frenemy:walkaway' or 'frenemy:walkedAwayFrom')
+	//	- value = a value for the event. Could be something meaningful like the opponents user ID
+	app.post('/api/1/events', auth.clientAuthorize, function(req, res){
+		var id = req.body.user;
+		if(!id){
+			return res.json(400, {'error': 'Missing User ID.'});
+		}
+		var emid = req.body.experimonth;
+		if(!emid){
+			return res.json(400, {'error': 'Missing Experimonth ID.'});
+		}
+		Experimonth.findById(emid).exec(function(err, experimonth){
+			if(err || !experimonth){
+				return res.json(400, {'error': 'Experimonth doesn\'t exist.'});
+			}
+			User.findById(id).exec(function(err, user){
+				if(err || !user){
+					return res.json(400, {'error': 'User doesn\'t exist.'});
+				}
+				var event = new Event();
+				event.experimonth = emid;
+				event.user = id;
+				event.kind = req.body.client_id;
+				event.name = req.body.name;
+				event.value = req.body.value;
+				event.save(function(err, event){
+					if(err || !event){
+						return res.json(400, {'error': 'Error saving event.', 'err': err, 'event': event});
+					}
+					res.json(event);
+				});
+			});
+		});
 	});
 };

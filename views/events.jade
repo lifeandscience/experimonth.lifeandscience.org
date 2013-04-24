@@ -1,0 +1,21 @@
+mixin do_events(events)
+	if events && events.length > 0
+
+		table.table.tablesorter
+			thead
+				tr
+					th Date
+					th Kind
+					th Experimonth
+					th Name
+					th Value
+			tbody
+				each event, i in events
+					tr
+						td #{event.date}
+						td #{event.kind ? event.kind.name : ''}
+						td #{event.experimonth ? event.experimonth.name : ''}
+						td #{event.name}
+						td #{event.value}
+	else
+		h2 No Events!

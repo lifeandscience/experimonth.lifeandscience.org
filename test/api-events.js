@@ -14,7 +14,7 @@ describe('API.Events',function() {
 		OAuth2.ClientCredentials.getToken({}, function(err, result){
 			result.should.have.property('access_token');
 
-			OAuth2.ClientCredentials.request('GET', '/events/user/<user-id>', {access_token: result.access_token}, function(err, res, body){
+			OAuth2.ClientCredentials.request('GET', '/api/1/events/user/<user-id>', {access_token: result.access_token}, function(err, res, body){
 				res.should.have.property('statusCode', 200);
 				try {
 					body = JSON.parse(body);
@@ -29,7 +29,7 @@ describe('API.Events',function() {
 		OAuth2.ClientCredentials.getToken({}, function(err, result){
 			result.should.have.property('access_token');
 
-			OAuth2.ClientCredentials.request('GET', '/events/experimonth/<experimonth-id>', {access_token: result.access_token}, function(err, res, body){
+			OAuth2.ClientCredentials.request('GET', '/api/1/events/experimonth/<experimonth-id>', {access_token: result.access_token}, function(err, res, body){
 				res.should.have.property('statusCode', 200);
 				try {
 					body = JSON.parse(body);
@@ -44,7 +44,7 @@ describe('API.Events',function() {
 		OAuth2.ClientCredentials.getToken({}, function(err, result){
 			result.should.have.property('access_token');
 
-			OAuth2.ClientCredentials.request('GET', '/events/<user-id>/<experimonth-id>', {access_token: result.access_token}, function(err, res, body){
+			OAuth2.ClientCredentials.request('GET', '/api/1/events/<user-id>/<experimonth-id>', {access_token: result.access_token}, function(err, res, body){
 				res.should.have.property('statusCode', 200);
 				try {
 					body = JSON.parse(body);
@@ -59,7 +59,7 @@ describe('API.Events',function() {
 		OAuth2.ClientCredentials.getToken({}, function(err, result){
 			result.should.have.property('access_token');
 
-			OAuth2.ClientCredentials.request('POST', '/events', {
+			OAuth2.ClientCredentials.request('POST', '/api/1/events', {
 				access_token: result.access_token
 			  , user: '<user-id>'
 			  , experimonth: '<experimonth-id>'

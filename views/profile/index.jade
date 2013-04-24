@@ -2,6 +2,7 @@ extends ../layout
 
 //include ../games/mixins
 include ../notifications
+include ../events
 
 block body
 	#container-inner.user-profile
@@ -27,6 +28,9 @@ block body
 
 			h2 Notifications
 			mixin do_notifications()
+			
+			h2 Events
+			mixin do_events(locals.events)
 			
 			//h1 Current Games
 			//mixin do_games(games, true, false)
