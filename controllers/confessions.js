@@ -3,6 +3,7 @@ var form = require('express-form')
   , utilities = require('../utilities')
   , mongoose = require('mongoose')
   , Confession = mongoose.model('Confession')
+  , Event = mongoose.model('Event')
   , moment = require('moment')
   , email = require('../email')
   , util = require('util')
@@ -13,6 +14,8 @@ module.exports = function(app){
 		var query = Confession.find({});
 		if(!req.user || req.user.role < 10){
 			query.where('active', true);
+		}else{
+			query.populate('recentEvents');
 		}
 		query.sort('-number').exec(function(err, confessions){
 			for(var i=0; i<confessions.length; i++){
@@ -146,7 +149,18 @@ module.exports = function(app){
 	
 			    // send mail with defined transport object
 				email.sendMail(mailOptions, null);
-				complete(item);
+				
+				
+				if(req.user){
+					// Find 5 recent events from the current user
+					return Event.find({user: req.user._id}).sort('date').limit(5).exec(function(err, events){
+						if(!err && events && events.length){
+							item.recentEvents = events;
+						}
+						complete(item);
+					});
+				}
+				return complete(item);
 			});
 		}
 	  , layout = 'layout-confessional';
