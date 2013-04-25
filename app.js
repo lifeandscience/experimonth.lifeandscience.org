@@ -70,9 +70,7 @@ app.configure(function(){
 			if(nav && nav.length){
 				for(var i=0, ii = nav.length; i < ii; i++){
 					var n = nav[i];
-					console.log('comparing ', n.link, url)
 					if(n.link == url){
-						console.log('woo!')
 						return true;
 					}
 					if(n.children && is_active(n.children)){
@@ -80,7 +78,6 @@ app.configure(function(){
 					}
 				}
 			}
-			console.log('not active...')
 			return false;
 		};
 		if(!req.user){
