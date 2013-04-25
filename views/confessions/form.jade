@@ -1,0 +1,16 @@
+extends ../layout
+
+block body
+	#container-inner
+		#header
+			h1 CONFESSIONAL
+			
+		h2 Whatever you say here is completely anonymous.
+	
+		form(action=action, method="POST")#confessionForm.form-horizontal
+			textarea#text.span7(type="text", placeholder="", name="text") !{confession.text}
+			
+			button.btn.btn-inverse(type="submit") confess
+		
+		h3 Whatever you say here is stripped of any identifying information and sent to Experimonth staff. 
+		h3 It may be quoted in a blog we create about the project.

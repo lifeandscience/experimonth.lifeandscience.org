@@ -1,0 +1,39 @@
+extends ../layout
+
+block body
+	#container-inner
+		#header
+			h1 CONFESSIONAL
+		
+		if confessions && confessions.length
+			u = user(2, 10)
+			table.table.tablesorter
+				thead
+					tr
+						th Confession #
+						th Confession
+						th Actions
+				tbody
+					each confession, i in confessions
+						tr
+							td.confession-label
+								d = moment(confession.date).clone()
+								- if(Math.round((d.minutes()/100)) > 0)
+									- d = d.add('hours', 1)
+								| On #{d.format('MMMM Do, YYYY [around] hA')}: Confession ##{confession.number}
+							td.confession-content
+								h2 !{confession.text}
+							td
+								ul.actions.unstyled
+									li.first
+										a.btn.btn-warning(href="/confessions/flag/"+confession._id) Flag
+										if u
+											| (#{confession.flags})
+									li
+										a.btn(href="/confessional/reply/"+confession.number) Reply
+									if u
+										li
+											if !confession.active
+												a.btn.btn-success(href="/confessions/publish/"+confession._id) Publish
+											else
+												a.btn.btn-danger(href="/confessions/unpublish/"+confession._id) Unpublish

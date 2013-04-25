@@ -7,6 +7,7 @@ module.exports = {
 	user: require('./user')
   , profile: require('./profile')
   , experimonths: require('./experimonths')
+  , confessions: require('./confessions')
   , notifications: require('./notifications')
   , home: function(app){
 		app.get('/home', function(req, res){
