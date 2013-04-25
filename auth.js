@@ -236,6 +236,20 @@ module.exports = {
 							}
 						]
 					});
+					res.locals.nav.push({
+						'name': 'Confessional'
+					  , 'link': '#'
+					  , 'children': [
+							{
+								'name': 'Confess!'
+							  , 'link': '/confessional'
+							}
+						  , {
+								'name': 'View Confessions'
+							  , 'link': '/confessions'
+							}
+						]
+					});
 				}
 				// Check if the user has filled out their profile!
 				checkProfile(req, res, next);

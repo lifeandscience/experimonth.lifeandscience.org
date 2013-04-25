@@ -66,6 +66,23 @@ app.configure(function(){
 			}
 			return null;
 		}
+		res.locals.is_active_nav = function(nav, url){
+			if(nav && nav.length){
+				for(var i=0, ii = nav.length; i < ii; i++){
+					var n = nav[i];
+					console.log('comparing ', n.link, url)
+					if(n.link == url){
+						console.log('woo!')
+						return true;
+					}
+					if(n.children && is_active(n.children)){
+						return true;
+					}
+				}
+			}
+			console.log('not active...')
+			return false;
+		};
 		if(!req.user){
 			return next();
 		}

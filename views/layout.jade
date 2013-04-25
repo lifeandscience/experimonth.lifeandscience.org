@@ -3,7 +3,8 @@ mixin do_nav(nav)
 		if n.header
 			li.nav-header #{n.header}
 		else if n.children
-			li.dropdown(class=(n.link == locals.url ? 'active' : ''))
+			//- Look ahead to determine if this link is active
+			li.dropdown(class=(n.link == locals.url || is_active_nav(n.children, locals.url) ? 'active' : ''))
 				a.dropdown-toggle(href=n.link, data-toggle="dropdown")
 					| #{n.name}
 					b.caret
