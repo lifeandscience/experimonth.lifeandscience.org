@@ -380,8 +380,7 @@ module.exports = {
 			delete req.token_expires;
 			delete req.token_user_id;
 			delete req.token_data;
-			res.writeHead(401);
-			return res.end({error: 'access_denied', message: 'Access token expired!'});
+			return next(new Error('Access token expired!'));
 		});
 		
 		// client credentials grant (section 4.4 of oauth2 spec)
