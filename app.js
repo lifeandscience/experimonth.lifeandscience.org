@@ -80,6 +80,12 @@ app.configure(function(){
 			}
 			return false;
 		};
+		next();
+	});
+	auth.setup(app);
+
+	// We must setup this middleware after auth is setup, as otherwise req.user will never be set.
+	app.use(function(req, res, next){
 		if(!req.user){
 			return next();
 		}
@@ -87,9 +93,7 @@ app.configure(function(){
 			res.locals.notifications = notifications;
 			next();
 		});
-//		next();
 	});
-	auth.setup(app);
 	
 	
 	
