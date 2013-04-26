@@ -145,7 +145,7 @@ module.exports = function(app){
 					return;
 				}
 				// Send a notification to all existing users that a new question was published.
-				User.notifyAll('Please check out the new profile question that was just published!', function(err){
+				User.notifyAll('info', null, 'New Profile Question Available!', 'Please check out the new profile question that was just published!', function(err){
 					if(err){
 						req.flash('error', 'Error notifying users! '+err);
 						res.redirect('back');

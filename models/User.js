@@ -104,19 +104,6 @@ UserSchema.method('sendActivationEmail', function(){
 	// send mail with defined transport object
 	email.sendMail(mailOptions);
 });
-UserSchema.method('notify', function(message, callback){
-	if(!message){
-		return callback(new Error('Can\t notify without a message!'));
-	}
-	var Notification = mongoose.model('Notification')
-	  , n = new Notification();
-	n.text = message;
-	n.user = this;
-	n.save(function(err){
-		if(err){ return callback(new Error('Trouble saving new notification!')); }
-		callback(null);
-	});
-});
 
 UserSchema.static('authenticate', function(email, password, callback) {
 	this.findOne({ email: email }, function(err, user) {
@@ -186,11 +173,11 @@ UserSchema.static('facebookAuthenticate', function(profile, callback){
 					if(err){ return callback(err); }
 					
 					if(user.email){
-						User.notifyAdmins('A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user.email+'</a>) registered!', function(){
+						User.notifyAdmins('info', null, 'New User Registration', 'A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user.email+'</a>) registered!', function(){
 							callback(null, user, message);
 						});
 					}else{
-						User.notifyAdmins('A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user._id+'</a>) registered!', function(){
+						User.notifyAdmins('info', null, 'New User Registration', 'A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user._id+'</a>) registered!', function(){
 							callback(null, user, message);
 						});
 					}
@@ -231,13 +218,14 @@ UserSchema.static('twitterAuthenticate', function(profile, callback){
 		user.save(function(err, user){
 			if(err){ return callback(err); }
 
-			User.notifyAdmins('A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user._id+'</a>) registered!', function(){
+			User.notifyAdmins('info', null, 'New User Registration', 'A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user._id+'</a>) registered!', function(){
 				callback(null, user, 'Thanks for signing up! Please supply your email address.');
 			});
 		});
 	});
 });
-UserSchema.static('notifyAdmins', function(notification, callback){
+UserSchema.static('notifyAdmins', function(type, format, subject, text, callback){
+	var Notification = mongoose.model('Notification');
 	this.find({role: 10}).exec(function(err, users){
 		if(err || !users || users.length == 0){
 			callback(new Error('Error finding users to notify.'));
@@ -251,11 +239,12 @@ UserSchema.static('notifyAdmins', function(notification, callback){
 				}
 			};
 		users.forEach(function(user){
-			user.notify(notification, check);
+			Notification.notify(type, format, subject, text, user, check);
 		});
 	});
 });
-UserSchema.static('notifyAll', function(notification, callback){
+UserSchema.static('notifyAll', function(type, format, subject, text, callback){
+	var Notification = mongoose.model('Notification');
 	this.find().exec(function(err, users){
 		if(err || !users || users.length == 0){
 			callback(new Error('Error finding users to notify.'));
@@ -271,7 +260,7 @@ UserSchema.static('notifyAll', function(notification, callback){
 			};
 		users.forEach(function(user){
 			console.log('notifying: ', user.email);
-			user.notify(notification, check);
+			Notification.notify(type, format, subject, text, user, check);
 		});
 	});
 });

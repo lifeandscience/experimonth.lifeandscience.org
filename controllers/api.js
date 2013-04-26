@@ -168,4 +168,59 @@ module.exports = function(app){
 			});
 		});
 	});
+
+
+	// NOTIFICATIONS
+	// Post a new event. Requires at least a valid User and some text, but prefers to also have:
+	//	- type = one of: ['warning', 'error', 'success', 'info']; defaults to 'warning'
+	//	- format = an array of: ['web', 'email', 'sms']
+	//	- subject = A subject line used for email-type notifications
+	var _types = ['warning', 'error', 'success', 'info'];
+	var _formats = ['web', 'email', 'sms'];
+	app.post('/api/1/notifications', auth.clientAuthorize, function(req, res){
+		var id = req.body.user;
+		if(!id){
+			return res.json(400, {'error': 'Missing User ID.'});
+		}
+		var text = req.body.text;
+		if(!text){
+			return res.json(400, {'error': 'Missing notification text.'});
+		}
+		var type = req.body.type;
+		if(_types.indexOf(type) === -1){
+			type = 'warning';
+		}
+		var format = req.body.format;
+		if(format && format.length){
+			for(var i = format.length-1; i >= 0; i--){
+				if(_formats.indexOf(format[i]) === -1){
+					format.splice(i, 1);
+				}
+			}
+		}
+		
+		Notification.notify(type, format, req.body.subject, req.body., user, callback)
+		Experimonth.findById(emid).exec(function(err, experimonth){
+			if(err || !experimonth){
+				return res.json(400, {'error': 'Experimonth doesn\'t exist.'});
+			}
+			User.findById(id).exec(function(err, user){
+				if(err || !user){
+					return res.json(400, {'error': 'User doesn\'t exist.'});
+				}
+				var event = new Event();
+				event.experimonth = emid;
+				event.user = id;
+				event.kind = req.body.client_id;
+				event.name = req.body.name;
+				event.value = req.body.value;
+				event.save(function(err, event){
+					if(err || !event){
+						return res.json(400, {'error': 'Error saving event.', 'err': err, 'event': event});
+					}
+					res.json(event);
+				});
+			});
+		});
+	});
 };

@@ -491,7 +491,7 @@ module.exports = {
 						return;
 					}
 					
-					User.notifyAdmins('A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user.email+'</a>) registered!', function(){
+					User.notifyAdmins('info', null, 'New User Registration', 'A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user.email+'</a>) registered!', function(){
 						// Successful!
 						// They need to activate the account?
 						// Send an email to spur activation
@@ -552,12 +552,11 @@ module.exports = {
 				// Successful!
 				user.state = 2;
 				user.save(function(err){
-					user.notify('Thanks for confirming your email address!', function(err){
+					var Notification = mongoose.model('Notification');
+					Notification.notify('success', null, 'Thanks for confirming your email address!', 'Your email address was confirmed successfully. Thanks again!', user, function(err, notification){
 						if(req.user){
-							req.flash('info', 'Your email address was confirmed!');
 							res.redirect('/profile');
 						}else{
-							req.flash('info', 'Your email address was confirmed! You may now login.');
 							res.redirect('/login');
 						}
 						
