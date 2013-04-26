@@ -6,8 +6,6 @@ include ../events
 
 block body
 	#container-inner.user-profile
-		console.log(locals)
-		//u = locals.user(2)
 		if !u
 			h1 Please provide your email address:
 			form.form-horizontal(action='/auth/addEmail', method='POST')

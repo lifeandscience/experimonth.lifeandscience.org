@@ -380,9 +380,8 @@ module.exports = {
 		});
 		
 		// an access token was received in a URL query string parameter or HTTP header
-		myOAP.on('access_token', function(req, token, next) {
+		myOAP.on('access_token', function(req, res, token, next) {
 			var TOKEN_TTL = 10 * 60 * 1000; // 10 minutes
-			console.log('checking access_token!');
 			if(token.grant_date.getTime() + TOKEN_TTL > Date.now()){
 				req.token_expires = token.grant_date.getTime() + TOKEN_TTL;
 				req.token_user_id = token.user_id;
@@ -394,7 +393,7 @@ module.exports = {
 			delete req.token_expires;
 			delete req.token_user_id;
 			delete req.token_data;
-			return next(new Error('Access token expired!'));
+			return res.json(500, {'error': 'Access token expired!'});
 		});
 		
 		// client credentials grant (section 4.4 of oauth2 spec)
