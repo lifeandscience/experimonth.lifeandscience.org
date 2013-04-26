@@ -5,6 +5,7 @@ var auth = require('../auth')
   , ProfileQuestion = mongoose.model('ProfileQuestion')
   , ProfileAnswer = mongoose.model('ProfileAnswer')
   , User = mongoose.model('User')
+  , Notification = mongoose.model('Notification')
   , Event = mongoose.model('Event');
 
 module.exports = function(app){
@@ -198,28 +199,12 @@ module.exports = function(app){
 				}
 			}
 		}
-		
-		Notification.notify(type, format, req.body.subject, req.body., user, callback)
-		Experimonth.findById(emid).exec(function(err, experimonth){
-			if(err || !experimonth){
-				return res.json(400, {'error': 'Experimonth doesn\'t exist.'});
+		User.findById(id).exec(function(err, user){
+			if(err || !user){
+				return res.json(400, {'error': 'User doesn\'t exist.'});
 			}
-			User.findById(id).exec(function(err, user){
-				if(err || !user){
-					return res.json(400, {'error': 'User doesn\'t exist.'});
-				}
-				var event = new Event();
-				event.experimonth = emid;
-				event.user = id;
-				event.kind = req.body.client_id;
-				event.name = req.body.name;
-				event.value = req.body.value;
-				event.save(function(err, event){
-					if(err || !event){
-						return res.json(400, {'error': 'Error saving event.', 'err': err, 'event': event});
-					}
-					res.json(event);
-				});
+			Notification.notify(type, format, req.body.subject, text, id, function(err, notification){
+				return res.json(notification);
 			});
 		});
 	});
