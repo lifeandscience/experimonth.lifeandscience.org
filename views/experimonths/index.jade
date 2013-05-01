@@ -7,8 +7,8 @@ block body
 		table.table.tablesorter
 			thead
 				tr
-					th Start Date
-					th End Date
+					th Start / End Date
+					th Name
 					th Kind
 					th Type
 					th Players
@@ -17,15 +17,15 @@ block body
 			tbody
 				each experimonth, i in experimonths
 					tr
-						td #{moment(experimonth.startDate).utc().format('YYYY-MM-DD')}
-						td #{moment(experimonth.endDate).utc().format('YYYY-MM-DD')}
+						td #{moment(experimonth.startDate).utc().format('M/D/YY')} - #{moment(experimonth.endDate).utc().format('M/D/YY')}
+						td #{experimonth.name}
 						td #{experimonth.kind && experimonth.kind.name ? experimonth.kind.name : ''}
 						td
 							if experimonth.type && experimonth.type.length
 								ul.unstyled
 									each type in experimonth.type
 										li #{type}
-						td 
+						td
 							if experimonth.unlimited
 								|  Unlimited
 							else
