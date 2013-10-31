@@ -4,6 +4,7 @@
  */
 
 var express = require('express')
+  , cons = require('consolidate')
   , auth = require('./auth')
   , http = require('http')
   , path = require('path')
@@ -29,6 +30,7 @@ var app = express();
 
 app.configure(function(){
 	app.set('port', process.env.PORT || 8000);
+	app.engine('jade', cons.jade);
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
 	app.use(express.favicon());

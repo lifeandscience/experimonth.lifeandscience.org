@@ -1,0 +1,24 @@
+extends layout
+
+block body
+	#container-inner
+		h1 Need an account? 
+		form.form-horizontal(action='/auth/local/register', method='POST')
+			#login.control-group
+				label.control-label(for='email') Email: 
+				.controls
+					.input-prepend
+						span.add-on
+							i.icon-envelope
+						input(type='text', name='email', placeholder='email@email.com', tabindex=4)
+			#password.control-group
+				label.control-label(for='password') Password: 
+				.controls
+					input(type='password', name='password', placeholder='password', tabindex=5)
+			#confirm-password.control-group
+				label.control-label(for='confirm-password') Confirm Password: 
+				.controls
+					input(type='password', name='confirm-password', placeholder='confirm password', tabindex=6)
+			#submit.control-group
+				.controls
+					input.btn(type='submit', tabindex=7) Register

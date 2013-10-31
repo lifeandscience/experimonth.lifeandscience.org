@@ -7,15 +7,16 @@
     "start": "node app.js"
   },
   "dependencies": {
-      "express": "3.1.0"
-    , "jade": "*"
+      "express": "~= 3"
+    , "consolidate": ">= 0.0.1"
+    , "jade": ">= 0.0.1"
     , "less-middleware": "*"
     , "mongoose": "~= 3.6"
     , "connect-mongo": ">= 0.0.1"
     , "nodemailer": ">= 0.0.1"
     , "moment": ">= 0.0.1"
     , "connect-flash": ">= 0.0.1"
-    , "express-form": ">= 0.0.1"
+    , "express-form": "~= 0.8"
     , "csv": ">= 0.0.1"
 
     , "bcrypt": ">= 0.0.1"

@@ -59,7 +59,7 @@ module.exports = {
 		passport.use(new FacebookStrategy({
 				clientID: process.env.FB_APP_ID || '265230110277521'
 			  , clientSecret: process.env.FB_SECRET || '3a7fb478ebe96ed00d92ce61a0e164a8'
-			  , callbackURL: (process.env.BASEURL || 'http://app.local:8000') + '/auth/facebook/callback'
+			  , callbackURL: (process.env.BASEURL || 'http://app.dev:8000') + '/auth/facebook/callback'
 			  , scope: 'email'
 			},
 			function(accessToken, refreshToken, profile, done) {
@@ -75,7 +75,7 @@ module.exports = {
 		passport.use(new TwitterStrategy({
 				consumerKey: process.env.TW_CONSUMER_KEY || 'LU94k2MmBtXyp3uoAwPoA'
 			  , consumerSecret: process.env.TW_CONSUMER_SECRET || 'hVBOfweBGvtoXR2b0vp5wanDqK0Wgs608bwoso9u8'
-			  , callbackURL: (process.env.BASEURL || 'http://app.local:8000') + '/auth/twitter/callback'
+			  , callbackURL: (process.env.BASEURL || 'http://app.dev:8000') + '/auth/twitter/callback'
 			},
 			function(token, tokenSecret, profile, done) {
 				User.twitterAuthenticate(profile, authenticationHandler(done));
@@ -84,7 +84,7 @@ module.exports = {
 		));
 		
 		// TODO: Figure this out?
-		// serialize user on login
+		// serialize user on signin
 		passport.serializeUser(function(user, done) {
 			done(null, user.id);
 		});
@@ -152,11 +152,31 @@ module.exports = {
 		app.use(function(req, res, next){
 			res.locals.url = req.url;
 			res.locals.nav = [
+				{
+					'name': 'Home'
+				  , 'link': '/home'
+				},
+				{
+					'name': 'What is this?'
+				  , 'link': '/what-is-this'
+				},
+				{
+					'name': 'Currently Recruiting'
+				  , 'link': '/currently-recruiting'
+				},
+				{
+					'name': 'Get Notified'
+				  , 'link': '/get-notified'
+				}
 			];
 			res.locals.rightNav = [
 				{
-					'name': 'Login'
-				  , 'link': '/login'
+					'name': 'Sign In'
+				  , 'link': '/signin'
+				},
+				{
+					'name': 'Create Account'
+				  , 'link': '/register'
 				}
 			];
 			if(req.user){
@@ -167,6 +187,7 @@ module.exports = {
 					  , 'link': '/logout'
 					}
 				];
+				res.locals.nav = [];
 				if(req.user.role < 10){
 					res.locals.nav.push({
 						'name': 'Profile'
@@ -270,7 +291,7 @@ module.exports = {
 				next(req.user);
 			} else {
 				console.log('wasn\'t logged in!');
-				res.redirect('login?next='+encodeURIComponent(authorize_url));
+				res.redirect('signin?next='+encodeURIComponent(authorize_url));
 			}
 		});
 		
@@ -409,7 +430,7 @@ module.exports = {
   , route: function(app){
 		var authenticateOptions = {
 				successRedirect: '/auth/finish'
-			  , failureRedirect: '/login'
+			  , failureRedirect: '/signin'
 			  , successFlash: 'Welcome!'
 			  , failureFlash: true
 			}
@@ -420,7 +441,7 @@ module.exports = {
 			res.json({error: null, message: 'You\'ve authenticated successfully!'});
 		});
 
-		app.get('/login', function(req, res){
+		app.get('/signin', function(req, res){
 			if(req.user){
 				if(req.session.redirect_url){
 					var url = req.session.redirect_url;
@@ -435,7 +456,24 @@ module.exports = {
 			if(req.param('next')){
 				req.session.redirect_url = req.param('next');
 			}
-			res.render('login', {title: 'Login / Register'});
+			res.render('signin', {title: 'Sign In'});
+		});
+		app.get('/register', function(req, res){
+			if(req.user){
+				if(req.session.redirect_url){
+					var url = req.session.redirect_url;
+					delete req.session.redirect_url;
+					return res.redirect(url);
+				}
+
+				req.flash('info', 'You are already logged in!');
+				res.redirect('/profile');
+				return;
+			}
+			if(req.param('next')){
+				req.session.redirect_url = req.param('next');
+			}
+			res.render('register', {title: 'Register'});
 		});
 		app.get('/logout', function(req, res){
 			req.logOut();
@@ -464,18 +502,18 @@ module.exports = {
 			  , email = req.param('email');
 			if(password != confirmPassword){
 				req.flash('error', 'Passwords do not match!');
-				res.redirect('/login');
+				res.redirect('/signin');
 				return;
 			}
 			User.findOne({email: email}, function(err, user){
 				if(err){
 					req.flash('error', 'An unexpected error occured. Please try again later.');
-					res.redirect('/login');
+					res.redirect('/signin');
 					return;
 				}
 				if(user){
 					req.flash('error', 'That email address is already in use.');
-					res.redirect('/login');
+					res.redirect('/signin');
 					return;
 				}
 				// Email address wasn't found, password seems to be good. Let's save!
@@ -486,11 +524,11 @@ module.exports = {
 				user.save(function(err){
 					if(err){
 						req.flash('error', 'There was an error during registration. Please try again.');
-						res.redirect('/login');
+						res.redirect('/signin');
 						return;
 					}
 					
-					User.notifyAdmins('info', null, 'New User Registration', 'A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user.email+'</a>) registered!', function(){
+					User.notifyAdmins('info', null, 'New User Registration', 'A new user (<a href="'+(process.env.BASEURL || 'http://app.dev:8000')+'/profile/'+user._id+'">'+user.email+'</a>) registered!', function(){
 						// Successful!
 						// They need to activate the account?
 						// Send an email to spur activation
@@ -508,7 +546,7 @@ module.exports = {
 			User.findOne({email: email}, function(err, user){
 				if(err || !user){
 					req.flash('error', 'User not found.');
-					res.redirect('/login');
+					res.redirect('/signin');
 					return;
 				}
 
@@ -524,7 +562,7 @@ module.exports = {
 			  , activationCode = req.param('activationCode');
 			if(!email || !activationCode){
 				req.flash('error', 'Missing parameters');
-				res.redirect('/login');
+				res.redirect('/signin');
 				return;
 			}
 			email = new Buffer(email, 'base64').toString('utf8');
@@ -532,19 +570,19 @@ module.exports = {
 			User.findOne({email: email, activationCode: activationCode}, function(err, user){
 				if(err || !user){
 					req.flash('error', 'Missing or invalid parameters');
-					res.redirect('/login');
+					res.redirect('/signin');
 					return;
 				}
 /*
 				if(user.activationCode != activationCode){
 					req.flash('error', 'Invalid activation code!');
-					res.redirect('/login');
+					res.redirect('/signin');
 					return;
 				}
 */
 				if(user.state > 1){
-					req.flash('info', 'You may now login below.');
-					res.redirect('/login');
+					req.flash('info', 'You may now sign in below.');
+					res.redirect('/signin');
 					return;
 				}
 
@@ -556,7 +594,7 @@ module.exports = {
 						if(req.user){
 							res.redirect('/profile');
 						}else{
-							res.redirect('/login');
+							res.redirect('/signin');
 						}
 						
 						// TODO: Merge multiple accounts?
@@ -597,7 +635,7 @@ module.exports = {
 			if(!req.user){
 				// How did this happen?!
 				req.flash('error', 'You must be logged in to add your email address!');
-				res.redirect('/login');
+				res.redirect('/signin');
 				return;
 			}
 			if(!email){
@@ -611,7 +649,7 @@ module.exports = {
 			req.user.save(function(err){
 				if(err){
 					req.flash('error', 'There was an error during registration. Please try again.');
-					res.redirect('/login');
+					res.redirect('/signin');
 					return;
 				}
 				// Successful!
@@ -663,7 +701,7 @@ module.exports = {
 					if(req.user && req.user.state == 0){
 						message = 'Please check your email to confirm your address. (<a href="/auth/local/register/resend/'+req.user.email+'">Resend?</a>)';
 					}else{
-						message = 'Please login to access that page.';
+						message = 'Please sign in to access that page.';
 					}
 				}
 				req.flash('error', message);
