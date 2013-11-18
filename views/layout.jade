@@ -1,25 +1,12 @@
-mixin do_nav(nav)
-	each n in nav
-		if n.header
-			li.nav-header #{n.header}
-		else if n.children
-			//- Look ahead to determine if this link is active
-			li.dropdown(class=(n.link == locals.url || is_active_nav(n.children, locals.url) ? 'active' : ''))
-				a.dropdown-toggle(href=n.link, data-toggle="dropdown")
-					| #{n.name}
-					b.caret
-				ul.dropdown-menu
-					mixin do_nav(n.children)
-		else
-			li(class=(n.link == locals.url ? 'active' : '')): a(href=n.link) #{n.name}
-	
 doctype 5
 html
 	head
 		title= title
-		link(rel='stylesheet', href='/css/style.css')
 		link(rel='stylesheet', href='/css3-social-signin-buttons/auth-buttons.css')
-		link(rel='stylesheet', href='/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css')
+		link(rel='stylesheet', href='/lib/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css')
+		link(rel='stylesheet', href='/css/navbar.css')
+		link(rel='stylesheet', href='/css/style.css')
+		//link(rel='stylesheet', media='all', type='text/css', href='http://fonts.googleapis.com/css?family=Abel:400|Oswald:300,400,700')
 	body
 		block messages
 			errorMessages = locals.flash('error')
@@ -42,37 +29,64 @@ html
 								button.close(type="button", data-dismiss="alert") &times;
 								| !{message}
 		block nav
-			.navbar.navbar-fixed-top
-				.navbar-inner
-					.container
-						a.btn.btn-navbar(data-toggle="collapse",data-target=".nav-collapse")
-							span.icon-bar
-							span.icon-bar
-							span.icon-bar
-						a.brand(href="/home") Experimonth
-						.nav-collapse
-							if locals.nav && locals.nav.length
-								ul.nav
-									mixin do_nav(locals.nav)
-							if locals.rightNav && locals.rightNav.length
-								ul.nav.pull-right
-									mixin do_nav(locals.rightNav)
-							if user(0)
-								ul.nav.pull-right
-									li.dropdown
-										- if(locals.notifications && locals.notifications.length > 0)
-											a#notificationsPopoverTrigger(href='#')
-												span.badge.badge-info !{notifications.length}
-												//b.caret
-											div#notificationsPopover.hide
-												include ./notifications.jade
-												mixin do_notifications()
-										- else
-											a(href='/profile')
-												span.badge.badge-info 0
-		.container
+		//.container
+		block vars
+		if skipContainer
 			block body
+		else
+			.container
+				block body
+		block footer
+			footer
+				.pre-footer
+						.container
+							.row
+								.span4
+									.footer-logo
+										a
+											| Experimonth
+									ul.footer-address
+										li
+											strong Museum of Life and Science in Durham, NC
+										li
+											strong Address:
+											| 433 W Murray Ave
+											br
+											| Durham, NC 27704, United States, Earth
+										li
+											strong 
+												a(href="mailto:experimonth@lifeandscience.org") experimonth@lifeandscience.org
+								.span4
+									h5.footer-header Attn: Scientists, Museums
+									ul.footer-address
+										li If you  are a scientist, researcher, artist, historian, and/or otherwise excited by the potential of  co-creating an Experimonth together, let us know.
+										li
+											br
+										li If you are a museum, library, or other type of do-good organization interested in co-hosting an Experimonth together, let us know.
+								.span4
+									h5.footer-header Get Notified
+									ul.footer-address
+										li Subscribe to our list to be notified when new projects are launched.
+					.deep-footer
+						.container
+							.row
+								.span12.text-right
+									.copyright Copyright &copy; 2013 Experimonth.
+
 		script(src='//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')
+		//script.
+		//	EM_NAV = !{JSON.stringify(locals.nav)};
+		//	REM_RIGHT_NAV = [
+		//		{
+		//			'name': 'Sign In',
+		//			'link': '/signin'
+		//		}
+		//	];
+		script(src='/js/em-navbar.js')
+		//script.
+		//	em_navbar(!{JSON.stringify(locals.nav)}, !{JSON.stringify(locals.rightNav)})
 		script(src='/venera/js/bootstrap.js')
-		script(src='/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js')
+		script(src='/lib/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js')
+		script(src='/lib/bootstrap-wysiwyg/external/jquery.hotkeys.js')
+		script(src='/lib/bootstrap-wysiwyg/bootstrap-wysiwyg.js')
 		script(src='/js/app.js')

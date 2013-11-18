@@ -42,7 +42,8 @@
 
 // Scaffolding
 // -------------------------
-@bodyBackground:        #ebede3;
+// @bodyBackground:        #ebede3;
+@bodyBackground:        #242424;
 @textColor:             #4f4e4c;
 @headerMainColor:       #7b7972;
 @colorDeepFooter:       #6C7065;
@@ -127,7 +128,7 @@
 @btnBrightBackground:               @yellowLight;
 @btnBrightBackgroundHighlight:            darken(@yellowLight, 10%);
 
-@btnPrimaryBackground:              #7d8176;
+@btnPrimaryBackground:              #960000;
 @btnPrimaryBackgroundHighlight:     darken(@btnPrimaryBackground, 5%);
 
 @btnInfoBackground:                 #40a39f;
@@ -169,9 +170,9 @@
 
 @dropdownLinkColor:             @grayDark;
 @dropdownLinkColorHover:        @white;
-@dropdownLinkColorActive:       @dropdownLinkColor;
+@dropdownLinkColorActive:       @white;
 
-@dropdownLinkBackgroundActive:  #7accc9;
+@dropdownLinkBackgroundActive:  #960000;
 @dropdownLinkBackgroundHover:   @dropdownLinkBackgroundActive;
 
 
@@ -197,9 +198,9 @@
 @iconSpritePath:          "/assets/bootstrap/glyphicons-halflings.png";
 @iconWhiteSpritePath:     "/assets/bootstrap/glyphicons-halflings-white.png";
 
-@imagesPath:              "../images/";
-@lightboxImagesPath:      "../images/lightbox/";
-@accordionImage:          '../images/accordion-on.png';
+@imagesPath:              "../venera/images/";
+@lightboxImagesPath:      "../venera/images/lightbox/";
+@accordionImage:          '../venera/images/accordion-on.png';
 
 // Input placeholder text color
 // -------------------------
@@ -234,16 +235,23 @@
 @navbarCollapseDesktopWidth:      @navbarCollapseWidth + 1;
 
 @navbarHeight:                    40px;
-@navbarBackgroundHighlight:       #eef0e8;
+//@navbarBackgroundHighlightOld:       #eef0e8;
+@navbarBackgroundHighlight:       #242424;
 @navbarBackground:                darken(@navbarBackgroundHighlight, 5%);
 @navbarBorder:                    darken(@navbarBackground, 12%);
 
-@navbarText:                      #53564e;
-@navbarLinkColor:                 #53564e;
-@navbarLinkColorHover:            @grayDark;
-@navbarLinkColorActive:           @gray;
+//@navbarText:                      #53564e;
+@navbarText:                      @white;
+//@navbarLinkColor:                 #53564e;
+@navbarLinkColor:                 @white;
+//@navbarLinkColorHover:            @grayDark;
+@navbarLinkColorHover:            darken(@navbarLinkColor, 20%);
+//@navbarLinkColorActive:           @gray;
+@navbarLinkColorActive:           @navbarLinkColor;
+//@navbarLinkBackgroundHover:       transparent;
 @navbarLinkBackgroundHover:       transparent;
-@navbarLinkBackgroundActive:      darken(@navbarBackground, 3%);
+//@navbarLinkBackgroundActive:      darken(@navbarBackground, 3%);
+@navbarLinkBackgroundActive:      #960000;
 
 @navbarBrandColor:                @navbarLinkColor;
 
@@ -316,14 +324,14 @@
 
 // Tooltips and popovers
 // -------------------------
-@tooltipColor:            #fff;
+@tooltipColor:            @white;
 @tooltipBackground:       #000;
 @tooltipArrowWidth:       5px;
 @tooltipArrowColor:       @tooltipBackground;
 
-@popoverBackground:       #fff;
+@popoverBackground:       @white;
 @popoverArrowWidth:       10px;
-@popoverArrowColor:       #fff;
+@popoverArrowColor:       @white;
 @popoverTitleBackground:  darken(@popoverBackground, 3%);
 
 // Special enhancement for popovers

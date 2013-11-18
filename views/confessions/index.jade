@@ -51,6 +51,12 @@ block body
 										a.btn(href="/confessional/reply/"+confession.number) Reply
 									if u
 										li
+											a(href="/confessions/promote/"+confession._id, class=(confession.promoted ? 'btn btn-success' : 'btn btn-danger'))
+												if confession.promoted
+													| Demote
+												else
+													| Promote
+										li
 											if !confession.active
 												a.btn.btn-success(href="/confessions/publish/"+confession._id) Publish
 											else

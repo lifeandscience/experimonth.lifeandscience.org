@@ -6,10 +6,12 @@ then
         exit
 fi
 
+#MONGO_URL:          mongodb://heroku:b22c046546e7e360f2885df0d45ad72e@linus.mongohq.com:10089/app12860619
+#MONGOHQ_URL:        mongodb://heroku:myEb51rOB8pZovUUMdZLvO-8Zcz4qAKztkCSg6fI-WxVW8wc4fOotLNhSeg6KxOfYeh6ZBHyrcPn7hduT804lg@linus.mongohq.com:10089/app12860619
 APPID=app12860619
 PORT=10089
 HOST=linus.mongohq.com
-PASSWORD=b22c046546e7e360f2885df0d45ad72e
+PASSWORD=myEb51rOB8pZovUUMdZLvO-8Zcz4qAKztkCSg6fI-WxVW8wc4fOotLNhSeg6KxOfYeh6ZBHyrcPn7hduT804lg
 USERNAME=heroku
 
 case "$2" in

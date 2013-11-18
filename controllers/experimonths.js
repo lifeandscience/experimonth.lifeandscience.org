@@ -9,7 +9,8 @@ var util = require('util')
   , ExperimonthEnrollment = mongoose.model('ExperimonthEnrollment')
   , ProfileQuestion = mongoose.model('ProfileQuestion')
   , User = mongoose.model('User')
-  , moment = require('moment');
+  , moment = require('moment')
+  , s3 = require('../s3');
 
 module.exports = function(app){
 	app.get('/experimonths', auth.authorize(2), function(req, res){
@@ -257,7 +258,7 @@ module.exports = function(app){
 				});
 			});
 			
-			// http://app.local:8000/experimonths/unenroll/513f596f40a9834325000001
+			// http://app.dev:8000/experimonths/unenroll/513f596f40a9834325000001
 		});
 		return;
 	});
@@ -282,7 +283,7 @@ module.exports = function(app){
 			field('name').trim()
 		  , field('description').trim()
 		  , field('type').array().trim()
-		  , field('image').trim()
+//		  , field('image').trim()
 		  , field('startDate').trim().required().isDate()
 		  , field('endDate').trim().required().isDate()
 		  , field('userLimit').trim().isNumeric()
@@ -316,6 +317,20 @@ module.exports = function(app){
 			});
 		}
 	  , beforeSave = function(req, res, item, complete){
+			// Take the image to S3!
+			if(req.files && req.files.image && req.files.image.size){
+				s3.uploadFile(req.files.image, null, function(err, url){
+					if(err){
+						console.log('error uploading file: ', err);
+					}else if(url){
+						item.image = url;
+					}
+					return complete(item);
+				});
+			}else{
+				return complete(item);
+			}
+			
 	/*
 			// Email to Beck
 			// setup e-mail data with unicode symbols
@@ -334,7 +349,7 @@ module.exports = function(app){
 				complete(item);
 			});
 	*/
-			complete(item);
+/* 			complete(item); */
 		}
 	  , layout = 'layout';
 	
@@ -342,7 +357,7 @@ module.exports = function(app){
 	app.post('/experimonths/add', auth.authorize(2, 10), formValidate, utilities.doForm(as, populate, 'Add Experimonth', Experimonth, template, varNames, redirect, beforeRender, beforeSave, layout));
 	
 	app.get('/experimonths/edit/:id', auth.authorize(2, 10), utilities.doForm(as, populate, 'Edit Experimonth', Experimonth, template, varNames, redirect, beforeRender, null, layout));
-	app.post('/experimonths/edit/:id', auth.authorize(2, 10), formValidate, utilities.doForm(as, populate, 'Add Experimonth', Experimonth, template, varNames, redirect, beforeRender, beforeSave, layout));
+	app.post('/experimonths/edit/:id', auth.authorize(2, 10), formValidate, utilities.doForm(as, populate, 'Edit Experimonth', Experimonth, template, varNames, redirect, beforeRender, beforeSave, layout));
 	
 	
 	

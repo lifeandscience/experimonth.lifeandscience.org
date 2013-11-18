@@ -1,0 +1,41 @@
+extends ../layout
+
+block body
+	#container-inner
+		form(method="POST", enctype="multipart/form-data")#userForm
+			fieldset
+				legend #{title}
+						
+				.control-group
+					label.control-label(for="title") Title:
+					.controls
+						input#title(type="text", placeholder="Title of the news post is awesome", name="title", value=newsPost.title)
+						p.help-block The title of this News Post.
+
+				.control-group
+					label.control-label(for="image") Image:
+					.controls
+						if newsPost.image
+							img.span2(src=newsPost.image)
+						else
+							.span2
+						input#image.span3(type="file", name="image")
+						p.help-block The image for display on the homepage
+						
+				.control-group
+					label.control-label(for="text") Text:
+					.controls
+						div#text.editable(contenteditable="true")
+						textarea.editable-textarea(name="text", placeholder="A nifty text", data-target="#text") !{newsPost.text}
+						p.help-block The text of this News Post.
+						
+				.control-group
+					label.control-label(for="link") Link:
+					.controls
+						input#link(name="link", placeholder="A nifty text", value=newsPost.link)
+						p.help-block The link to the actual news story.
+
+			.form-actions
+				button.btn.btn-primary(type="submit") Submit
+				|  
+				a.btn(href="/news") Cancel

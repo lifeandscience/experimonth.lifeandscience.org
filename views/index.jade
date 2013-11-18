@@ -1,10 +1,167 @@
 extends layout
+block vars
+	skipContainer = true
 
 block body
-	h1= title
-	p 
-		| Welcome to #{title}. You may wish to 
-		a(href='/login') login
-		|  or visit your 
-		a(href='/profile') profile
-		| .
+	#homepage-carousel.carousel.slide.over-something
+		.carousel-inner.slider-w
+			.active.item
+				.container
+					h1.slider-header Know Yourself. Through Science.
+					h2.slider-sub-header Complete monthly challenges and collect data for curious and playful scientists.
+					.cta
+						if locals.user()
+							a.btn.btn-cta(href='/experimonths') Enroll &gt;
+						else
+							a.btn.btn-cta(href='/register') Get Started (It's Free) &gt;
+					.slider-browsers-w.clearfix
+						.slider-browser.slider-browser-left.hidden-phone(data-position-bottom='-8%')
+							img(alt='Experimonth: Freeloader', src='/img/carousel_freeloader.png')
+						.slider-browser.slider-browser-center(data-position-bottom='-9%')
+							img(alt='Experimonth: Frenemy', src='/img/carousel_frenemy.png')
+						.slider-browser.slider-browser-right.hidden-phone(data-position-bottom='-8%')
+							img(alt='Experimonth: Mood', src='/img/carousel_mood.png')
+			//.item
+				.container
+					h1.slider-header I am always on skype, feel free to ask questions.
+					h2.slider-sub-header Maecenas fermentum sem in nunc sagittis iaculis.
+					.cta
+						a.btn.btn-cta.btn-warning(href='features/pricing_tables.html') Some Action Button
+					.row.zoomed-browsers-w
+						.span4
+							.zoomed-browser
+								img(alt='Browser-window-1', src='assets/images/browser-window.png')
+						.span4
+							.zoomed-browser.hidden-phone
+								img(alt='Browser-window-2', src='assets/images/browser-window.png')
+						.span4
+							.zoomed-browser.hidden-phone
+								img(alt='Browser-window-3', src='assets/images/browser-window.png')
+			//a.carousel-control.left(data-slide='prev', href='#homepage-carousel')
+				i.icon-chevron-left
+			//a.carousel-control.right(data-slide='next', href='#homepage-carousel')
+				i.icon-chevron-right
+	.sub-slider-features
+		.container
+			.row
+				.span4
+					.info-bullet
+						i.icon-file
+						h5 Make a Commitment
+						p
+							| Make a promise to yourself and others that you’ll last the month (or at least try to).
+				.span4
+					.info-bullet
+						i.icon-tags
+						h5 Try Every Day
+						p
+							| Try your best to stick with it everyday, and to try again if you don’t. After all, failure is a critical part of science. 
+				.span4
+					.info-bullet
+						i.icon-cogs
+						h5 Be Honest & Forthright
+						p
+							| Share with others what challenges and triumphs you experience. Learn about yourself.
+	section.section-wrapper.under-slider
+		.container
+			.row
+				.span12
+					h3.section-header Currently Recruiting...
+				// TODO: Load 4 of these from the DB
+				for experimonth, i in currentlyRecruiting
+					.span3
+						.white-card.clearfix
+							.img-w.hover-fader
+								a(href='assets/images/test-square.png', data-rel='lightbox[gallery]')
+									if experimonth.image
+										img(src=experimonth.image)
+									//span.hover-fade
+										i.icon-zoom-in
+							h5 #{experimonth.name}
+							p #{experimonth.description}
+							if locals.user()
+								a.btn.btn-primary.btn-extra.pull-right(href='/experimonths') Enroll &gt;
+							else
+								a.btn.btn-primary.btn-extra.pull-right(href='features/pricing_tables.html') Get Started (It's Free) &gt;
+	section.section-wrapper
+		.container
+			.row
+				.span6
+					h3.section-header Confessions
+					.testimonials
+						.testimonials-users.row.hidden-phone
+							for confession, i in confessions
+								.span1
+									a(data-toggle='testimonial', href='#testimonial'+i, class=(i == 0 ? 'testimonials-user-w active' : 'testimonials-user-w'))
+										span.testimonials-user
+											//span.testimonials-image
+											img(src='/img/testimonial_black.png')
+						.testimonials-speeches
+							for confession, i in confessions
+								div(id='testimonial'+i, class=(i == 0 ? 'testimonials-speech active' : 'testimonials-speech'))
+									p #{confession.text}
+									.speech-by
+										| Confession ##{confession.number}
+				.span6
+					h3.section-header What is Experimonth?
+					.white-card
+						p Experimonth started in January of 2009 as a way to redefine New Year’s Resolutions and make new friends while making new habits.  
+
+						p Since then, it’s been re-imagined as a way for science museums to engage people around the world while also generating data for scientists who want to solve big problems. Each Experimonth is designed with a scientist and sometimes also an artist and is intended to be fun and to give participants a way to reflect on their own lives and identities.
+
+						p Experimonths have been generously funded by the Institute for Museum and Library Services and the National Science Foundation.
+	section.section-wrapper.stripped
+		.container
+			.row.clients-w
+				.span12
+					h3.section-header Meet the Scientists
+				.span2
+					img(alt='Client-1', src='/img/scientist_1.png')
+				.span2
+					img(alt='Client-1', src='/img/scientist_2.png')
+				.span2
+					img(alt='Client-1', src='/img/scientist_3.png')
+				.span2
+					img(alt='Client-1', src='/img/scientist_4.png')
+				.span2
+					img(alt='Client-1', src='/img/scientist_5.png')
+				.span2
+					img(alt='Client-1', src='/img/scientist_6.png')
+	section.section-wrapper.stripped
+		.container
+			.row
+				.span12
+					h3.section-header In the News
+				for newsPost, i in news
+					.span4
+						.white-card.recent-post.clearfix
+							h5.recent-post-header
+								a(href='blog/single_post.html') #{newsPost.title}
+							.post-info.clearfix
+								.pull-left
+									d = moment(newsPost.date).clone()
+									span.post-date #{d.format('MMMM Do, YYYY')}
+									//a.post-comments(href='blog/single_post.html') 14 Comments
+								//.pull-right
+									a.post-like(href='#')
+										i.icon-heart
+										| 250
+							if newsPost.image
+								img.post-image(alt='Photo-card-big-1', src=newsPost.image)
+							p.post-content.separated #{newsPost.text}
+							if newsPost.link
+								a.btn.btn-primary.btn-extra.pull-right(href=newsPost.link) Read More >
+	section.section-wrapper.stripped
+		.container
+			.row
+				.span12
+					h3.section-header Provided by...
+				.span5
+					a(href="http://lifeandscience.org")
+						img(src="/img/provided_mls.png")
+				.span5
+					a(href="http://www.exploratorium.edu/")
+						img(src="/img/provided_explo.png")
+				.span2
+					a(href="http://www.nsf.gov")
+						img(src="/img/provided_nsf.png")

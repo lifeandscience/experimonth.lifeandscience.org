@@ -9,6 +9,7 @@ var ExperimonthKindSchema = new Schema({
   , hash: String
   , url: {type: String}
   , instructions: {type: String}
+  , image: String
 });
 ExperimonthKindSchema.post('save', function(kind){
 	if(!kind.hash){
@@ -57,6 +58,10 @@ var ExperimonthSchema = new Schema({
 ExperimonthSchema.statics.findActiveQuery = function(){
 	var today = new Date();
 	return this.find({startDate: {$lte: today}, endDate: {$gte: today}, published: true});
+};
+ExperimonthSchema.statics.getEnrollableExperimonths = function(){
+	var today = new Date();
+	return this.find({endDate: {$gte: today}, published: true, open: true});
 };
 var Experimonth = mongoose.model('Experimonth', ExperimonthSchema);
 exports = Experimonth;

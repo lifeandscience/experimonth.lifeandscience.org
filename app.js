@@ -1,3 +1,22 @@
+process.env.TZ = 'America/New_York';
+
+// Check expected ENV vars
+[	'S3_ACCESS_KEY'
+  , 'S3_ACCESS_SECRET'
+  , 'S3_BUCKET'
+  , 'S3_SLUG'
+].forEach(function(envVar, index){
+	if(!process.env[envVar]){
+		console.log(envVar+' environment variable is not set!');
+		process.exit();
+	}
+});
+[	'PORT'
+].forEach(function(envVar, index){
+	if(!process.env[envVar]){
+		console.log('OPTIONAL: '+envVar+' environment variable is required!');
+	}
+});
 
 /**
  * Module dependencies.
@@ -12,11 +31,12 @@ var express = require('express')
   , mongoose = require('mongoose') 
   , MongoStore = require('connect-mongo')(express)
   , flash = require('connect-flash')
-  , moment = require('moment');
+  , moment = require('moment')
+  , send = require('send');
   
   
 // Database
-var dbURL = process.env.MONGO_URL || 'mongodb://localhost/experimonth'
+var dbURL = process.env.MONGO_URL || process.env.MONGOHQ_URL || 'mongodb://localhost/experimonth'
   , db = mongoose.connect(dbURL);
 
 // Models
@@ -104,6 +124,61 @@ app.configure(function(){
 	app.use(app.router);
 	app.use(require('less-middleware')({ src: __dirname + '/public' }));
 	app.use(express.static(path.join(__dirname, 'public')));
+	app.get('/js/em-navbar.js', function(req, res){
+		if(req.user){
+			res.write('var EM_USER = '+JSON.stringify(req.user)+';');
+		}else{
+			res.write('var EM_USER = null;');
+		}
+		var fullURL = req.protocol + "://" + req.get('host');
+		res.write('var EM_URL = "'+fullURL+'";');
+		if(!req.user){
+			res.write('var EM_NAV = '+JSON.stringify([
+				{
+					'name': 'Home'
+				  , 'link': fullURL+'/home'
+				},
+				{
+					'name': 'What is this?'
+				  , 'link': fullURL+'/what-is-this'
+				},
+				{
+					'name': 'Currently Recruiting'
+				  , 'link': fullURL+'/currently-recruiting'
+				},
+				{
+					'name': 'Get Notified'
+				  , 'link': fullURL+'/get-notified'
+				}
+			])+';');
+			res.write('var EM_RIGHT_NAV = '+JSON.stringify([
+				{
+					'name': 'Sign In'
+				  , 'link': fullURL+'/signin'
+				  , 'class': 'signin'
+				},
+				{
+					'name': 'Create Account'
+				  , 'link': fullURL+'/register'
+				  , 'class': 'create-account'
+				}
+			])+';');
+		}else{
+			res.write('var EM_DEFAULT_NAV = '+JSON.stringify(res.locals.nav)+';');
+			res.write('var EM_RIGHT_NAV = '+JSON.stringify([
+				{
+					'name': 'Profile'
+				  , 'link': fullURL+'/profile'
+				},
+				{
+					'name': 'Logout'
+				  , 'link': fullURL+'/logout'
+				}
+			])+';');
+		}
+		var fileStream = fs.createReadStream('./public/js/em-navbar.js');
+        fileStream.pipe(res);
+	});
 });
 
 app.configure('development', function(){

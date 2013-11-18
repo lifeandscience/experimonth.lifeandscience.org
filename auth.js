@@ -151,47 +151,15 @@ module.exports = {
 
 		app.use(function(req, res, next){
 			res.locals.url = req.url;
-			res.locals.nav = [
-				{
-					'name': 'Home'
-				  , 'link': '/home'
-				},
-				{
-					'name': 'What is this?'
-				  , 'link': '/what-is-this'
-				},
-				{
-					'name': 'Currently Recruiting'
-				  , 'link': '/currently-recruiting'
-				},
-				{
-					'name': 'Get Notified'
-				  , 'link': '/get-notified'
-				}
-			];
-			res.locals.rightNav = [
-				{
-					'name': 'Sign In'
-				  , 'link': '/signin'
-				},
-				{
-					'name': 'Create Account'
-				  , 'link': '/register'
-				}
-			];
+			var fullURL = req.protocol + "://" + req.get('host');
+			res.locals.nav = [];
 			if(req.user){
 				// Build nav based on user role
-				res.locals.rightNav = [
-					{
-						'name': 'Logout'
-					  , 'link': '/logout'
-					}
-				];
 				res.locals.nav = [];
 				if(req.user.role < 10){
 					res.locals.nav.push({
 						'name': 'Profile'
-					  , 'link': '/profile'
+					  , 'link': fullURL+'/profile'
 					});
 				}else{
 					res.locals.nav.push({
@@ -200,18 +168,18 @@ module.exports = {
 					  , 'children': [
 							{
 								'name': 'Your Profile'
-							  , 'link': '/profile'
+							  , 'link': fullURL+'/profile'
 							}
 						  , {
 								'header': 'Profile Questions'
 							}
 						  , {
 								'name': 'List'
-							  , 'link': '/profile/questions'
+							  , 'link': fullURL+'/profile/questions'
 							}
 						  , {
 								'name': 'Add'
-							  , 'link': '/profile/questions/add'
+							  , 'link': fullURL+'/profile/questions/add'
 							}
 						]
 					});
@@ -221,22 +189,22 @@ module.exports = {
 					  , 'children': [
 							{
 								'name': 'List'
-							  , 'link': '/experimonths'
+							  , 'link': fullURL+'/experimonths'
 							}
 						  , {
 								'name': 'Add'
-							  , 'link': '/experimonths/add'
+							  , 'link': fullURL+'/experimonths/add'
 							}
 						  , {
 								'header': 'Kinds'
 							}
 						  , {
 								'name': 'List'
-							  , 'link': '/experimonths/kinds'
+							  , 'link': fullURL+'/experimonths/kinds'
 							}
 						  , {
 								'name': 'Add'
-							  , 'link': '/experimonths/kinds/add'
+							  , 'link': fullURL+'/experimonths/kinds/add'
 							}
 						]
 					});
@@ -246,14 +214,14 @@ module.exports = {
 					  , 'children': [
 							{
 								'name': 'List'
-							  , 'link': '/users'
+							  , 'link': fullURL+'/users'
 							}
 						  , {
 								'header': 'Export'
 							}
 						  , {
 								'name': 'Standard'
-							  , 'link': '/users/export'
+							  , 'link': fullURL+'/users/export'
 							}
 						]
 					});
@@ -263,11 +231,25 @@ module.exports = {
 					  , 'children': [
 							{
 								'name': 'Confess!'
-							  , 'link': '/confessional'
+							  , 'link': fullURL+'/confessional'
 							}
 						  , {
 								'name': 'View Confessions'
-							  , 'link': '/confessions'
+							  , 'link': fullURL+'/confessions'
+							}
+						]
+					});
+					res.locals.nav.push({
+						'name': 'News'
+					  , 'link': '#'
+					  , 'children': [
+							{
+								'name': 'News'
+							  , 'link': fullURL+'/news'
+							}
+						  , {
+								'name': 'Add New News'
+							  , 'link': fullURL+'/news/add'
 							}
 						]
 					});

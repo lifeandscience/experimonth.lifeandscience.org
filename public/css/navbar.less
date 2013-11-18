@@ -1,0 +1,87 @@
+@import 'http://fonts.googleapis.com/css?family=Abel:400|Oswald:300,400,700';
+&.em-navbar-wrapper {
+	@import '../venera/less/theme_venera.less';
+
+	margin: 0;
+	font-family: "Oswald", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 15px;
+	line-height: 20px;
+	font-weight: 300;
+/* 	color: #4f4e4c; */
+/* 	background-color: #242424; */
+	padding-top: 72px;
+	
+	text-transform: uppercase;
+	
+	.navbar-inner {
+		border: 0;
+		
+		a {
+			font-size: 18px;
+			margin: 7px 0;
+		}
+		
+		a.brand {
+			margin: 0;
+			display: block;
+			width: 133px;
+			height: 53px;
+			background: transparent url('../img/logo.gif') scroll no-repeat left top;
+			text-indent: -999em;
+		}
+		
+		.nav > li {
+			> a.signin,
+			> a.signin:hover {
+				background-color: white;
+				color: #242424;
+			}
+			> a.create-account {
+				background-color: #960000;
+			}
+			&.active > a.signin,
+			&.active > a.create-account,
+			&.active > a.signin:hover,
+			&.active > a.create-account:hover {
+				-webkit-border-radius: 0;
+				-moz-border-radius: 0;
+				border-radius: 0;
+			}
+		}
+	}
+
+	.dropdown-menu > li > a:hover,
+	.dropdown-menu > li > a:focus,
+	.dropdown-submenu:hover > a,
+	.dropdown-submenu:focus > a {
+		background-image: none;
+	}
+	
+	.navbar .nav-tabs .open .dropdown-toggle,
+	.navbar .nav-pills .open .dropdown-toggle,
+	.navbar .nav > li.dropdown.open.active > a:hover,
+	.navbar .nav > li.dropdown.open.active > a:focus {
+		color: #960000;
+	}
+}
+
+@media (min-width: 768px) and (max-width: 980px) {
+	body {
+		padding-top: 0;
+	}
+}
+@media (max-width: 767px) {
+	body {
+		padding-top: 0;
+	}
+}
+@media (max-width: 979px) {
+	body {
+		padding-top: 0;
+	}
+}
+@media (max-width: 480px) {
+	body {
+		padding-top: 0;
+	}
+}

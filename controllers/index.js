@@ -1,3 +1,8 @@
+var mongoose = require('mongoose')
+  , Experimonth = mongoose.model('Experimonth')
+  , Confession = mongoose.model('Confession')
+  , NewsPost = mongoose.model('NewsPost')
+  , async = require('async');
 
 /*
  * GET home page.
@@ -8,10 +13,23 @@ module.exports = {
   , profile: require('./profile')
   , experimonths: require('./experimonths')
   , confessions: require('./confessions')
+  , news: require('./news')
   , notifications: require('./notifications')
   , home: function(app){
 		app.get('/home', function(req, res){
-			res.render('index', { title: 'Home Page' });
+			async.parallel({
+				experimonths: function(callback){
+					Experimonth.getEnrollableExperimonths().sort('startDate').limit(4).exec(callback);
+				}
+			  , confessions: function(callback){
+					Confession.find({active: true, promoted: true}).sort('-date').limit(4).exec(callback);
+				}
+			  , news: function(callback){
+					NewsPost.find({active: true}).sort('-date').limit(3).exec(callback);
+				}
+			}, function(err, results){
+				res.render('index', { title: 'Home Page', currentlyRecruiting: results.experimonths, confessions: results.confessions, news: results.news });
+			});
 		});
 		app.get('/empty', function(req, res){
 			var mongoose = require('mongoose')

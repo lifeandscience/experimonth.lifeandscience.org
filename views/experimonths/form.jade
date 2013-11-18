@@ -2,21 +2,28 @@ extends ../layout
 
 block body
 	#container-inner
-		form(method="POST")#userForm.form-horizontal
+		form(method="POST", enctype="multipart/form-data")#userForm.form-horizontal
 			fieldset
 				legend #{title}
-						
+
 				.control-group
 					label.control-label(for="name") Name:
 					.controls
 						input#name.span5(type="text", placeholder="Frenemy", name="name", value=experimonth.name)
 						p.help-block The name of this Experimonth.
-						
+
 				.control-group
 					label.control-label(for="description") Description:
 					.controls
 						textarea#description.span5(placeholder="A nifty description", name="description") !{experimonth.description}
 						p.help-block The description of this Experimonth.
+
+				.control-group
+					label.control-label(for="image") Image:
+					.controls
+						img.span2(src=experimonth.image)
+						input#image.span3(type="file", name="image")
+						p.help-block The image for display on the homepage
 
 				.control-group
 					label.control-label(for="type") Type:
@@ -27,8 +34,8 @@ block body
 						label.checkbox
 							input#open(type="checkbox", name="type[]", value="Weekly", checked=(experimonth.type && experimonth.type.indexOf('Weekly') != -1))
 							|  Weekly
-						
-				.control-group
+
+				//.control-group
 					label.control-label(for="image") Image (URL):
 					.controls
 						input#image.span5(type="text", placeholder="Frenemy", name="image", value=experimonth.image)

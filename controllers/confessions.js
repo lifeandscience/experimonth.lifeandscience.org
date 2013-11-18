@@ -73,6 +73,28 @@ module.exports = function(app){
 		});
 	});
 	
+	app.get('/confessions/promote/:id', function(req, res){
+		if(!req.params.id){
+			req.flash('error', 'Confession ID required!');
+			res.redirect('/confessions');
+			return;
+		}
+		Confession.findById(req.params.id).exec(function(err, confession){
+			if(err || !confession){
+				req.flash('error', 'Confession not found!');
+				res.redirect('/confessions');
+				return;
+			}
+			confession.promoted = !confession.promoted;
+			confession.save(function(err){
+				req.flash('info', 'Confession '+(confession.promoted ? 'promoted!' : 'demoted!'));
+				res.redirect('/confessions');
+				return;
+			});
+			return;
+		});
+	});
+	
 	app.get('/confessions/publish/:id', auth.authorize(2, 10), function(req, res){
 		if(!req.params.id){
 			req.flash('error', 'Confession ID required!');

@@ -1,4 +1,4 @@
-@import url('../venera/css/theme_venera.css');
+@import '../venera/less/theme_venera_white';
 
 body {
 /*   padding: 50px; */
@@ -11,4 +11,75 @@ a {
 
 #notificationsPopover{
 	width: 248px;
+}
+.editable {
+	max-height: 250px;
+	height: 250px;
+	background-color: white;
+	border-collapse: separate;
+	border: 1px solid rgb(204, 204, 204);
+	padding: 4px;
+	box-sizing: content-box;
+	-webkit-box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset;
+	box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+	border-bottom-left-radius: 3px;
+	border-top-left-radius: 3px;
+	overflow: scroll;
+	outline: none;
+}
+.sub-slider-features {
+	background: #960000;
+	color: white;
+
+	.info-bullet {
+		> i, > h5, > p {
+			color: white;
+		}
+		> h5 {
+			border-color: white;
+		}
+	}
+}
+
+.white-card {
+  background-color: #fff;
+  .box-shadow(~"0px 1px 4px 0px #9dc2dc, 2px 2px 1px 0px #fff inset");
+  #gradient > .vertical(#f9fcfe, #fff);
+
+  &.just-white {
+    background: #fff;
+  }
+  .img-w {
+    .box-shadow(0px 0px 3px 3px #fff);
+
+    &.hover-fader {
+      .hover-fade {
+        background-color: rgba(0, 0, 0, 0.7);
+      }
+      i {
+        color: #fff;
+      }
+    }
+  }
+
+  h5 {
+    color: @colorHeaders;
+    border-bottom: 1px solid #bbd9ee;
+    .box-shadow(0px 1px 0px #fff);
+    text-shadow: -1px -1px #fff;
+  }
+
+  p {
+    color: @colorHeaders;
+  }
+}
+
+.pre-footer .footer-logo a,
+.pre-footer .footer-header {
+	border-bottom-color: #3d3d3d;
+}
+footer a {
+	color: #c9d3cd;
 }

@@ -1,0 +1,49 @@
+extends ../layout
+
+block body
+	#container-inner
+		#header
+			h1 
+				| News 
+				a.btn.btn-default(href="/news/add") Add
+			
+		
+		if newsPosts && newsPosts.length
+			u = user(2, 10)
+			table.table.tablesorter
+				thead
+					tr
+						th Date
+						th Image
+						th Title
+						th Text
+						th Link
+						th Actions
+				tbody
+					each newsPost, i in newsPosts
+						tr
+							td.newsPost-label
+								d = moment(newsPost.date).clone()
+								| #{d.format('MMMM Do, YYYY')}
+							td
+								if newsPost.image
+									img(src=newsPost.image)
+							td.newsPost-label
+								h2 #{newsPost.title}
+							td.confession-content
+								p !{newsPost.text}
+							td
+								if newsPost.link
+									a(href=newsPost.link) Link
+							td
+								ul.actions.unstyled
+									if u
+										li.first
+											if !newsPost.active
+												a.btn.btn-success(href="/news/publish/"+newsPost._id) Publish
+											else
+												a.btn.btn-warning(href="/news/unpublish/"+newsPost._id) Unpublish
+										li
+											a.btn.btn-success(href="/news/edit/"+newsPost._id) Edit
+										//li
+										//	a.btn.btn-danger(href="/news/delete/"+newsPost._id) Delete
