@@ -52,7 +52,7 @@ block body
 								tr(class='experimonth')
 									td 
 										if enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url
-											a(href=enrollment.experimonth.kindPopulated.url) #{enrollment.experimonth.name}
+											a(href=enrollment.experimonth.kindPopulated.url + '/experimonth/' + enrollment.experimonth._id) #{enrollment.experimonth.name}
 										else
 											| #{enrollment.experimonth.name}
 									td #{moment(enrollment.experimonth.startDate).utc().format('YYYY-MM-DD')}

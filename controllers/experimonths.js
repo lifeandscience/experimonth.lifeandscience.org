@@ -257,7 +257,7 @@ module.exports = function(app){
 				});
 			});
 			
-			// http://app.local:8000/experimonths/unenroll/513f596f40a9834325000001
+			// http://app.dev:8000/experimonths/unenroll/513f596f40a9834325000001
 		});
 		return;
 	});

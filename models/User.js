@@ -87,7 +87,7 @@ UserSchema.method('generateActivationCode', function(){
 	this.activationCode = bcrypt.genSaltSync(10);
 });
 UserSchema.method('sendActivationEmail', function(){
-	var base_url = (process.env.BASEURL || 'http://app.local:8000')
+	var base_url = (process.env.BASEURL || 'http://app.dev:8000')
 	  , activation_url = base_url + '/auth/local/confirm/'+new Buffer(this.email).toString('base64')+'/'+new Buffer(this.activationCode).toString('base64')
 	  , html = confirmEmailTemplate({email: this.email, base_url: base_url, activation_url: activation_url});
 	html = layoutTemplate({title: 'Confirm Your Email Address', body: html, moment: moment});
@@ -173,11 +173,11 @@ UserSchema.static('facebookAuthenticate', function(profile, callback){
 					if(err){ return callback(err); }
 					
 					if(user.email){
-						User.notifyAdmins('info', null, 'New User Registration', 'A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user.email+'</a>) registered!', function(){
+						User.notifyAdmins('info', null, 'New User Registration', 'A new user (<a href="'+(process.env.BASEURL || 'http://app.dev:8000')+'/profile/'+user._id+'">'+user.email+'</a>) registered!', function(){
 							callback(null, user, message);
 						});
 					}else{
-						User.notifyAdmins('info', null, 'New User Registration', 'A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user._id+'</a>) registered!', function(){
+						User.notifyAdmins('info', null, 'New User Registration', 'A new user (<a href="'+(process.env.BASEURL || 'http://app.dev:8000')+'/profile/'+user._id+'">'+user._id+'</a>) registered!', function(){
 							callback(null, user, message);
 						});
 					}
@@ -218,7 +218,7 @@ UserSchema.static('twitterAuthenticate', function(profile, callback){
 		user.save(function(err, user){
 			if(err){ return callback(err); }
 
-			User.notifyAdmins('info', null, 'New User Registration', 'A new user (<a href="'+(process.env.BASEURL || 'http://app.local:8000')+'/profile/'+user._id+'">'+user._id+'</a>) registered!', function(){
+			User.notifyAdmins('info', null, 'New User Registration', 'A new user (<a href="'+(process.env.BASEURL || 'http://app.dev:8000')+'/profile/'+user._id+'">'+user._id+'</a>) registered!', function(){
 				callback(null, user, 'Thanks for signing up! Please supply your email address.');
 			});
 		});
