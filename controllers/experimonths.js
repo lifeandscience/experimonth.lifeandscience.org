@@ -9,7 +9,6 @@ var util = require('util')
   , ExperimonthEnrollment = mongoose.model('ExperimonthEnrollment')
   , ProfileQuestion = mongoose.model('ProfileQuestion')
   , User = mongoose.model('User')
-  , moment = require('moment')
   , s3 = require('../s3');
 
 module.exports = function(app){
@@ -19,7 +18,16 @@ module.exports = function(app){
 			params.published = true;
 		}
 		Experimonth.find(params).populate('kind').exec(function(err, experimonths){
-			res.render('experimonths', {title: 'Upcoming Experimonths', experimonths: experimonths, moment: moment});
+			res.render('experimonths/experimonths', {title: 'Experimonths', experimonths: experimonths});
+		});
+	});
+	app.get('/currently-recruiting', /* auth.authorize(2), */ function(req, res){
+		var params = {};
+		if(!req.user || req.user.role < 10){
+			params.published = true;
+		}
+		Experimonth.find(params).populate('kind').exec(function(err, experimonths){
+			res.render('experimonths', {title: 'Currently Recruiting', experimonths: experimonths});
 		});
 	});
 	
@@ -30,7 +38,7 @@ module.exports = function(app){
 				res.redirect('back');
 				return;
 			}
-			res.render('experimonths/view', {title: 'Experimonth: '+experimonth.name, experimonth: experimonth, moment: moment});
+			res.render('experimonths/view', {title: 'Experimonth: '+experimonth.name, experimonth: experimonth});
 		});
 	});
 	
@@ -403,7 +411,7 @@ module.exports = function(app){
 	
 	app.get('/experimonths/kinds', auth.authorize(2), function(req, res){
 		ExperimonthKind.find().exec(function(err, experimonthKinds){
-			res.render('experimonths/kinds', {title: 'Kinds of Experimonths', experimonthKinds: experimonthKinds, moment: moment});
+			res.render('experimonths/kinds', {title: 'Kinds of Experimonths', experimonthKinds: experimonthKinds});
 		});
 	});
 	
@@ -414,7 +422,7 @@ module.exports = function(app){
 				res.redirect('back');
 				return;
 			}
-			res.render('experimonths/kinds/view', {title: 'Kind of Experimonth: '+req.param('id'), experimonthKind: experimonthKind, moment: moment});
+			res.render('experimonths/kinds/view', {title: 'Kind of Experimonth: '+req.param('id'), experimonthKind: experimonthKind});
 		});
 	});
 	

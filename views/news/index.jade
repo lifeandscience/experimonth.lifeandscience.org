@@ -23,7 +23,7 @@ block body
 					each newsPost, i in newsPosts
 						tr
 							td.newsPost-label
-								d = moment(newsPost.date).clone()
+								d = locals.moment(newsPost.date).clone()
 								| #{d.format('MMMM Do, YYYY')}
 							td
 								if newsPost.image

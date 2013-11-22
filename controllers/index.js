@@ -31,6 +31,13 @@ module.exports = {
 				res.render('index', { title: 'Home Page', currentlyRecruiting: results.experimonths, confessions: results.confessions, news: results.news });
 			});
 		});
+		app.get('/get-notified', function(req, res){
+			res.render('get-notified', { title: 'Get Notified' });
+		});
+		app.get('/what-is-this', function(req, res){
+			res.render('what-is-this', { title: 'What Is This?' });
+		});
+/*
 		app.get('/empty', function(req, res){
 			var mongoose = require('mongoose')
 			  , count = 0
@@ -46,6 +53,7 @@ module.exports = {
 				mongoose.connection.collections[collection].drop(done);
 			}
 		});
+*/
 	}
   , api: require('./api')
 };

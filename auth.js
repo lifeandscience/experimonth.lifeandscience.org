@@ -115,7 +115,6 @@ module.exports = {
 						next();
 						return;
 					}
-					console.log('questions: ', questions.length, ' answers: ', answers.length);
 					req.flash('question');
 					if(questions.length > answers.length){
 						console.log('posing a question!');
@@ -133,14 +132,12 @@ module.exports = {
 						}
 						var question = availableQuestions[Math.floor(Math.random()*availableQuestions.length)];
 						app.render('profile/mixins', {question: question, answer: null, active: false}, function(err, html){
-							console.log('woo?', html);
 							req.flash('question', '<p><strong>Your profile is incomplete!</strong> Please answer the following question:</p>'+html);
 		/* 					res.redirect('/profile'); */
 							next();
 						});
 						return;
 					}
-					console.log('stopped');
 					// This user has answered all the questions!
 					next();
 					return;
@@ -152,16 +149,17 @@ module.exports = {
 		app.use(function(req, res, next){
 			res.locals.url = req.url;
 			var fullURL = req.protocol + "://" + req.get('host');
-			res.locals.nav = [];
 			if(req.user){
 				// Build nav based on user role
-				res.locals.nav = [];
-				if(req.user.role < 10){
+				if(req.user.role == 10){
+					res.locals.nav = [];
+/*
 					res.locals.nav.push({
 						'name': 'Profile'
 					  , 'link': fullURL+'/profile'
 					});
 				}else{
+*/
 					res.locals.nav.push({
 						'name': 'Profile'
 					  , 'link': '#'
@@ -188,6 +186,10 @@ module.exports = {
 					  , 'link': '#'
 					  , 'children': [
 							{
+								'name': 'Currently Recruiting'
+							  , 'link': fullURL+'/currently-recruiting'
+							}
+						  , {
 								'name': 'List'
 							  , 'link': fullURL+'/experimonths'
 							}
@@ -484,18 +486,18 @@ module.exports = {
 			  , email = req.param('email');
 			if(password != confirmPassword){
 				req.flash('error', 'Passwords do not match!');
-				res.redirect('/signin');
+				res.redirect('/register');
 				return;
 			}
 			User.findOne({email: email}, function(err, user){
 				if(err){
 					req.flash('error', 'An unexpected error occured. Please try again later.');
-					res.redirect('/signin');
+					res.redirect('/register');
 					return;
 				}
 				if(user){
 					req.flash('error', 'That email address is already in use.');
-					res.redirect('/signin');
+					res.redirect('/register');
 					return;
 				}
 				// Email address wasn't found, password seems to be good. Let's save!
@@ -506,7 +508,7 @@ module.exports = {
 				user.save(function(err){
 					if(err){
 						req.flash('error', 'There was an error during registration. Please try again.');
-						res.redirect('/signin');
+						res.redirect('/register');
 						return;
 					}
 					

@@ -2,40 +2,46 @@ extends layout
 
 block body
 	#container-inner
+		
 		- if ('undefined' !== typeof errors && errors.length)
 			ul#errors
 				- each error in errors
 					li.error= error
-					h1 Please login:
-		ul.login-buttons.unstyled
-			li
-				a.btn-auth.btn-facebook(href="/auth/facebook") Login with Facebook
-			li
-				a.btn-auth.btn-twitter(href="/auth/twitter") Login with Twitter
 
-		h1 Need an account? 
-		form.form-horizontal(action='/auth/local/register', method='POST')
-			#login.control-group
-				label.control-label(for='email') Email: 
-				.controls
-					.input-prepend
-						span.add-on
-							i.icon-envelope
-						input(type='text', name='email', placeholder='email@email.com', tabindex=4)
-			#password.control-group
-				label.control-label(for='password') Password: 
-				.controls
-					input(type='password', name='password', placeholder='password', tabindex=5)
-			#confirm-password.control-group
-				label.control-label(for='confirm-password') Confirm Password: 
-				.controls
-					input(type='password', name='confirm-password', placeholder='confirm password', tabindex=6)
-			#submit.control-group
-				.controls
-					input.btn(type='submit', tabindex=7) Register
+		h1 Know yourself. Through science.
+		p.big-text Experimonths are month-long challenges that teach you about your own motivations, biases, tendencies and habits. At the same time, they collect data for scientists who have agreed to trade rigor for cutting edge data. Play along by signing up. It’s free.
 
-		h1 Already have an account?
-		p
-			| Sign in 
-			a(href="/signin") here
-			| .
+		.row
+			.span8.offset2.text-center
+				.well
+					a.btn.btn-auth.btn-twitter(href="/auth/twitter")
+						i.icon-twitter
+						|  Sign up with Twitter
+					a.btn.btn-auth.btn-facebook(href="/auth/facebook") 
+						i.icon-facebook
+						|  Sign up with Facebook
+		.row
+			.span6.offset3.text-center
+				h2 Or create your own account:
+		.row
+			.span4.offset4.text-center
+				form.well(action='/auth/local/register', method='POST')
+					#login.control-group
+						//label.control-label(for='email') Email: 
+						.controls
+							input(type='text', name='email', placeholder='Email', tabindex=1)
+					#password.control-group
+						//label.control-label(for='password') Password: 
+						.controls
+							input(type='password', name='password', placeholder='Password', tabindex=2)
+					#password.control-group
+						//label.control-label(for='password') Password: 
+						.controls
+							input(type='password', name='confirm-password', placeholder='Confirm password', tabindex=3)
+					#submit.control-group
+						.controls
+							input.btn-auth.btn-login(type='submit', value='Login with Email', tabindex=3) Sign up with Email
+				p
+					| If you already have an account, 
+					a(href="/signin") login here
+					| .

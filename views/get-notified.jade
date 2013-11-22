@@ -1,0 +1,13 @@
+extends layout
+
+block body
+	#container-inner
+		- if ('undefined' !== typeof errors && errors.length)
+			ul#errors
+				- each error in errors
+					li.error= error
+
+		h1 Get Notified
+		p.big-text Sign up to receive an email when we launch a new Experimonth (only new ones, not repeats).
+		
+		h1 -- Form Goes Here --

@@ -17,21 +17,15 @@ var emailQueue = []
   , lastSendingTimeCount = 0
   , numEmailsPerSecond = 4
   , execQueue = function(){
-/* 		util.log('execQueue'); */
+		// TODO: Should the email queue be persisted to the database?!
 		// Grab the latest from the queue
 		if(emailQueue.length > 0 && emailsInFlight < numEmailsPerSecond){
-/* 			util.log('queue length is '+emailQueue.length); */
 			var currentTime = Math.floor(Date.now()/1000);
-/* 			util.log('current time: '+currentTime); */
-/* 			util.log('vs last time: '+lastSendingTime); */
 			if(currentTime == lastSendingTime){
 				// Check the count and possibly sleep
-/* 				util.log('this is running during the same second!'); */
 				if(lastSendingTimeCount == numEmailsPerSecond){
 					// We've met our rate
 					// Sleep / postpone this iteration
-/* 					util.log('we\'ve met our rate limit!'); */
-/* 					util.log('setting a timeout until the next second!'); */
 					setTimeout(execQueue, 1000);
 					return;
 				}
@@ -48,7 +42,6 @@ var emailQueue = []
 			emailsInFlight++;
 			// Send the email
 			email.sendMail(mail.options, function(error, response){
-/* 			var foobar = function(error, response){ */
 			    if(error){
 			        util.log('Email message not sent: '+util.inspect(error));
 			    }else{
@@ -60,13 +53,13 @@ var emailQueue = []
 			    }
 			    emailsInFlight--;
 			    execQueue();
-/* 			}(null, 'Dummy Response!'); */
 			});
 		}
 	};
 
 module.exports = {
 	sendMail: function(options, callback){
+		options.from = '"Experimonth: Frenemy" <experimonth@lifeandscience.org>';
 		emailQueue.push({options: options, callback: callback});
 		execQueue();
 	}

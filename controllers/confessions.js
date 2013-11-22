@@ -56,7 +56,6 @@ module.exports = function(app){
 			confession.save(function(err){
 	
 				var mailOptions = {
-			    	from: "Experimonth: Frenemy <experimonth@lifeandscience.org>", // sender address
 			    	to: 'experimonth+confessional@lifeandscience.org', // list of receivers
 			    	subject: 'Flagged Confession!', // Subject line
 			    	text: 'Confessional #'+confession.number+' was flagged, bringing it\'s total number of flags to '+confession.flags+' on '+moment().format('YYYY-MM-DD hh:mm A')+'\n\n---\n\n'+confession.text
@@ -163,7 +162,6 @@ module.exports = function(app){
 				item.number = count+1;
 	
 				var mailOptions = {
-			    	from: "Experimonth: Frenemy <experimonth@lifeandscience.org>", // sender address
 			    	to: 'experimonth+confessional@lifeandscience.org', // list of receivers
 			    	subject: 'New confession!', // Subject line
 			    	text: 'New Confessional posted on '+moment(item.date).format('YYYY-MM-DD hh:mm A')+'\n\n---\n\n'+item.text

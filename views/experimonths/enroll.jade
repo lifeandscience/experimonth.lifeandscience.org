@@ -3,8 +3,8 @@ extends ../layout
 block body
 	#container-inner
 		h1 #{title}
-		h3 Start Date: #{moment(experimonth.startDate).utc().format('YYYY-MM-DD')}
-		h3 End Date: #{moment(experimonth.endDate).utc().format('YYYY-MM-DD')}
+		h3 Start Date: #{locals.moment(experimonth.startDate).utc().format('YYYY-MM-DD')}
+		h3 End Date: #{locals.moment(experimonth.endDate).utc().format('YYYY-MM-DD')}
 		
 		p To enroll in this Experimonth, you must read and accept the following text:
 		

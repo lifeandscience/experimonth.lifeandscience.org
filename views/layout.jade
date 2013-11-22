@@ -2,7 +2,6 @@ doctype 5
 html
 	head
 		title= title
-		link(rel='stylesheet', href='/css3-social-signin-buttons/auth-buttons.css')
 		link(rel='stylesheet', href='/lib/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css')
 		link(rel='stylesheet', href='/css/navbar.css')
 		link(rel='stylesheet', href='/css/style.css')
@@ -66,7 +65,9 @@ html
 								.span4
 									h5.footer-header Get Notified
 									ul.footer-address
-										li Subscribe to our list to be notified when new projects are launched.
+										li 
+											a(href="/get-notified") Subscribe to our list
+											|  to be notified when new projects are launched.
 					.deep-footer
 						.container
 							.row

@@ -1,0 +1,52 @@
+extends layout
+
+block body
+	#container-inner
+		- if ('undefined' !== typeof errors && errors.length)
+			ul#errors
+				- each error in errors
+					li.error= error
+
+		h1 What is Experimonth?
+		
+		.row
+			.span8
+				p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam fermentum et diam elementum tincidunt. Quisque pellentesque sapien nec lorem luctus, vitae lobortis eros sollicitudin. Fusce sed nulla arcu. Fusce quis facilisis mi, eu cursus leo. Nam quam mauris, molestie ac dignissim at, hendrerit vitae diam. Ut fringilla, magna ac pharetra feugiat, turpis felis hendrerit elit, non bibendum nisl nisi semper neque. Donec a sem pharetra, auctor turpis in, fermentum diam. Maecenas vel vestibulum nisl, nec lobortis orci. Aliquam quis est vel libero pellentesque auctor sit amet id dolor. Morbi hendrerit tellus laoreet, vestibulum neque in, sollicitudin urna.
+
+				p Integer eu felis vulputate, ultricies nibh a, dictum nisl. Pellentesque sit amet ipsum lobortis, consectetur ligula eu, egestas velit. Vestibulum nec euismod neque, sit amet varius neque. In in consequat eros. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In elit nibh, vestibulum a lacus vitae, accumsan laoreet sapien. Fusce aliquam dolor eget elit tristique, condimentum fringilla mi scelerisque. Nam porttitor congue sollicitudin. Integer pellentesque porta sem ac mollis. Morbi sed purus neque. Mauris rutrum diam turpis, facilisis iaculis sapien pretium in. Pellentesque orci sem, tempor id mollis ut, molestie a lectus. Quisque tempor est libero, eget fermentum est gravida nec. Cras placerat consequat aliquet.
+
+				p Praesent quis est at nulla egestas mollis ac vel orci. Donec at congue diam. Quisque vel nisi quis urna luctus facilisis. Aliquam volutpat, odio et porta imperdiet, purus dolor fringilla augue, in rhoncus mauris tortor vel ante. Praesent suscipit, augue quis tincidunt eleifend, mi justo ultricies velit, et mollis arcu justo non metus. Etiam eget felis eu urna ullamcorper hendrerit. Nam tempor tincidunt mauris, sed ullamcorper risus varius eget. Aenean vel enim sed nulla consectetur luctus.
+
+				p Vivamus suscipit dui id arcu condimentum, quis lobortis lacus aliquet. Maecenas a sapien posuere, ultricies enim nec, euismod nisi. Donec varius erat id nulla blandit, ut tempor turpis tincidunt. Curabitur tincidunt massa sed est commodo, et tempus lorem bibendum. Aliquam tempor viverra tortor non tincidunt. Aenean lacinia at erat et varius. In vehicula arcu in erat ornare laoreet. Nullam aliquam eu elit sit amet porta. Quisque sagittis ante mauris. Proin rutrum tincidunt diam in convallis. Nulla porttitor orci at ultrices gravida. Mauris ultricies lorem non lacus sodales placerat. Proin id bibendum lacus.
+
+				p Vestibulum elit tellus, ultricies sit amet eleifend ac, dignissim pellentesque lectus. Sed rhoncus erat in neque iaculis, nec pretium nunc venenatis. Proin laoreet nisl ut imperdiet egestas. Duis massa est, porta ac dolor nec, commodo faucibus turpis. Duis laoreet, augue a ornare pretium, lacus dolor congue mauris, eu pulvinar orci justo ut nisl. Aenean adipiscing, massa eget molestie suscipit, tortor odio venenatis est, a condimentum purus mauris non ante. Etiam erat eros, posuere at tellus ac, mattis rhoncus orci. Fusce condimentum sollicitudin ante, non adipiscing leo rutrum quis. Mauris euismod sagittis quam non cursus. Suspendisse ullamcorper scelerisque leo, ac laoreet dui sodales et. In et nunc molestie, iaculis nibh ac, cursus tortor. Vivamus fringilla risus at massa convallis, nec adipiscing ligula condimentum. Vestibulum consectetur facilisis nibh suscipit accumsan. In in magna euismod, imperdiet nibh a, porttitor nisi.
+			
+			.span4
+				.meet-the-team
+					h5 Meet the Team
+					
+					img.team-image(src="/img/team_beck.png")
+					h6.name-and-title Beck Tench, Creator
+					h6.twitter
+						a(href="http://twitter.com/10ch") @10ch
+						| , 
+						a(href="http://twitter.com/experimonth") @experimonth
+					p Beck created experimonth as a way to redefine her new year’s resolutions in 2008.  She now leads the development of Experimonth and gets paid to do it.
+					
+					img.team-image(src="/img/team_elizabeth.png")
+					h6.name-and-title Elizabeth Fleming
+					h6.twitter
+						a(href="http://twitter.com/elizabef") @elizabef
+					p Elizabeth was the first person to experimonth with Beck, joining her and some of their colleagues, friends and strangers for each of the original 2009 experimonths. She has helped develop them from their first imaginings at the museum and specifically thinks up ways they can be explored in physical space.
+					
+					img.team-image(src="/img/team_troy.png")
+					h6.name-and-title Troy Livingston
+					h6.twitter
+						a(href="http://twitter.com/troybur") @troybur
+					p Troy is a seasoned experimonther and also its number one champion, making space for Beck and Elizabeth to play with the idea before it was something that could be reasonably justified as work.
+
+					img.team-image(src="/img/team_ben.png")
+					h6.name-and-title Ben Schell
+					h6.twitter
+						a(href="http://twitter.com/benschell") @benschell
+					p Ben makes experimonths work. He writes all of the code, structures the databases and troubleshoots when things don’t go as we’d planned.

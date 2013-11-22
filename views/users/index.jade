@@ -17,7 +17,7 @@ block body
 						td 
 							a(href="/profile/"+user._id) #{user.email}
 						td #{user.score}
-						td #{moment(user.lastPlayed).format('YYYY-MM-DD hh:mm A')}
+						td #{locals.moment(user.lastPlayed).format('YYYY-MM-DD hh:mm A')}
 						td
 							a.btn(href="/users/edit/#{user._id}") Edit
 							| 

@@ -3,8 +3,8 @@ extends ../layout
 block body
 	#container-inner
 		h1 #{title}
-		h3 Start Date: #{moment(experimonth.startDate).utc().format('YYYY-MM-DD')}
-		h3 End Date: #{moment(experimonth.endDate).utc().format('YYYY-MM-DD')}
+		h3 Start Date: #{locals.moment(experimonth.startDate).utc().format('YYYY-MM-DD')}
+		h3 End Date: #{locals.moment(experimonth.endDate).utc().format('YYYY-MM-DD')}
 
 		h2 Players (#{experimonth.users.length} / #{experimonth.userLimit}):
 		table.table.tablesorter
@@ -18,7 +18,7 @@ block body
 					tr
 						td #{user._id}
 						td #{user.name}
-						td #{moment(user.lastPlayed).format('YYYY-MM-DD hh:mm A')}
+						td #{locals.moment(user.lastPlayed).format('YYYY-MM-DD hh:mm A')}
 		//- if(pages > 1)
 		//	.pagination
 		//		ul

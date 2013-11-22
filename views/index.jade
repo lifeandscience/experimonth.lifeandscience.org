@@ -46,19 +46,19 @@ block body
 			.row
 				.span4
 					.info-bullet
-						i.icon-file
+						.hpIcon.hpIcon-handshake
 						h5 Make a Commitment
 						p
 							| Make a promise to yourself and others that you’ll last the month (or at least try to).
 				.span4
 					.info-bullet
-						i.icon-tags
+						.hpIcon.hpIcon-notepad
 						h5 Try Every Day
 						p
 							| Try your best to stick with it everyday, and to try again if you don’t. After all, failure is a critical part of science. 
 				.span4
 					.info-bullet
-						i.icon-cogs
+						.hpIcon.hpIcon-heart
 						h5 Be Honest & Forthright
 						p
 							| Share with others what challenges and triumphs you experience. Learn about yourself.
@@ -101,7 +101,7 @@ block body
 								div(id='testimonial'+i, class=(i == 0 ? 'testimonials-speech active' : 'testimonials-speech'))
 									p #{confession.text}
 									.speech-by
-										| Confession ##{confession.number}
+										a(href="/confessional/reply/"+confession.number) Confession ##{confession.number}
 				.span6
 					h3.section-header What is Experimonth?
 					.white-card
@@ -110,6 +110,8 @@ block body
 						p Since then, it’s been re-imagined as a way for science museums to engage people around the world while also generating data for scientists who want to solve big problems. Each Experimonth is designed with a scientist and sometimes also an artist and is intended to be fun and to give participants a way to reflect on their own lives and identities.
 
 						p Experimonths have been generously funded by the Institute for Museum and Library Services and the National Science Foundation.
+						
+						a(href="/what-is-this") Read more...
 	section.section-wrapper.stripped
 		.container
 			.row.clients-w
@@ -139,7 +141,7 @@ block body
 								a(href='blog/single_post.html') #{newsPost.title}
 							.post-info.clearfix
 								.pull-left
-									d = moment(newsPost.date).clone()
+									d = locals.moment(newsPost.date).clone()
 									span.post-date #{d.format('MMMM Do, YYYY')}
 									//a.post-comments(href='blog/single_post.html') 14 Comments
 								//.pull-right

@@ -94,7 +94,6 @@ UserSchema.method('sendActivationEmail', function(){
 
 	// setup e-mail data with unicode symbols
 	var mailOptions = {
-	    from: "Experimonth: Frenemy <experimonth@lifeandscience.org>", // sender address
 	    to: this.email, // list of receivers
 	    subject: 'Frenemy: Confirm Your Email Address', // Subject line
 	    generateTextFromHTML: true,
@@ -284,7 +283,6 @@ UserSchema.methods.notifyOfActivation = function(isActivation, cb){
 		
 		// setup e-mail data with unicode symbols
 		var mailOptions = {
-		    from: "Experimonth: Frenemy <experimonth@lifeandscience.org>", // sender address
 		    to: this.email, // list of receivers
 		    subject: title, // Subject line
 		    generateTextFromHTML: true,

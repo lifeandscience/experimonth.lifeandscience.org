@@ -12,7 +12,8 @@ var util = require('util')
   , User = mongoose.model('User')
   , Event = mongoose.model('Event')
   , ProfileQuestion = mongoose.model('ProfileQuestion')
-  , ProfileAnswer = mongoose.model('ProfileAnswer');
+  , ProfileAnswer = mongoose.model('ProfileAnswer')
+  , async = require('async');
 
 module.exports = function(app){
 	
@@ -145,16 +146,18 @@ module.exports = function(app){
 					return;
 				}
 				// Send a notification to all existing users that a new question was published.
+/*
 				User.notifyAll('info', null, 'New Profile Question Available!', 'Please check out the new profile question that was just published!', function(err){
 					if(err){
 						req.flash('error', 'Error notifying users! '+err);
 						res.redirect('back');
 						return;
 					}
+*/
 					req.flash('info', 'Profile Question published successfully.');
 					res.redirect('back');
 					return;
-				});
+/* 				}); */
 			});
 		});
 	});
@@ -165,8 +168,9 @@ module.exports = function(app){
 			res.redirect('back');
 			return;
 		}
-		if(!req.param('value') && !req.param('no_answer')){
-			req.flash('error', 'Please answer the question or check the \'Choose not to answer\' box.');
+		console.log('full: ', req.body);
+		if(!req.param('value') && !req.param('no_answer') && req.param('submit') != 'Choose not to answer'){
+			req.flash('error', 'Please answer the question or click\'Choose not to answer\'.');
 			res.redirect('back');
 			return;
 		}
@@ -238,35 +242,54 @@ module.exports = function(app){
 		});
 	});
 
+	var doProfile = function(user, res){
+		async.parallel({
+			enrollments: function(callback){
+				ExperimonthEnrollment.find({_id: {$in: user.enrollments}}).populate('experimonth').exec(callback);
+			}
+		  , events: function(callback){
+				Event.find({user: user._id}).populate('kind').populate('experimonth').exec(callback);
+			}
+		}, function(err, results){
+			if(err){
+				req.flash('error', err);
+				res.redirect('back');
+				return;
+			}
+			if(!results.enrollments){
+				req.flash('error', 'Enrollments not found.');
+				res.redirect('back');
+				return;
+			}
+			if(!results.events){
+				req.flash('error', 'Events not found.');
+				res.redirect('back');
+				return;
+			}
+			async.map(results.enrollments, function(enrollment, callback){
+				ExperimonthKind.findById(enrollment.experimonth.kind).exec(function(err, kind){
+					if(err){
+						callback(err);
+						return;
+					}
+					enrollment.experimonth.kindPopulated = kind;
+					return callback(null, enrollment);
+				});
+			}, function(err, results){
+				ProfileAnswer.find({user: user._id}).populate('question').exec(function(err, answers){
+					var questions = [];
+					for(var i=0; i<answers.length; i++){
+						questions.push(answers[i].question._id);
+					}
+					ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).sort('-publishDate').exec(function(err, questions){
+						res.render('profile', {title: 'Your Profile', u: user, enrollments: results.enrollments, questions: questions, answers: answers, timezones: utilities.getTimezones()/* , games: games */, events: results.events});
+					});
+				});
+			});		});
+	}
 	app.get('/profile', auth.authorize(1, 0, null, true), function(req, res){
 //		console.log('user.timezone', utilities.getTimezoneFromOffset(req.user.timezone));
-		ExperimonthEnrollment.find({_id: {$in: req.user.enrollments}}).populate('experimonth').exec(function(err, enrollments){
-			Event.find({user: req.user._id}).populate('kind').populate('experimonth').exec(function(err, events){
-				var count = enrollments.length
-				  , done = function(err, kind){
-						if(!err && kind){
-							enrollments[count].experimonth.kindPopulated = kind;
-						}
-						if(--count < 0){
-							return ProfileAnswer.find({user: req.user._id}).populate('question').exec(function(err, answers){
-								var questions = [];
-								for(var i=0; i<answers.length; i++){
-									questions.push(answers[i].question._id);
-								}
-								ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).exec(function(err, questions){
-									res.render('profile', {title: 'Your Profile', u: req.user, enrollments: enrollments, questions: questions, answers: answers, timezones: utilities.getTimezones()/* , games: games */, events: events});
-								});
-							});
-						}
-						if(enrollments[count].experimonth.kind){
-							ExperimonthKind.findById(enrollments[count].experimonth.kind).exec(done);
-						}else{
-							done();
-						}
-					};
-				done();
-			});
-		});
+		doProfile(req.user, res);
 	});
 
 	app.get('/profile/:id', auth.authorize(2, 10), function(req, res){
@@ -281,36 +304,7 @@ module.exports = function(app){
 				res.redirect('back');
 				return;
 			}
-			ExperimonthEnrollment.find({_id: {$in: user.enrollments}}).populate('experimonth').exec(function(err, enrollments){
-				var count = enrollments.length
-				  , done = function(err, kind){
-						if(!err && kind){
-							enrollments[count].experimonth.kindPopulated = kind;
-						}
-						if(--count < 0){
-							return ProfileAnswer.find({user: user._id}).populate('question').exec(function(err, answers){
-								var questions = [];
-								for(var i=0; i<answers.length; i++){
-									questions.push(answers[i].question._id);
-								}
-								ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).exec(function(err, questions){
-									var Notification = mongoose.model('Notification');
-									
-									Notification.find({user: user, read: false}, function(err, notifications){
-										res.render('profile', {title: 'User Profile', u: user, enrollments: user.enrollments, questions: questions, answers: answers, userNotifications: notifications, timezones: utilities.getTimezones()/* , games: games */});
-									});
-								});
-							});
-						}
-						if(enrollments[count].experimonth.kind){
-							ExperimonthKind.findById(enrollments[count].experimonth.kind).exec(done);
-						}else{
-							done();
-						}
-					};
-				done();
-				
-			});
+			doProfile(user, res);
 		});
 	});
 };

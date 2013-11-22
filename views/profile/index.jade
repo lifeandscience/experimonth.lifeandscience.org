@@ -20,122 +20,163 @@ block body
 					.controls
 						input.btn(type='submit', value='Submit!', tabindex=3) Submit
 		else 
-			if u.email
+			//if u.email
 				img(src='http://www.gravatar.com/avatar/'+u.email_hash)
-			h1 Welcome to your profile!
+			h1 Your Profile
+			
+			.row
+				.span8
+					p Edit your profile details at any time by typing in new information and clicking save.
+			
+					// h2 Opt Out
+					// p If you'd prefer, you can opt-out of your data being used in the analysis of the results of each Experimonth.
+					// form(method="POST", action="/users/opt_out")#opt_out
+					//	.control-group
+					//		.controls
+					//			label.checkbox
+					//				input(type="checkbox", name="opt_out", checked=u.opt_out)
+					//				| Opt-Out
+					//			button.btn.btn-primary(type="submit") Submit
 
-			h2 Notifications
-			mixin do_notifications()
-			
-			h2 Events
-			mixin do_events(locals.events)
-			
-			//h1 Current Games
-			//mixin do_games(games, true, false)
-			
-			//h1 Past Games
-			//mixin do_games(games, true, true)
-			
-			h2
-				| Your Experimonths 
-				a.btn(href="/experimonths") Enroll in More!
-			if enrollments && enrollments.length > 0
-				table.table
-					thead
-						tr
-							th Name
-							th Start Date
-							th End Date
-					tbody
-						each enrollment, i in enrollments
-							if enrollment.experimonth
-								tr(class='experimonth')
-									td 
-										if enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url
-											a(href=enrollment.experimonth.kindPopulated.url) #{enrollment.experimonth.name}
-										else
-											| #{enrollment.experimonth.name}
-									td #{moment(enrollment.experimonth.startDate).utc().format('YYYY-MM-DD')}
-									td #{moment(enrollment.experimonth.endDate).utc().format('YYYY-MM-DD')}
-			
-			// h2 Opt Out
-			// p If you'd prefer, you can opt-out of your data being used in the analysis of the results of each Experimonth.
-			// form(method="POST", action="/users/opt_out")#opt_out
-			//	.control-group
-			//		.controls
-			//			label.checkbox
-			//				input(type="checkbox", name="opt_out", checked=u.opt_out)
-			//				| Opt-Out
-			//			button.btn.btn-primary(type="submit") Submit
-			
-			h2 Tell us more about you!
-			h2 Basic Info
-			form(method="POST", action="/users/edit/#{u._id}")#userForm
-				.control-group
-					label.control-label(for="email") Email Address:
-					.controls
-						input#email.span5.disabled(type="text", placeholder="", name="email", value=u.email, disabled="disabled")
+					form(method="POST", action="/users/edit/#{u._id}")#userForm
+						.control-group
+							label.control-label(for="email") Email Address:
+							.controls
+								input#email.span5.disabled(type="text", placeholder="", name="email", value=u.email, disabled="disabled")
+		
+						.control-group
+							label.control-label(for="name") Name:
+							.controls
+								input#name.span5(type="text", placeholder="", name="name", value=u.name)
+				
+						.control-group
+							label.control-label(for="timezone") Timezone:
+							.controls
+								select#timezone.span5(name="timezone")
+									each offset, name in timezones
+										option(value=name, selected=(name == u.timezone)) #{name}
+									- for(var i=-12; i<13; i++){
+										option(value=i, selected=(''+i == u.timezone)) #{i}
+									- }
+				
+						.control-group
+							label.control-label(for="zipcode") Zip Code:
+							.controls
+								input#zipcode.span5(type="text", placeholder="", name="zipcode", value=u.zipcode)
+				
+						.control-group
+							label.control-label(for="birthday") Birthday:
+							.controls
+								input#birthday.span5(type="text", placeholder="", name="birthday", value=u.birthday)
+				
+						.control-group
+							label.control-label(for="ethnicity") Ethnicity:
+							.controls
+								input#ethnicity.span5(type="text", placeholder="", name="ethnicity", value=u.ethnicity)
+				
+						.control-group
+							label.control-label(for="gender") Gender:
+							.controls
+								input#gender.span5(type="text", placeholder="", name="gender", value=u.gender)
+		
+						.control-group
+							.controls
+								button.btn.btn-primary(type="submit") Save
 
-				.control-group
-					label.control-label(for="name") Name:
-					.controls
-						input#name.span5(type="text", placeholder="", name="name", value=u.name)
-		
-				.control-group
-					label.control-label(for="timezone") Timezone:
-					.controls
-						select#timezone.span5(name="timezone")
-							each offset, name in timezones
-								option(value=name, selected=(name == u.timezone)) #{name}
-							- for(var i=-12; i<13; i++){
-								option(value=i, selected=(''+i == u.timezone)) #{i}
-							- }
-		
-				.control-group
-					label.control-label(for="zipcode") Zip Code:
-					.controls
-						input#zipcode.span5(type="text", placeholder="", name="zipcode", value=u.zipcode)
-		
-				.control-group
-					label.control-label(for="birthday") Birthday:
-					.controls
-						input#birthday.span5(type="text", placeholder="", name="birthday", value=u.birthday)
-		
-				.control-group
-					label.control-label(for="ethnicity") Ethnicity:
-					.controls
-						input#ethnicity.span5(type="text", placeholder="", name="ethnicity", value=u.ethnicity)
-		
-				.control-group
-					label.control-label(for="gender") Gender:
-					.controls
-						input#gender.span5(type="text", placeholder="", name="gender", value=u.gender)
+				.span4
+					.notifications
+						.pull-right
+							// TODO: Add correct number of messages
+							if locals.userNotifications
+								n = locals.userNotifications
+							else if locals.notifications
+								n = locals.notifications
+							n = n ? n.length : 0
+							n = n + (questions ? questions.length : 0)
+							h6.bubble #{n}
+						h5 Experimonth Messages
+						
+						if questions && questions.length > 0
+							
+							.notification.notification-questions
+								.notification-header
+									.notification-subject You have new questions
+									span.notification-date #{locals.moment(questions[0].publishDate).format('MMMM DD, YYYY, h:mm A')}
+								.notification-body 
+									each question, i in questions
+										active = (i == 0)
+										include mixins
+										//mixin do_question(question, null, i == 0)
 
-				.control-group
-					.controls
-						button.btn.btn-primary(type="submit") Save
-			
+						mixin do_notifications()
+
 			h3 Additional Info
-			div#myCarousel.carousel.slide(data-interval="false")
-				.carousel-inner
-					haveDoneAQuestion = questions && questions.length > 0;
-					if questions && questions.length > 0
-						answer = null
-						each question, i in questions
-							active = (i == 0)
-							include mixins
-							//mixin do_question(question, null, i == 0)
-					if answers && answers.length > 0
-						each answer, i in answers
-							active = (!haveDoneAQuestion && i == 0)
-							question = answer.question
-							include mixins
-							//mixin do_question(answer.question, answer, !haveDoneAQuestion && i == 0)
-				a.carousel-control.left(href="#myCarousel", data-slide="prev") &lsaquo;
-				a.carousel-control.right(href="#myCarousel", data-slide="next") &rsaquo;
-			h6 User
-			pre !{u}
-			h6 Answers
-			pre !{answers}
-			h6 Questions
-			pre !{questions}
+			.row
+				haveDoneAQuestion = questions && questions.length > 0;
+				if questions && questions.length > 0
+					answer = null
+					each question, i in questions
+						active = (i == 0)
+						whiteCard = true
+						include mixins
+						//mixin do_question(question, null, i == 0)
+				if answers && answers.length > 0
+					each answer, i in answers
+						active = (!haveDoneAQuestion && i == 0)
+						question = answer.question
+						whiteCard = true
+						include mixins
+						//mixin do_question(answer.question, answer, !haveDoneAQuestion && i == 0)
+
+			loggedInU = user()
+			if loggedInU && loggedInU.role == 10
+				h3 Debug Info:
+
+				#extra.accordion
+					.accordion-group
+						.accordion-heading
+							a.accordion-toggle(href="#events-details", data-parent="#extra", data-toggle="collapse") Events
+						#events-details.accordion-body.collapse 
+							.accordion-inner 
+								mixin do_events(locals.events)
+					.accordion-group
+						.accordion-heading
+							a.accordion-toggle(href="#experimonths-details", data-parent="#extra", data-toggle="collapse") Experimonths
+						#experimonths-details.accordion-body.collapse 
+							.accordion-inner 
+								if enrollments && enrollments.length > 0
+									table.table
+										thead
+											tr
+												th Name
+												th Start Date
+												th End Date
+										tbody
+											each enrollment, i in enrollments
+												if enrollment.experimonth
+													tr(class='experimonth')
+														td 
+															if enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url
+																a(href=enrollment.experimonth.kindPopulated.url) #{enrollment.experimonth.name}
+															else
+																| #{enrollment.experimonth.name}
+														td #{locals.moment(enrollment.experimonth.startDate).utc().format('YYYY-MM-DD')}
+														td #{locals.moment(enrollment.experimonth.endDate).utc().format('YYYY-MM-DD')}
+					.accordion-group
+						.accordion-heading
+							a.accordion-toggle(href="#user-details", data-parent="#extra", data-toggle="collapse") User
+						#user-details.accordion-body.collapse 
+							.accordion-inner 
+								pre !{u}
+					.accordion-group
+						.accordion-heading
+							a.accordion-toggle(href="#answers-details", data-parent="#extra", data-toggle="collapse") Answers
+						#answers-details.accordion-body.collapse
+							.accordion-inner
+								pre !{answers}
+					.accordion-group
+						.accordion-heading
+							a.accordion-toggle(href="#questions-details", data-parent="#extra", data-toggle="collapse") Questions
+						#questions-details.accordion-body.collapse
+							.accordion-inner
+								pre !{questions}

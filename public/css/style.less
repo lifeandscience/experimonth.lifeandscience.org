@@ -1,12 +1,15 @@
 @import '../venera/less/theme_venera_white';
 
+@red: #730202;
+@lightGray: #cbcbcb;
+@mediumGray: #8b9191;
+@hpRed: #960000;
+
 body {
 /*   padding: 50px; */
 /*   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; */
-}
-
-a {
-  color: #00B7FF;
+	padding-top: 100px;
+	color: black;
 }
 
 #notificationsPopover{
@@ -20,8 +23,11 @@ a {
 	border: 1px solid rgb(204, 204, 204);
 	padding: 4px;
 	box-sizing: content-box;
+	.box-shadow(~"rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset");
+/*
 	-webkit-box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset;
 	box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset;
+*/
 	border-top-right-radius: 3px;
 	border-bottom-right-radius: 3px;
 	border-bottom-left-radius: 3px;
@@ -29,8 +35,19 @@ a {
 	overflow: scroll;
 	outline: none;
 }
+body .slider-header,
+body .section-wrapper .section-header,
+body .testimonials .testimonials-speech p,
+body .white-card h5,
+body .meet-the-team h5,
+body .notifications h5 {
+	border-color: @lightGray;
+}
+.slider-sub-header {
+	color: @mediumGray;
+}
 .sub-slider-features {
-	background: #960000;
+	background: @hpRed;
 	color: white;
 
 	.info-bullet {
@@ -42,10 +59,26 @@ a {
 		}
 	}
 }
+.slider-w .cta a,
+.btn {
+	border-width: 0 0 4px 0;
+	.box-shadow(none);
+	background-image: none;
+}
+.slider-w .cta a,
+.btn-default {
+	border-color: @lightGray;
+	color: @red;
+	
+	&:hover,
+	&:active {
+		background-color: darken(#ECF0F1, 10%);
+	}
+}
 
 .white-card {
   background-color: #fff;
-  .box-shadow(~"0px 1px 4px 0px #9dc2dc, 2px 2px 1px 0px #fff inset");
+  .box-shadow(~"0px 1px 4px 0px #cbcbcb, 2px 2px 1px 0px #fff inset");
   #gradient > .vertical(#f9fcfe, #fff);
 
   &.just-white {
@@ -82,4 +115,139 @@ a {
 }
 footer a {
 	color: #c9d3cd;
+}
+.well {
+	
+}
+.btn-auth {
+	padding: 25px 60px;
+	margin-right: 20px;
+	color: white;
+	background-image: none;
+	.reset-filter();
+	
+	i {
+		margin-right: 5px;
+	}
+	
+	&.btn-facebook {
+		background-color: #3c4a9b;
+		border-color: lighten(#3c4a9b, 15%);
+	}
+	&.btn-twitter {
+		background-color: #499dff;
+		border-color: lighten(#499dff, 15%);
+	}
+	&:hover,
+	&:active {
+		color: #EEE;
+	}
+}
+input.btn-auth {
+	margin-right: 0;
+	background-color: @red;
+	border-color: lighten(@red, 5%);
+}
+
+a {
+	color: @red;
+}
+p.big-text {
+	font-size: 24px;
+	line-height: 1.2em;
+	margin: 1em 0;
+}
+h1 {
+	border-bottom: 2px solid @lightGray;
+	padding-bottom: 15px;
+}
+footer {
+	margin-top: 60px;
+}
+.hpIcon {
+	width: 120px;
+	height: 80px;
+	margin: 0 auto 24px auto;
+	
+	&.hpIcon-handshake {
+		background: transparent url('../img/icon_handshake.png') scroll no-repeat center center;
+	}
+	&.hpIcon-notepad {
+		background: transparent url('../img/icon_notepad.png') scroll no-repeat center center;
+	}
+	&.hpIcon-heart {
+		background: transparent url('../img/icon_heart.png') scroll no-repeat center center;
+	}
+}
+.testimonials .testimonials-speech {
+	.box-shadow(~"0px 1px 4px 0px #cbcbcb, 2px 2px 1px 0px #fff inset");
+	padding-right: 20px;
+}
+.recent-post .post-date {
+	border: none;
+}
+.meet-the-team {
+	.white-card;
+	
+	img.team-image {
+		float: left;
+		margin: 10px 10px 10px 0;
+	}
+	h6 {
+		margin-top: 0;
+		text-transform: uppercase;
+	}
+	h6.name-and-title {
+		margin-bottom: 0;
+		margin-top: 50px;
+	}
+	p {
+		font-size: 15px;
+		line-height: 20px;
+		clear: both;
+	}
+}
+.notifications {
+	.white-card;
+	
+	h5 {
+		margin-top: 12px;
+		padding-bottom: 12px;
+	}
+	h6.bubble {
+		font-size: 24px;
+		line-height: 48px;
+		text-align: center;
+		width: 48px;
+		height: 48px;
+		margin: 0;
+		color: white;
+		background: transparent url('../img/icon_bubble.png') scroll no-repeat center center;
+	}
+	.notification {
+		margin-bottom: 20px;
+		
+		.notification-header {
+			height: 60px;
+			padding: 20px 0 0 90px;
+			margin-bottom: 10px;
+			background: transparent url('../img/icon_notification.png') scroll no-repeat left center;
+
+			
+			.notification-subject {
+				text-transform: uppercase;
+				font-size: 14px;
+				font-weight: normal;
+			}
+			.notification-date {
+				color: @mediumGray;
+			}
+		}
+					
+		&.notification-questions {
+			.notification-header {
+				background-image: url('../img/icon_new_question.png');
+			}
+		}
+	}
 }

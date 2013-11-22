@@ -1,22 +1,26 @@
 //mixin do_question(question, answer, active)
-.item.question(class=(active ? 'active' : ''))
-	form(method="POST", action="/profile/questions/answer/#{question._id}")
-		- if(answer)
-			input(type="hidden", name="answerid", value=answer._id)
-		.control-group
-			label.control-label(for="value") Q: #{question.text}
-			- if(question.type == 'open')
+.item.question(class=(active ? 'active ' : '')+(whiteCard ? 'span4' : 'clearfix'))
+	div(class=(whiteCard ? 'white-card clearfix' : ''))
+		form(method="POST", action="/profile/questions/answer/#{question._id}")
+			- if(answer)
+				input(type="hidden", name="answerid", value=answer._id)
+			.control-group
+				label.control-label(for="value") #{question.text}
+				- if(question.type == 'open')
+					.controls
+						input.input-block-level(type="text", name="value", value=(answer ? answer.value : false))
+				- else if(question.type == 'multiple-choice')
+					.controls
+						select.input-block-level(name="value")
+							option(value="") Select
+							- for choice, j in question.choices
+								option(value=choice, selected=(answer && choice == answer.value))
+									| #{choice}
+			input.btn.btn-primary.pull-right(type="submit", name="submit", value="Submit")
+			|  
+			input.btn.pull-right(type="submit", name="submit", value="Choose not to answer")
+			//.control-group.pull-right
 				.controls
-					input(type="text", name="value", value=(answer ? answer.value : false))
-			- else if(question.type == 'multiple-choice')
-				.controls
-					- for choice, j in question.choices
-						label.radio
-							input(type="radio", name="value", value=choice, checked=(answer && choice == answer.value))
-							| #{choice}
-		.control-group
-			.controls
-				label.checkbox
-					input(type="checkbox", name="no_answer", checked=(answer && answer.no_answer))
-					| Choose not to answer
-				button.btn.btn-primary(type="submit") Submit
+					label.checkbox
+						input(type="checkbox", name="no_answer", checked=(answer && answer.no_answer))
+						| Choose not to answer

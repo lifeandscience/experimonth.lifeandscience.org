@@ -19,7 +19,7 @@ block body
 					each confession, i in confessions
 						tr
 							td.confession-label
-								d = moment(confession.date).clone()
+								d = locals.moment(confession.date).clone()
 								- if(Math.round((d.minutes()/100)) > 0)
 									- d = d.add('hours', 1)
 								| On #{d.format('MMMM Do, YYYY [around] hA')}: Confession ##{confession.number}
@@ -37,7 +37,7 @@ block body
 											tbody
 												each event, i in confession.recentEvents
 													tr
-														td #{moment(event.date).format('M/D/YY h:mm')}
+														td #{locals.moment(event.date).format('M/D/YY h:mm')}
 														td #{event.name}
 														td #{event.value}
 										

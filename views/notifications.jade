@@ -5,17 +5,13 @@ mixin do_notifications()
 		n = locals.notifications
 	if n && n.length > 0
 		each notification, i in n
-			div(class='notification alert alert-'+notification.type+(notification.read ? ' read' : ''))
-				if notification.subject
-					| #{moment(notification.date).format('LLL')} - 
-					strong !{notification.subject}
+			div(class='notification notification-'+notification.type+(notification.read ? ' read' : ''))
+				.notification-header
 					a.close(href='/notification/read/'+notification._id)
 						i.icon-remove
-					| !{notification.text}
-				else
-					| #{moment(notification.date).format('LLL')} - 
-					| !{notification.text}
-					a.close(href='/notification/read/'+notification._id)
-						i.icon-remove
+					if notification.subject
+						.notification-subject #{notification.subject}
+					span.notification-date #{locals.moment(notification.date).format('MMMM DD, YYYY, h:mm A')}
+				.notification-body !{notification.text}
 	else
 		h2 No Notifications!

@@ -132,25 +132,26 @@ app.configure(function(){
 		}
 		var fullURL = req.protocol + "://" + req.get('host');
 		res.write('var EM_URL = "'+fullURL+'";');
+		var defaultNav = [
+			{
+				'name': 'Home'
+			  , 'link': fullURL+'/home'
+			},
+			{
+				'name': 'What is this?'
+			  , 'link': fullURL+'/what-is-this'
+			},
+			{
+				'name': 'Currently Recruiting'
+			  , 'link': fullURL+'/currently-recruiting'
+			},
+			{
+				'name': 'Get Notified'
+			  , 'link': fullURL+'/get-notified'
+			}
+		];
 		if(!req.user){
-			res.write('var EM_NAV = '+JSON.stringify([
-				{
-					'name': 'Home'
-				  , 'link': fullURL+'/home'
-				},
-				{
-					'name': 'What is this?'
-				  , 'link': fullURL+'/what-is-this'
-				},
-				{
-					'name': 'Currently Recruiting'
-				  , 'link': fullURL+'/currently-recruiting'
-				},
-				{
-					'name': 'Get Notified'
-				  , 'link': fullURL+'/get-notified'
-				}
-			])+';');
+			res.write('var EM_NAV = '+JSON.stringify(defaultNav)+';');
 			res.write('var EM_RIGHT_NAV = '+JSON.stringify([
 				{
 					'name': 'Sign In'
@@ -164,7 +165,7 @@ app.configure(function(){
 				}
 			])+';');
 		}else{
-			res.write('var EM_DEFAULT_NAV = '+JSON.stringify(res.locals.nav)+';');
+			res.write('var EM_DEFAULT_NAV = '+JSON.stringify(res.locals.nav || defaultNav)+';');
 			res.write('var EM_RIGHT_NAV = '+JSON.stringify([
 				{
 					'name': 'Profile'

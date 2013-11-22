@@ -4,53 +4,38 @@ block body
 	#container-inner
 		h1 #{title}
 		
-		table.table.tablesorter
+		table.table.table-striped.currently-recruiting
 			thead
 				tr
-					th Start / End Date
-					th Name
-					th Kind
-					th Type
-					th Players
-					th Open?
-					th Actions
+					th Experimonth
+					th Begins on...
+					th Open Spots
+					th Enroll
 			tbody
 				each experimonth, i in experimonths
 					tr
-						td #{moment(experimonth.startDate).utc().format('M/D/YY')} - #{moment(experimonth.endDate).utc().format('M/D/YY')}
-						td #{experimonth.name}
-						td #{experimonth.kind && experimonth.kind.name ? experimonth.kind.name : ''}
 						td
-							if experimonth.type && experimonth.type.length
-								ul.unstyled
-									each type in experimonth.type
-										li #{type}
+							strong #{experimonth.name}
+							if experimonth.description
+								|  
+								span.description (#{experimonth.description})
+						td #{locals.moment(experimonth.startDate).utc().format('MMM. D, YYYY')}
 						td
 							if experimonth.unlimited
 								|  Unlimited
+							else if (experimonth.users.length / experimonth.userLimit) > 0.5
+								|  Plenty Left
 							else
-								|  #{experimonth.users.length} / #{experimonth.userLimit}
-						td #{experimonth.open ? 'yes' : 'no'}
+								|  #{experimonth.userLimit - experimonth.users.length} Left
 						td
-							a.btn(href="/experimonths/view/#{experimonth._id}") View
-							|  
-							a.btn(href="/experimonths/edit/#{experimonth._id}") Edit
 							u = user(2, 10)
 							if u
-								|  
-								if experimonth.published
-									a.btn.btn-success.disabled(data-bootbox-alert="<p>You may not publish this Experimonth as it has already been published.</p>") Published
-								else
-									a.btn.btn-success(href="/experimonths/publish/#{experimonth._id}", data-bootbox-confirm="<p>Are you sure you want to publish this Experimonth</p><p>Publishing an Experimonth notifies users that a new Experimonth has been published.</p>") Publish
-							//|  
-							//a.btn.btn-danger(href="/experimonths/delete/#{experimonth._id}") Delete	
-							u = user(2)
-							- if(u)
-								|  
-								- if(experimonth.users.indexOf(u._id.toString()) == -1)
-									a.btn.btn-primary(href="/experimonths/enroll/#{experimonth._id}") Enroll!
-								- else
+								if experimonth.users.indexOf(u._id.toString()) != -1
 									a.btn.btn-warning(href="/experimonths/unenroll/#{experimonth._id}") Un-enroll
+								else
+									a.btn.btn-primary(href="/experimonths/enroll/#{experimonth._id}") Do It
+							else
+								a.btn.btn-primary(href="/register") Get Started
 		//- if(pages > 1)
 		//	.pagination
 		//		ul
