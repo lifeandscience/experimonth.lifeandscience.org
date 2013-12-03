@@ -58,12 +58,16 @@ sub {
 }
 img {
   /* Responsive images (ensure images don't scale beyond their parents) */
+
   max-width: 100%;
   /* Part 1: Set a maxium relative to the parent */
+
   width: auto\9;
   /* IE7-8 need help adjusting responsive images */
+
   height: auto;
   /* Part 2: Scale the height according to the width, otherwise you get stretching */
+
   vertical-align: middle;
   border: 0;
   -ms-interpolation-mode: bicubic;
@@ -158,7 +162,7 @@ textarea {
   img {
     max-width: 100% !important;
   }
-  @page {
+  @page  {
     margin: 0.5cm;
   }
   p,
@@ -701,6 +705,7 @@ ol.inline > li {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
   padding-left: 5px;
   padding-right: 5px;
@@ -987,6 +992,7 @@ input[type="color"]:focus,
   outline: 0;
   outline: thin dotted \9;
   /* IE6-9 */
+
   -webkit-box-shadow: inset 0 2px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
   -moz-box-shadow: inset 0 2px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
   box-shadow: inset 0 2px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
@@ -996,8 +1002,10 @@ input[type="checkbox"] {
   margin: 4px 0 0;
   *margin-top: 0;
   /* IE7 */
+
   margin-top: 1px \9;
   /* IE8-9 */
+
   line-height: normal;
 }
 input[type="file"],
@@ -1013,8 +1021,10 @@ select,
 input[type="file"] {
   height: 32px;
   /* In IE7, the height of the select element cannot be changed by height, only font-size */
+
   *margin-top: 4px;
   /* For IE7, add top margin to align select with labels */
+
   line-height: 32px;
 }
 select {
@@ -1419,6 +1429,7 @@ select:focus:invalid:focus {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
   vertical-align: middle;
   padding-left: 5px;
@@ -1569,6 +1580,7 @@ input.search-query {
   padding-left: 14px;
   padding-left: 4px \9;
   /* IE7-8 doesn't have border-radius, so don't indent the padding */
+
   margin-bottom: 0;
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
@@ -1625,6 +1637,7 @@ input.search-query {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
   margin-bottom: 0;
   vertical-align: middle;
@@ -2210,6 +2223,7 @@ button.close {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
   padding: 4px 12px;
   margin-bottom: 0;
@@ -2232,6 +2246,7 @@ button.close {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   *background-color: #ecf0f1;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
   border: 1px solid #bdc3c7;
   *border: 0;
@@ -2370,6 +2385,7 @@ input[type="button"].btn-block {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   *background-color: #fdfba5;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 .btn-bright:hover,
@@ -2401,6 +2417,7 @@ input[type="button"].btn-block {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   *background-color: #960000;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 .btn-primary:hover,
@@ -2432,6 +2449,7 @@ input[type="button"].btn-block {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   *background-color: #f8ebac;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 .btn-warning:hover,
@@ -2463,6 +2481,7 @@ input[type="button"].btn-block {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   *background-color: #ce7f6b;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 .btn-danger:hover,
@@ -2494,6 +2513,7 @@ input[type="button"].btn-block {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   *background-color: #aabf70;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 .btn-success:hover,
@@ -2525,6 +2545,7 @@ input[type="button"].btn-block {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   *background-color: #69adaa;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 .btn-info:hover,
@@ -2556,6 +2577,7 @@ input[type="button"].btn-block {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   *background-color: #222222;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 .btn-inverse:hover,
@@ -2587,6 +2609,7 @@ input[type="button"].btn-block {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   *background-color: #eeeeee;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 .btn-gray:hover,
@@ -2661,6 +2684,7 @@ input[type="submit"].btn.btn-mini {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
   font-size: 0;
   vertical-align: middle;
@@ -2836,6 +2860,7 @@ input[type="submit"].btn.btn-mini {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
 }
 .btn-group-vertical > .btn {
@@ -3564,6 +3589,7 @@ input[type="submit"].btn.btn-mini {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   *background-color: #f2f2f2;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
   -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.075);
   -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.075);
@@ -3805,6 +3831,7 @@ input[type="submit"].btn.btn-mini {
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   *background-color: #f2f2f2;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 .navbar-inverse .btn-navbar:hover,
@@ -3833,6 +3860,7 @@ input[type="submit"].btn.btn-mini {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
   font-size: 18px;
   margin-right: 0px;
@@ -3867,6 +3895,7 @@ input[type="submit"].btn.btn-mini {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
   margin-left: 0;
   margin-bottom: 0;
@@ -4059,6 +4088,7 @@ input[type="submit"].btn.btn-mini {
   border: 1px solid rgba(0, 0, 0, 0.3);
   *border: 1px solid #6c7065;
   /* IE6-7 */
+
   -webkit-box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
   -moz-box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
@@ -7715,6 +7745,7 @@ a .icon-flip-vertical:before {
   height: 90px;
   overflow: hidden;
   /* cut the drop shadows off */
+
 }
 .bs-navbar-top-example .navbar-fixed-top,
 .bs-navbar-bottom-example .navbar-fixed-bottom {
@@ -7816,6 +7847,7 @@ form.bs-docs-example {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
   margin-right: 15px;
 }
@@ -7872,6 +7904,7 @@ form.bs-docs-example {
   .bs-docs-sidenav > li > a {
     width: 190px \9;
     /* Override the previous IE8-9 hack */
+  
   }
 }
 /* Desktop
@@ -8031,6 +8064,7 @@ form.bs-docs-example {
   list-style: none;
   overflow: hidden;
   /* clear floats */
+
 }
 .responsive-utilities-test li {
   position: relative;
@@ -8104,6 +8138,7 @@ form.bs-docs-example {
 ol.linenums {
   margin: 0 0 0 33px;
   /* IE indents via margin-left */
+
 }
 ol.linenums li {
   padding-left: 12px;
@@ -8123,8 +8158,7 @@ li.L9 {
   color: #fff;
   list-style-type: decimal;
 }
-/* END STYLES FOR CODE EXAMPLES SECTIONS IN DOCUMENTATION */
-#lightboxOverlay {
+/* END STYLES FOR CODE EXAMPLES SECTIONS IN DOCUMENTATION */#lightboxOverlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -8198,6 +8232,7 @@ li.L9 {
   height: 100%;
   background-image: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
   /* Trick IE into showing hover */
+
   display: block;
 }
 .lb-prev {
@@ -8495,6 +8530,7 @@ li.L9 {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
   margin: 0px 10px 10px 0px;
   position: relative;
@@ -8503,6 +8539,7 @@ li.L9 {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
   background-color: #c14957;
   color: #fff;
@@ -8733,7 +8770,9 @@ li.L9 {
   *zoom: 1;
   padding-bottom: 10px;
   /* Comment author photo */
+
   /* Actual comment text */
+
 }
 .post-comments-list li:before,
 .post-comments-list li:after {
@@ -8770,6 +8809,7 @@ li.L9 {
   position: relative;
   font-family: "Abel", "Helvetica Neue", Helvetica, Arial, sans-serif;
   /* Add an tip poiting to comment author */
+
 }
 .post-comments-list li .comment-content:before {
   content: "";
@@ -8792,6 +8832,7 @@ li.L9 {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
   overflow: hidden;
   vertical-align: top;
@@ -8935,13 +8976,21 @@ li.L9 {
   text-align: center;
   background: #76a3a0 url('../venera/images/slider-noise-blue-bg.jpg') top left repeat;
   /* Slider item */
+
   /* Browser showcasing product */
+
   /* Call to Action button */
+
   /* Wrapper of slider browsers */
+
   /* Browser with screenshot */
+
   /* Smaller browser on left */
+
   /* Big browser in the middle */
+
   /* Smaller browser on right */
+
 }
 .slider-w .item {
   height: 440px;
@@ -9041,9 +9090,13 @@ li.L9 {
   margin-bottom: 30px;
   padding: 0px 3%;
   /* Icon with font awesome */
+
   /* You can place an image instead of a font awesome icon */
+
   /* Header of the feature */
+
   /* Feature description */
+
 }
 .sub-slider-features .info-bullet > i {
   font-size: 100px;
@@ -9082,10 +9135,15 @@ li.L9 {
   padding-top: 30px;
   padding-bottom: 30px;
   /* Add a stripped background to a section */
+
   /* Area under a slider - adding a border to separate visually */
+
   /* Header of a logical section */
+
   /* Paragraph of a section with slightly larger font */
+
   /* Can be used as a wrapper of call to action button */
+
 }
 .section-wrapper.stripped {
   background: transparent url('../venera/images/stripped-bg.png') left top repeat;
@@ -9222,13 +9280,21 @@ li.L9 {
 .pricing-table {
   padding-top: 20px;
   /* Name of the membership plan */
+
   /* Wrapper of the plan information */
+
   /* Wrapper for Price info of a plan */
+
   /* Description of the price */
+
   /* Currency of a plan */
+
   /* Price itself */
+
   /* Per month per year - any sort of pricing period goes here */
+
   /* You can add description to a pricing plan */
+
 }
 .pricing-table .plan-name {
   text-transform: uppercase;
@@ -9245,6 +9311,7 @@ li.L9 {
   border-right: 1px solid #eee;
   border-left: 1px solid #eee;
   /* Remove borders from first and last plans in a row */
+
 }
 .pricing-table .pricing-plan-w.first-plan {
   border-left: none;
@@ -9274,6 +9341,7 @@ li.L9 {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
 }
 .pricing-table .price-self {
@@ -9283,6 +9351,7 @@ li.L9 {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
 }
 .pricing-table .price-period {
@@ -9292,6 +9361,7 @@ li.L9 {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
 }
 .pricing-table .plan-desc p {
@@ -9342,8 +9412,11 @@ form.no-margin-bottom {
 .testimonials {
   margin-bottom: 20px;
   /* Client with testimonial */
+
   /* Text of testimonial */
+
   /* Testimonial author info */
+
 }
 .testimonials .testimonials-user {
   -webkit-box-shadow: -3px -3px 0px 0px #ced0c6;
@@ -9374,6 +9447,7 @@ form.no-margin-bottom {
   position: relative;
   display: block;
   /* Add a pointer from user avatar to the testimonial text */
+
 }
 .testimonials .testimonials-user-w.active .testimonials-user,
 .testimonials .testimonials-user-w:hover .testimonials-user {
@@ -9434,9 +9508,13 @@ table.no-margin {
   background: #92a298 url('../venera/images/slider-noise-bg.jpg') left top repeat;
   border-top: 10px solid #7c8f83;
   /* Footer logo styles */
+
   /* Company Address information */
+
   /* Header of a section in footer */
+
   /* List of items in footer has to have custom styles */
+
 }
 .pre-footer .thumbnail {
   -webkit-box-shadow: none;
@@ -9496,7 +9574,9 @@ table.no-margin {
   background-color: #3d3d3d;
   border-top: 2px solid #303030;
   /* Copyright information */
+
   /* Footer links */
+
 }
 .deep-footer .copyright {
   color: #cccccc;
@@ -9510,6 +9590,7 @@ table.no-margin {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
   margin-left: 10px;
 }
@@ -9643,6 +9724,7 @@ table.no-margin {
 .slider-w {
   background: #ffffff;
   /* Call to Action button */
+
 }
 .slider-w .cta a {
   -webkit-box-shadow: 0px 0px 6px 1px #eee, 0px 2px 3px 1px #fff inset;
@@ -9671,8 +9753,11 @@ table.no-margin {
   text-align: center;
   margin-bottom: 50px;
   /* Icon with font awesome */
+
   /* Header of the feature */
+
   /* Feature description */
+
 }
 .sub-slider-features .info-bullet > i {
   color: #6b92ba;
@@ -9697,6 +9782,7 @@ table.no-margin {
 /* Can be used to separte sections of the website */
 .section-wrapper {
   /* Add a stripped background to a section */
+
 }
 .section-wrapper.stripped {
   background: none;
@@ -9750,7 +9836,9 @@ table.no-margin {
 /* Testimonials styles */
 .testimonials {
   /* Client with testimonial */
+
   /* Text of testimonial */
+
 }
 .testimonials .testimonials-user {
   -webkit-box-shadow: none;
@@ -9760,6 +9848,7 @@ table.no-margin {
 }
 .testimonials .testimonials-user-w {
   /* Add a pointer from user avatar to the testimonial text */
+
 }
 .testimonials .testimonials-user-w.active .testimonials-user,
 .testimonials .testimonials-user-w:hover .testimonials-user {
@@ -9797,9 +9886,13 @@ table.no-margin {
   background: #242424;
   border-top: 10px solid #171717;
   /* Footer logo styles */
+
   /* Company Address information */
+
   /* Header of a section in footer */
+
   /* List of items in footer has to have custom styles */
+
 }
 .pre-footer .thumbnail {
   -webkit-box-shadow: none;
@@ -9835,7 +9928,9 @@ table.no-margin {
   background-color: #3d3d3d;
   border-top: 2px solid #303030;
   /* Copyright information */
+
   /* Footer links */
+
 }
 .deep-footer .copyright {
   color: #fff;
@@ -10172,7 +10267,9 @@ table.no-margin {
 .post-comments-list li {
   border-bottom: 1px dashed #cccccc;
   /* Comment author photo */
+
   /* Actual comment text */
+
 }
 .post-comments-list li .comment-author-photo {
   -webkit-box-shadow: none;
@@ -10190,6 +10287,7 @@ table.no-margin {
   padding: 0px 0px 10px 10px;
   font-family: "Abel", "Helvetica Neue", Helvetica, Arial, sans-serif;
   /* Add an tip poiting to comment author */
+
 }
 .post-comments-list li .comment-content:before {
   border-color: transparent #ffffff transparent transparent;
@@ -10226,6 +10324,7 @@ table.no-margin {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
+
   *zoom: 1;
 }
 .visible-desktop-inline {
@@ -10651,6 +10750,9 @@ table.no-margin {
   .single-post-w {
     padding: 30px 35px;
   }
+}
+@media (min-width: 980px) {
+  
 }
 @media (min-width: 768px) and (max-width: 979px) {
   .row {
@@ -11409,7 +11511,9 @@ table.no-margin {
 }
 body {
   /*   padding: 50px; */
+
   /*   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; */
+
   padding-top: 100px;
   color: black;
 }
@@ -11431,6 +11535,7 @@ body {
 	-webkit-box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset;
 	box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset;
 */
+
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
@@ -11547,6 +11652,9 @@ footer a {
 .btn-auth:hover,
 .btn-auth:active {
   color: #EEE;
+}
+.btn-auth > i {
+  text-shadow: none;
 }
 input.btn-auth {
   margin-right: 0;
@@ -11953,4 +12061,7 @@ footer {
 }
 .notifications .notification.notification-questions .notification-header {
   background-image: url('../img/icon_new_question.png');
+}
+.notifications .notification.notification-questions .question {
+  margin-bottom: 15px;
 }

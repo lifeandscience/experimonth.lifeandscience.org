@@ -5,7 +5,11 @@
 			- if(answer)
 				input(type="hidden", name="answerid", value=answer._id)
 			.control-group
-				label.control-label(for="value") #{question.text}
+				label.control-label(for="value")
+					| #{question.text}
+					if question.required
+						|  
+						div.pull-right.label.label-info Required
 				- if(question.type == 'open')
 					.controls
 						input.input-block-level(type="text", name="value", value=(answer ? answer.value : false))

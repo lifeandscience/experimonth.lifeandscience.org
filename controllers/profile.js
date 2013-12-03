@@ -72,7 +72,7 @@ module.exports = function(app){
 				var mailOptions = {
 			    	from: "Experimonth: Frenemy <experimonth@lifeandscience.org>", // sender address
 			    	to: 'experimonth+confessional@lifeandscience.org', // list of receivers
-			    	subject: 'New confession!', // Subject line
+			    	subject: 'New confession.', // Subject line
 			    	text: 'New Confessional posted on '+moment(item.date).format('YYYY-MM-DD hh:mm A')+'\n\n---\n\n'+item.text
 			    };
 	
@@ -147,9 +147,9 @@ module.exports = function(app){
 				}
 				// Send a notification to all existing users that a new question was published.
 /*
-				User.notifyAll('info', null, 'New Profile Question Available!', 'Please check out the new profile question that was just published!', function(err){
+				User.notifyAll('info', null, 'New Profile Question Available.', 'Please check out the new profile question that was just published.', function(err){
 					if(err){
-						req.flash('error', 'Error notifying users! '+err);
+						req.flash('error', 'Error notifying users. '+err);
 						res.redirect('back');
 						return;
 					}
@@ -195,11 +195,11 @@ module.exports = function(app){
 					}
 					answer.save(function(err){
 						if(err){
-							req.flash('error', 'Error saving existing answer!');
+							req.flash('error', 'Error saving existing answer.');
 							res.redirect('back');
 							return;
 						}
-						req.flash('info', 'Thanks for your answer!');
+						req.flash('info', 'Thanks for your answer.');
 						res.redirect('back');
 						return;
 					});
@@ -217,7 +217,7 @@ module.exports = function(app){
 			}
 			answer.save(function(err){
 				if(err){
-					req.flash('error', 'Error saving new answer!');
+					req.flash('error', 'Error saving new answer.');
 					res.redirect('back');
 					return;
 				}
@@ -229,12 +229,12 @@ module.exports = function(app){
 				}
 				req.user.save(function(err){
 					if(err){
-						req.flash('error', 'Error saving user!');
+						req.flash('error', 'Error saving user.');
 						res.redirect('back');
 						return;
 					}
 	
-					req.flash('info', 'Thanks for your answer!');
+					req.flash('info', 'Thanks for your answer.');
 					res.redirect('back');
 				});
 				return;

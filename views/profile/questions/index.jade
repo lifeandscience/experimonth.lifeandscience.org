@@ -14,7 +14,13 @@ block body
 				tbody
 					- each question, i in questions
 						tr
-							td #{question.text}
+							td 
+								| #{question.text} (
+								if question.required
+									| required
+								else
+									| optional
+								| )
 							td #{question.type}
 							td #{question.choices_string}
 							td 

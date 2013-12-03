@@ -6,7 +6,7 @@ include ../events
 
 block body
 	#container-inner.user-profile
-		if !u
+		if u.state < 2
 			h1 Please provide your email address:
 			form.form-horizontal(action='/auth/addEmail', method='POST')
 				#login.control-group
@@ -18,10 +18,10 @@ block body
 							input(type='text', name='email', placeholder='email@email.com', tabindex=1)
 				#submit.control-group
 					.controls
-						input.btn(type='submit', value='Submit!', tabindex=3) Submit
+						input.btn(type='submit', value='Submit', tabindex=3) Submit
 		else 
 			//if u.email
-				img(src='http://www.gravatar.com/avatar/'+u.email_hash)
+			//	img(src='http://www.gravatar.com/avatar/'+u.email_hash)
 			h1 Your Profile
 			
 			.row

@@ -27,19 +27,19 @@ module.exports = function(app){
 	
 	app.get('/news/publish/:id', auth.authorize(2, 10), function(req, res){
 		if(!req.params.id){
-			req.flash('error', 'News Post ID required!');
+			req.flash('error', 'News Post ID required.');
 			res.redirect('/news');
 			return;
 		}
 		NewsPost.findById(req.params.id).exec(function(err, newsPost){
 			if(err || !newsPost){
-				req.flash('error', 'News Post not found!');
+				req.flash('error', 'News Post not found.');
 				res.redirect('/news');
 				return;
 			}
 			newsPost.active = true;
 			newsPost.save(function(err){
-				req.flash('info', 'News Post published!');
+				req.flash('info', 'News Post published.');
 				res.redirect('/news');
 				return;
 			});
@@ -49,19 +49,19 @@ module.exports = function(app){
 	
 	app.get('/news/unpublish/:id', auth.authorize(2, 10), function(req, res){
 		if(!req.params.id){
-			req.flash('error', 'News Post ID required!');
+			req.flash('error', 'News Post ID required.');
 			res.redirect('/news');
 			return;
 		}
 		NewsPost.findById(req.params.id).exec(function(err, newsPost){
 			if(err || !newsPost){
-				req.flash('error', 'News Post not found!');
+				req.flash('error', 'News Post not found.');
 				res.redirect('/news');
 				return;
 			}
 			newsPost.active = false;
 			newsPost.save(function(err){
-				req.flash('info', 'News Post unpublished!');
+				req.flash('info', 'News Post unpublished.');
 				res.redirect('/news');
 				return;
 			});

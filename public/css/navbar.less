@@ -15,6 +15,10 @@
 	text-transform: uppercase;
 	
 	.navbar-inner {
+		background-color: #242424;
+		background-image: none;
+		.reset-filter();
+
 		border: 0;
 		
 		a {
@@ -25,8 +29,8 @@
 		a.brand {
 			margin: 0;
 			display: block;
-			width: 133px;
-			height: 53px;
+			width: 135px;
+			height: 55px;
 			background: transparent url('../img/logo.gif') scroll no-repeat left top;
 			text-indent: -999em;
 		}
@@ -64,6 +68,10 @@
 	.navbar .nav > li.dropdown.open.active > a:focus {
 		color: #960000;
 	}
+}
+
+body {
+	margin-top: 100px;
 }
 
 @media (min-width: 768px) and (max-width: 980px) {

@@ -10964,6 +10964,9 @@
   }
 }
 .em-navbar-wrapper .navbar-inner {
+  background-color: #242424;
+  background-image: none;
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
   border: 0;
 }
 .em-navbar-wrapper .navbar-inner a {
@@ -10973,8 +10976,8 @@
 .em-navbar-wrapper .navbar-inner a.brand {
   margin: 0;
   display: block;
-  width: 133px;
-  height: 53px;
+  width: 135px;
+  height: 55px;
   background: transparent url('../img/logo.gif') scroll no-repeat left top;
   text-indent: -999em;
 }
@@ -11005,6 +11008,9 @@
 .em-navbar-wrapper .navbar .nav > li.dropdown.open.active > a:hover,
 .em-navbar-wrapper .navbar .nav > li.dropdown.open.active > a:focus {
   color: #960000;
+}
+body {
+  margin-top: 100px;
 }
 @media (min-width: 768px) and (max-width: 980px) {
   body {

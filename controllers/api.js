@@ -48,7 +48,7 @@ module.exports = function(app){
 										if(user.requiredAnswers.length != numRequiredQuestions){
 											// This user hasn't filled out all their questions. So, we've got to exclude them from play.
 											// TODO: Notify the player that they've been skipped from playing because their profile is incomplete?
-											console.log('this player was excluded due to not filling out their questions!', user._id);
+											console.log('this player was excluded due to not filling out their questions.', user._id);
 											experimonth.users.splice(i, 1);
 										}else if(!fillInAdmin && user.role >= 10){
 											// Find an enrolled admin

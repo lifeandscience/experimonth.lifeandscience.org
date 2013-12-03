@@ -92,7 +92,7 @@ module.exports = function(app){
 			count++;
 			user.save(function(err){
 				if(--count == 0){
-					req.flash('info', 'Users generated successfully!');
+					req.flash('info', 'Users generated successfully.');
 					res.redirect('/users');
 				}
 			});
@@ -119,7 +119,7 @@ module.exports = function(app){
 			return;
 		}
 		User.update({_id: req.params.id}, {$set: {role: 10}}, {}, function(){
-			req.flash('info', 'User Promoted!');
+			req.flash('info', 'User Promoted.');
 			res.redirect('/users');
 		});
 	});
@@ -129,7 +129,7 @@ module.exports = function(app){
 			return;
 		}
 		User.update({_id: req.params.id}, {$set: {role: 0}}, {}, function(){
-			req.flash('info', 'User Demoted!');
+			req.flash('info', 'User Demoted.');
 			res.redirect('/users');
 		});
 	});
@@ -144,7 +144,7 @@ module.exports = function(app){
 			user.save();
 			user.notifyOfActivation(true, function(){
 				util.log('activated: '+util.inspect(arguments));
-				req.flash('info', 'User Activated!');
+				req.flash('info', 'User Activated.');
 				res.redirect('/users');
 			});
 		});
@@ -160,14 +160,14 @@ module.exports = function(app){
 			user.save(function(){
 				user.notifyOfActivation(false, function(){
 					util.log('activated: '+util.inspect(arguments));
-					req.flash('info', 'User De-activated!');
+					req.flash('info', 'User De-activated.');
 					res.redirect('/users');
 				});
 			});
 		});
 	/*
 		User.update({_id: req.params.id}, {$set: {active: false}}, {}, function(){
-			req.flash('info', 'User De-activated!');
+			req.flash('info', 'User De-activated.');
 			res.redirect('/users');
 		});
 	*/
@@ -175,7 +175,7 @@ module.exports = function(app){
 	
 	app.get('/users/export', auth.authorize(2, 10), function(req, res, next){
 		var start = Date.now();
-		util.log('starting the log up! '+start);
+		util.log('starting the log up. '+start);
 		// Export all game data as a CSV
 		var User = mongoose.model('User');
 	
@@ -196,7 +196,7 @@ module.exports = function(app){
 		  , checkDone = function(){
 				if(--numUsers == 0){
 					if(totallyDone){
-						util.log('totally done!');
+						util.log('totally done.');
 						if(hasFoundUser){
 							// We found at least one game
 							// Maybe the query needs to be re-run starting at an offset of offset
@@ -247,14 +247,14 @@ module.exports = function(app){
 	// Saving for now.
 	app.get('/users/resetScores/d23bd87', auth.authorize(2, 10), function(req, res, next){
 		User.update({defending: true}, { $set: { score: 10000 }}, { multi: true }, function(){
-			util.log('did reset defending users!');
+			util.log('did reset defending users.');
 			util.log(util.inspect(arguments));
 	
 			User.update({defending: false}, { $set: { score: 0 }}, { multi: true }, function(){
-				util.log('did reset accumulating users!');
+				util.log('did reset accumulating users.');
 				util.log(util.inspect(arguments));
 	
-				req.flash('error', 'User scores reset!');
+				req.flash('error', 'User scores reset.');
 				res.redirect('/users');
 			});
 		});

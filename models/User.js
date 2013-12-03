@@ -95,7 +95,7 @@ UserSchema.method('sendActivationEmail', function(){
 	// setup e-mail data with unicode symbols
 	var mailOptions = {
 	    to: this.email, // list of receivers
-	    subject: 'Frenemy: Confirm Your Email Address', // Subject line
+	    subject: 'Experimonth: Confirm Your Email Address', // Subject line
 	    generateTextFromHTML: true,
 	    html: html // html body
 	}
@@ -308,6 +308,33 @@ UserSchema.static('randomAdmin', function(callback) {
 		this.findOne().skip(rand).exec(callback);
 	}.bind(this));
 });
+UserSchema.methods.checkProfileQuestions =  function(req, notComplete, complete){
+	var user = this
+	  , ProfileQuestion = mongoose.model('ProfileQuestion')
+	  , ProfileAnswer = mongoose.model('ProfileAnswer');
+	ProfileQuestion.find({published: true}).exec(function(err, questions){
+		if(err){
+			console.log('error retrieving questions: ', arguments);
+			notComplete(null, null);
+			return;
+		}
+		ProfileAnswer.find({user: user._id}).exec(function(err, answers){
+			if(err){
+				console.log('error retrieving answers: ', arguments);
+				notComplete(questions, null);
+				return;
+			}
+			req.flash('question');
+			if(questions.length > answers.length){
+				console.log('calling notComplete');
+				notComplete(questions, answers);
+			}else{
+				console.log('calling complete');
+				complete();
+			}
+		});
+	});
+};
 
 User = mongoose.model('User', UserSchema);
 exports = User;

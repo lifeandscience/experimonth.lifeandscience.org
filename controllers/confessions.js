@@ -35,20 +35,20 @@ module.exports = function(app){
 					confessions[i].save();
 				}
 			}
-			req.flash('info', 'Done numbering existing confessions!');
+			req.flash('info', 'Done numbering existing confessions.');
 			res.redirect('/confessions');
 		});
 	});
 	
 	app.get('/confessions/flag/:id', function(req, res){
 		if(!req.params.id){
-			req.flash('error', 'Confession ID required!');
+			req.flash('error', 'Confession ID required.');
 			res.redirect('/confessions');
 			return;
 		}
 		Confession.findById(req.params.id).exec(function(err, confession){
 			if(err || !confession){
-				req.flash('error', 'Confession not found!');
+				req.flash('error', 'Confession not found.');
 				res.redirect('/confessions');
 				return;
 			}
@@ -57,14 +57,14 @@ module.exports = function(app){
 	
 				var mailOptions = {
 			    	to: 'experimonth+confessional@lifeandscience.org', // list of receivers
-			    	subject: 'Flagged Confession!', // Subject line
+			    	subject: 'Flagged Confession.', // Subject line
 			    	text: 'Confessional #'+confession.number+' was flagged, bringing it\'s total number of flags to '+confession.flags+' on '+moment().format('YYYY-MM-DD hh:mm A')+'\n\n---\n\n'+confession.text
 			    };
 	
 			    // send mail with defined transport object
 				email.sendMail(mailOptions, null);
 	
-				req.flash('info', 'Confession flagged!');
+				req.flash('info', 'Confession flagged.');
 				res.redirect('/confessions');
 				return;
 			});
@@ -74,19 +74,19 @@ module.exports = function(app){
 	
 	app.get('/confessions/promote/:id', function(req, res){
 		if(!req.params.id){
-			req.flash('error', 'Confession ID required!');
+			req.flash('error', 'Confession ID required.');
 			res.redirect('/confessions');
 			return;
 		}
 		Confession.findById(req.params.id).exec(function(err, confession){
 			if(err || !confession){
-				req.flash('error', 'Confession not found!');
+				req.flash('error', 'Confession not found.');
 				res.redirect('/confessions');
 				return;
 			}
 			confession.promoted = !confession.promoted;
 			confession.save(function(err){
-				req.flash('info', 'Confession '+(confession.promoted ? 'promoted!' : 'demoted!'));
+				req.flash('info', 'Confession '+(confession.promoted ? 'promoted.' : 'demoted.'));
 				res.redirect('/confessions');
 				return;
 			});
@@ -96,19 +96,19 @@ module.exports = function(app){
 	
 	app.get('/confessions/publish/:id', auth.authorize(2, 10), function(req, res){
 		if(!req.params.id){
-			req.flash('error', 'Confession ID required!');
+			req.flash('error', 'Confession ID required.');
 			res.redirect('/confessions');
 			return;
 		}
 		Confession.findById(req.params.id).exec(function(err, confession){
 			if(err || !confession){
-				req.flash('error', 'Confession not found!');
+				req.flash('error', 'Confession not found.');
 				res.redirect('/confessions');
 				return;
 			}
 			confession.active = true;
 			confession.save(function(err){
-				req.flash('info', 'Confession published!');
+				req.flash('info', 'Confession published.');
 				res.redirect('/confessions');
 				return;
 			});
@@ -118,19 +118,19 @@ module.exports = function(app){
 	
 	app.get('/confessions/unpublish/:id', auth.authorize(2, 10), function(req, res){
 		if(!req.params.id){
-			req.flash('error', 'Confession ID required!');
+			req.flash('error', 'Confession ID required.');
 			res.redirect('/confessions');
 			return;
 		}
 		Confession.findById(req.params.id).exec(function(err, confession){
 			if(err || !confession){
-				req.flash('error', 'Confession not found!');
+				req.flash('error', 'Confession not found.');
 				res.redirect('/confessions');
 				return;
 			}
 			confession.active = false;
 			confession.save(function(err){
-				req.flash('info', 'Confession unpublished!');
+				req.flash('info', 'Confession unpublished.');
 				res.redirect('/confessions');
 				return;
 			});
@@ -163,7 +163,7 @@ module.exports = function(app){
 	
 				var mailOptions = {
 			    	to: 'experimonth+confessional@lifeandscience.org', // list of receivers
-			    	subject: 'New confession!', // Subject line
+			    	subject: 'New confession.', // Subject line
 			    	text: 'New Confessional posted on '+moment(item.date).format('YYYY-MM-DD hh:mm A')+'\n\n---\n\n'+item.text
 			    };
 	
@@ -185,9 +185,9 @@ module.exports = function(app){
 		}
 	  , layout = 'layout-confessional';
 	
-	app.get('/confessional', utilities.doForm(as, populate, 'Confess!', Confession, template, varNames, redirect, beforeRender, null, layout));
-	app.get('/confessional/reply/:number', utilities.doForm(as, populate, 'Confess!', Confession, template, varNames, redirect, beforeRender, null, layout));
-	app.post('/confessional', formValidate, utilities.doForm(as, populate, 'Confess!', Confession, template, varNames, redirect, beforeRender, beforeSave, layout));
+	app.get('/confessional', utilities.doForm(as, populate, 'Confess.', Confession, template, varNames, redirect, beforeRender, null, layout));
+	app.get('/confessional/reply/:number', utilities.doForm(as, populate, 'Confess.', Confession, template, varNames, redirect, beforeRender, null, layout));
+	app.post('/confessional', formValidate, utilities.doForm(as, populate, 'Confess.', Confession, template, varNames, redirect, beforeRender, beforeSave, layout));
 	
 	
 	app.get('/confessional/thanks', function(req, res){

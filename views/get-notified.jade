@@ -10,4 +10,25 @@ block body
 		h1 Get Notified
 		p.big-text Sign up to receive an email when we launch a new Experimonth (only new ones, not repeats).
 		
-		h1 -- Form Goes Here --
+		// Begin MailChimp Signup Form 
+		#mc_embed_signup
+			form#mc-embedded-subscribe-form.validate(action='http://lifeandscience.us2.list-manage.com/subscribe/post?u=90bfea598695502771d70b932&id=2cb389281e', method='post', name='mc-embedded-subscribe-form', target='_blank', novalidate='novalidate')
+				h2 Subscribe to our mailing list
+				.indicates-required
+					span.asterisk *
+					| indicates required
+				.mc-field-group
+					label(for='mce-EMAIL')
+						| Email Address
+						span.asterisk *
+					input#mce-EMAIL.required.email(type='email', value='', name='EMAIL')
+				.mc-field-group.input-group
+					strong Please check, if applicable: 
+					input(id='mce-group[14889]-14889-0', type='checkbox', value='1', name='group[14889][1]')
+					label(for='mce-group[14889]-14889-0') I represent an organization that is interested in Experimonthing.
+				#mce-responses.clear
+					#mce-error-response.response(style='display: none;')
+					#mce-success-response.response(style='display: none;')
+				.clear
+					input#mc-embedded-subscribe.button(type='submit', value='Subscribe', name='subscribe')
+		// End mc_embed_signup

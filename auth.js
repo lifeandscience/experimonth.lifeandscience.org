@@ -9,7 +9,7 @@ var mongoose = require('mongoose')
   , OAuth2Provider = require('oauth2-provider').OAuth2Provider;
 
 var homeRoute = '/home'
-  , adminEmails = ['ben.schell@gmail.com', 'ben.schell@bluepanestudio.com', 'ben@benschell.org', 'beck@becktench.com'];
+  , adminEmails = ['ben.schell@gmail.com', 'ben.schell@bluepanestudio.com', 'beck@becktench.com'];
 
 module.exports = {
 	setup: function(app){
@@ -101,47 +101,41 @@ module.exports = {
 		app.use(passport.session());
 		
 		var checkProfile = function(req, res, next){
-			var ProfileQuestion = mongoose.model('ProfileQuestion')
-			  , ProfileAnswer = mongoose.model('ProfileAnswer');
-			ProfileQuestion.find({published: true}).exec(function(err, questions){
-				if(err){
-					console.log('error retrieving questions: ', arguments);
-					next();
-					return;
+			// If the user hasn't yet finished their registration (including email address), skip the question posts.
+			if(req.user.state < 2){
+				return next();
+			}
+			if(req.hasCheckedQuestions){
+				return next();
+			}
+			console.log('setting req.hasCheckedQuestions');
+			req.hasCheckedQuestions = true;
+			console.log('req.hasCheckedQuestions: ', req.hasCheckedQuestions ? 'YES' : 'NO');
+			req.user.checkProfileQuestions(req, function(questions, answers){
+				console.log('posing a question!');
+				// There are some un-answered questions!
+				// Pick a random question of those that aren't answered
+				var answered = {}
+				  , availableQuestions = [];
+				for(var i=0; i<answers.length; i++){
+					answered[answers[i].question] = true;
 				}
-				ProfileAnswer.find({user: req.user._id}).exec(function(err, answers){
-					if(err){
-						console.log('error retrieving answers: ', arguments);
-						next();
-						return;
+				for(var i=0; i<questions.length; i++){
+					if(!answered[questions[i]._id]){
+						availableQuestions.push(questions[i]);
 					}
-					req.flash('question');
-					if(questions.length > answers.length){
-						console.log('posing a question!');
-						// There are some un-answered questions!
-						// Pick a random question of those that aren't answered
-						var answered = {}
-						  , availableQuestions = [];
-						for(var i=0; i<answers.length; i++){
-							answered[answers[i].question] = true;
-						}
-						for(var i=0; i<questions.length; i++){
-							if(!answered[questions[i]._id]){
-								availableQuestions.push(questions[i]);
-							}
-						}
-						var question = availableQuestions[Math.floor(Math.random()*availableQuestions.length)];
-						app.render('profile/mixins', {question: question, answer: null, active: false}, function(err, html){
-							req.flash('question', '<p><strong>Your profile is incomplete!</strong> Please answer the following question:</p>'+html);
-		/* 					res.redirect('/profile'); */
-							next();
-						});
-						return;
-					}
-					// This user has answered all the questions!
+				}
+				var question = availableQuestions[Math.floor(Math.random()*availableQuestions.length)];
+				app.render('profile/mixins', {question: question, answer: null, active: false}, function(err, html){
+					req.flash('question', '<p><strong>Your profile is incomplete!</strong> Please answer the following question:</p>'+html);
+/* 					res.redirect('/profile'); */
 					next();
-					return;
 				});
+				return;
+			}, function(){
+				// This user has answered all the questions!
+				next();
+				return;
 			});
 			return false;
 		}
@@ -680,16 +674,24 @@ module.exports = {
 			requiredRole = 0;
 		}
 		return function(req, res, next){
+			var thisRoute = homeRoute;
+			console.log('woo? ', req.user ? req.user.state : 0, requiredState);
 			if(!req.user || req.user.state < requiredState){
-				if(!message){
-					if(req.user && req.user.state == 0){
+				if(req.user){
+					if(req.user.state == 0){
 						message = 'Please check your email to confirm your address. (<a href="/auth/local/register/resend/'+req.user.email+'">Resend?</a>)';
-					}else{
-						message = 'Please sign in to access that page.';
+					}else if(req.user.state == 1){
+						message = 'Please supply your email address to proceed.';
+						thisRoute = '/profile';
+						console.log('setting thisRoute: ', thisRoute);
+					}else if(!message){
+						message = 'You don\'t have permission to access that page.';
 					}
+				}else{
+					message = 'Please sign in to access that page.';
 				}
 				req.flash('error', message);
-				res.redirect(homeRoute);
+				res.redirect(thisRoute);
 				return;
 			}
 			if(!req.user || req.user.role < requiredRole){
@@ -711,7 +713,7 @@ module.exports = {
 			
 
 			// Check if we need to answer questions
-			if(req.user.role >= 10 || skipQuestionCount){
+			if(req.user.role >= 10 || skipQuestionCount || req.user.state < 2){
 				// If we're an admin, we don't check for questions
 				next();
 				return;
