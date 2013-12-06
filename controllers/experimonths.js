@@ -17,8 +17,17 @@ module.exports = function(app){
 		if(!req.user || req.user.role < 10){
 			params.published = true;
 		}
-		Experimonth.find(params).populate('kind').exec(function(err, experimonths){
-			res.render('experimonths/experimonths', {title: 'Experimonths', experimonths: experimonths});
+		var finish = function(enrollGoesToProfile){
+			Experimonth.find(params).populate('kind').exec(function(err, experimonths){
+				res.render('experimonths/experimonths', {title: 'Experimonths', experimonths: experimonths, enrollGoesToProfile: enrollGoesToProfile});
+			});
+		}
+		req.user.checkProfileQuestions(req, function(questions, answers){
+			// The user did not complete all the required questions.
+			req.flash('error', 'You must answer all required profile questions before enrolling in an Experimonth.');
+			finish(true);
+		}, function(){
+			finish(false);
 		});
 	});
 	app.get('/currently-recruiting', /* auth.authorize(2), */ function(req, res){
@@ -26,9 +35,18 @@ module.exports = function(app){
 		if(!req.user || req.user.role < 10){
 			params.published = true;
 		}
-		Experimonth.find(params).populate('kind').exec(function(err, experimonths){
-			res.render('experimonths', {title: 'Currently Recruiting', experimonths: experimonths});
-		});
+		var finish = function(enrollGoesToProfile){
+			Experimonth.find(params).populate('kind').exec(function(err, experimonths){
+				res.render('experimonths', {title: 'Currently Recruiting', experimonths: experimonths, enrollGoesToProfile: enrollGoesToProfile});
+			});
+		}
+		req.user.checkProfileQuestions(req, function(questions, answers){
+			// The user did not complete all the required questions.
+			req.flash('error', 'You must answer all required profile questions before enrolling in an Experimonth.');
+			finish(true);
+		}, function(){
+			finish(false);
+		});;
 	});
 	
 	app.get('/experimonths/view/:id', auth.authorize(2), function(req, res){
@@ -52,7 +70,7 @@ module.exports = function(app){
 		req.user.checkProfileQuestions(req, function(questions, answers){
 			// The user did not complete all the required questions.
 			req.flash('error', 'You must answer all required profile questions before enrolling in an Experimonth.');
-			res.redirect('/profile');
+			res.redirect('back');
 		}, function(){
 			Experimonth.findById(req.param('id')).exec(function(err, experimonth){
 				if(err || !experimonth){
@@ -133,7 +151,7 @@ module.exports = function(app){
 		req.user.checkProfileQuestions(req, function(questions, answers){
 			// The user did not complete all the required questions.
 			req.flash('error', 'You must answer all required profile questions before enrolling in an Experimonth.');
-			res.redirect('/profile');
+			res.redirect('back');
 		}, function(){
 			Experimonth.findById(req.param('id')).exec(function(err, experimonth){
 				if(err || !experimonth){

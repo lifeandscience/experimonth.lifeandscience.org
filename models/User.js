@@ -266,34 +266,29 @@ UserSchema.static('notifyAll', function(type, format, subject, text, callback){
 UserSchema.methods.notifyOfActivation = function(isActivation, cb){
 	util.log('notifying '+this.email+' of deactivation');
 
-	if(process.env.DO_NOTIFICATIONS){
-		util.log('will DO_NOTIFICATIONS');
-		var html = ''
-		  , title = ''
-		  , user = this;
-		if(isActivation){
-			title = 'Your Experimonth Account has been Activated!';
-			html = activationTemplate({user: user});
-		}else { // deactivation
-			// Just round start!
-			title = 'Your Experimonth Account has been Deactivated!';
-			html = deactivationTemplate({user: user});
-		}
-		html = layoutTemplate({title: title, body: html, moment: moment});
-		
-		// setup e-mail data with unicode symbols
-		var mailOptions = {
-		    to: this.email, // list of receivers
-		    subject: title, // Subject line
-		    generateTextFromHTML: true,
-		    html: html // html body
-		}
-		
-		// send mail with defined transport object
-		email.sendMail(mailOptions, cb);
-	}else if(cb){
-		cb();
+	var html = ''
+	  , title = ''
+	  , user = this;
+	if(isActivation){
+		title = 'Your Experimonth Account has been Activated!';
+		html = activationTemplate({user: user});
+	}else { // deactivation
+		// Just round start!
+		title = 'Your Experimonth Account has been Deactivated!';
+		html = deactivationTemplate({user: user});
 	}
+	html = layoutTemplate({title: title, body: html, moment: moment});
+	
+	// setup e-mail data with unicode symbols
+	var mailOptions = {
+	    to: this.email, // list of receivers
+	    subject: title, // Subject line
+	    generateTextFromHTML: true,
+	    html: html // html body
+	}
+	
+	// send mail with defined transport object
+	email.sendMail(mailOptions, cb);
 };
 UserSchema.virtual('email_hash').get(function(){
 	return crypto.createHash('md5').update(this.email.toLowerCase().trim()).digest('hex');

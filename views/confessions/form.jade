@@ -1,16 +1,26 @@
 extends ../layout
 
+include ./mixins
+
 block body
 	#container-inner
 		#header
-			h1 CONFESSIONAL
+			h1 Confess
 			
-		h2 Whatever you say here is completely anonymous.
-	
-		form(action=action, method="POST")#confessionForm.form-horizontal
-			textarea#text.span7(type="text", placeholder="", name="text") !{confession.text}
-			
-			button.btn.btn-inverse(type="submit") confess
-		
-		h3 Whatever you say here is stripped of any identifying information and sent to Experimonth staff. 
-		h3 It may be quoted in a blog we create about the project.
+		.row
+			.span8
+				p 
+					| Whatever you say here is completely anonymous and stripped of identifying information before it’s sent to the Experimonth team.  It may appear on our 
+					a(href="/confessional") Confessions page
+					| .
+
+				form(action=action, method="POST")#confessionForm.form-horizontal
+					textarea#text.input-block-level(type="text", placeholder="", name="text", rows="15") !{confession.text}
+					button.btn.btn-inverse.pull-right(type="submit") confess
+
+			.span4
+				if random_confession
+					div.confession.white-card
+						mixin do_confession(random_confession, true)
+				div.view-all-confessions.text-center
+					a(href="/confessional") View all confessions.

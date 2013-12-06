@@ -119,6 +119,17 @@ jQuery(function(){
 			}
 		}
 	});
+	
+	/* Confess Page Refresh Button */
+	jQuery(document).on('click', 'a[href="/confess/random"]', function(){
+		jQuery(this).closest('div.confession.white-card').empty().load('/confess/random');
+		return false;
+	});
+
+	/* Enroll page; confirm unenrolling */
+	jQuery(document).on('click', 'a[href^="/experimonths/unenroll/"]', function(){
+		return confirm('Are you sure you want to un-enroll from this Experimonth?');
+	});
 });
 
 (function() {

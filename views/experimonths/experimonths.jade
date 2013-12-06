@@ -48,7 +48,7 @@ block body
 							- if(u)
 								|  
 								- if(experimonth.users.indexOf(u._id.toString()) == -1)
-									a.btn.btn-primary(href="/experimonths/enroll/#{experimonth._id}") Enroll
+									a.btn.btn-primary(href=(enrollGoesToProfile ? '/profile' : "/experimonths/enroll/#{experimonth._id}")) Enroll
 								- else
 									a.btn.btn-warning(href="/experimonths/unenroll/#{experimonth._id}") Un-enroll
 		//- if(pages > 1)

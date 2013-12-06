@@ -1,0 +1,51 @@
+mixin do_confession(confession, withRefresh)
+	u = user(2, 10)
+	if confession
+		h5
+			| Confession No. #{confession.number}
+			if withRefresh
+				a.refresh.pull-right(href="/confess/random")
+					i.icon-repeat
+		.post-info.clearfix
+			.pull-left
+				span.post-date 
+					d = locals.moment(confession.date).clone()
+					- if(Math.round((d.minutes()/100)) > 0)
+						- d = d.add('hours', 1)
+					| #{d.format('MMMM Do, YYYY [at] h:mm A')}
+			if u
+				.pull-right
+					.post-like
+						i.icon-flag
+						|  #{confession.flags}
+		.post-content
+			p #{confession.text}
+			if u && confession.recentEvents && confession.recentEvents.length
+				table.table
+					thead
+						tr
+							th Date
+							th Name
+							th Value
+					tbody
+						each event, i in confession.recentEvents
+							tr
+								td #{locals.moment(event.date).format('M/D/YY h:mm')}
+								td #{event.name}
+								td #{event.value}
+		.post-info-after
+			if u
+				if !confession.active
+					a(href="/confess/publish/"+confession._id) Publish
+				else
+					a(href="/confess/unpublish/"+confession._id) Unpublish
+				|  | 
+				a(href="/confess/promote/"+confession._id)
+					if confession.promoted
+						| Demote
+					else
+						| Promote
+				|  | 
+			a.flag(href="/confess/flag/"+confession._id) Flag
+			|  | 
+			a.reply(href="/confess/reply/"+confession.number) Reply

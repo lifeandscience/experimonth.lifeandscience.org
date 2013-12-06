@@ -1,63 +1,19 @@
 extends ../layout
 
+include ./mixins
+
 block body
 	#container-inner
 		#header
-			h1 CONFESSIONAL
+			h1
+				| Confessional
+				p.extra
+					a(href="/confess") Submit your own
+					|  or click "reply" to respond below.
 		
 		if confessions && confessions.length
-			u = user(2, 10)
-			table.table.tablesorter
-				thead
-					tr
-						th Confession #
-						th Confession
-						if u
-							th Events
-						th Actions
-				tbody
-					each confession, i in confessions
-						tr
-							td.confession-label
-								d = locals.moment(confession.date).clone()
-								- if(Math.round((d.minutes()/100)) > 0)
-									- d = d.add('hours', 1)
-								| On #{d.format('MMMM Do, YYYY [around] hA')}: Confession ##{confession.number}
-							td.confession-content
-								h2 !{confession.text}
-							if u
-								td
-									if confession.recentEvents && confession.recentEvents.length > 0
-										table.table.tablesorter
-											thead
-												tr
-													th Date
-													th Name
-													th Value
-											tbody
-												each event, i in confession.recentEvents
-													tr
-														td #{locals.moment(event.date).format('M/D/YY h:mm')}
-														td #{event.name}
-														td #{event.value}
-										
-							td
-								ul.actions.unstyled
-									li.first
-										a.btn.btn-warning(href="/confessions/flag/"+confession._id) Flag
-										if u
-											| (#{confession.flags})
-									li
-										a.btn(href="/confessional/reply/"+confession.number) Reply
-									if u
-										li
-											a(href="/confessions/promote/"+confession._id, class=(confession.promoted ? 'btn btn-success' : 'btn btn-danger'))
-												if confession.promoted
-													| Demote
-												else
-													| Promote
-										li
-											if !confession.active
-												a.btn.btn-success(href="/confessions/publish/"+confession._id) Publish
-											else
-												a.btn.btn-danger(href="/confessions/unpublish/"+confession._id) Unpublish
+			.row
+				each confession, i in confessions
+					.span4
+						div.confession.white-card
+							mixin do_confession(confession, false)

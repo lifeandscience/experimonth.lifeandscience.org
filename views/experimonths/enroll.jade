@@ -3,15 +3,14 @@ extends ../layout
 block body
 	#container-inner
 		h1 #{title}
-		h3 Start Date: #{locals.moment(experimonth.startDate).utc().format('YYYY-MM-DD')}
-		h3 End Date: #{locals.moment(experimonth.endDate).utc().format('YYYY-MM-DD')}
-		
-		p To enroll in this Experimonth, you must read and accept the following text:
-		
-		textarea #{experimonth.survey}
+		h4 Begins #{locals.moment(experimonth.startDate).utc().format('MMMM D, YYYY')} and ends #{locals.moment(experimonth.endDate).utc().format('MMMM D, YYYY')}.
+
+		p Donate your anonymized experimonth data to scientists:
+		p #{experimonth.survey}
 		
 		form(action="/experimonths/enroll/"+experimonth._id, method="POST")
 			.form-actions
 				button.btn.btn-primary(type="submit", name="submit", value="Accept") Accept
 				|  
 				button.btn(type="submit", name="submit", value="Decline") Decline
+				|  You can join the experimonth regardless of your choice.

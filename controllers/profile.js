@@ -242,6 +242,36 @@ module.exports = function(app){
 		});
 	});
 
+	var doAdditionalInfo = function(user, res){
+		ProfileAnswer.find({user: user._id}).populate('question').exec(function(err, answers){
+			var questions = [];
+			for(var i=0; i<answers.length; i++){
+				questions.push(answers[i].question._id);
+			}
+			ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).sort('-publishDate').exec(function(err, questions){
+				res.render('profile/additional_info', {title: 'Your Additional Info', u: user, questions: questions, answers: answers});
+			});
+		});
+	}
+	app.get('/profile/additional-info', auth.authorize(1, 0, null, true), function(req, res){
+		doAdditionalInfo(req.user, res);
+	});
+	app.get('/profile/additional-info/:id', auth.authorize(2, 10), function(req, res){
+		if(!req.param('id')){
+			req.flash('error', 'Missing Profile Question ID.');
+			res.redirect('back');
+			return;
+		}
+		User.findById(req.param('id'))/* .populate('experimonths') */.exec(function(err, user){
+			if(err || !user){
+				req.flash('error', 'User not found.');
+				res.redirect('back');
+				return;
+			}
+			doAdditionalInfo(user, res);
+		});
+	});
+
 	var doProfile = function(user, res){
 		async.parallel({
 			enrollments: function(callback){
@@ -282,16 +312,17 @@ module.exports = function(app){
 						questions.push(answers[i].question._id);
 					}
 					ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).sort('-publishDate').exec(function(err, questions){
-						res.render('profile', {title: 'Your Profile', u: user, enrollments: results.enrollments, questions: questions, answers: answers, timezones: utilities.getTimezones()/* , games: games */, events: results.events});
+						res.render('profile', {title: 'Your Experimonth Profile', u: user, enrollments: results.enrollments, questions: questions, answers: answers, timezones: utilities.getTimezones()/* , games: games */, events: results.events});
 					});
 				});
-			});		});
+			});
+		});
 	}
 	app.get('/profile', auth.authorize(1, 0, null, true), function(req, res){
 //		console.log('user.timezone', utilities.getTimezoneFromOffset(req.user.timezone));
+		req.flash('question');
 		doProfile(req.user, res);
 	});
-
 	app.get('/profile/:id', auth.authorize(2, 10), function(req, res){
 		if(!req.param('id')){
 			req.flash('error', 'Missing Profile Question ID.');
@@ -307,4 +338,6 @@ module.exports = function(app){
 			doProfile(user, res);
 		});
 	});
+
+
 };

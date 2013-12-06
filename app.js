@@ -148,6 +148,10 @@ app.configure(function(){
 			{
 				'name': 'Get Notified'
 			  , 'link': fullURL+'/get-notified'
+			},
+			{
+				'name': 'Confess'
+			  , 'link': fullURL+'/confess'
 			}
 		];
 		if(!req.user){

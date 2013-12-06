@@ -10,7 +10,7 @@ var form = require('express-form')
   , auth = require('../auth');
 
 module.exports = function(app){
-	app.get('/confessions', function(req, res){
+	app.get('/confessional', function(req, res){
 		var query = Confession.find({});
 		if(!req.user || req.user.role < 10){
 			query.where('active', true);
@@ -25,7 +25,7 @@ module.exports = function(app){
 		});
 	});
 	
-	app.get('/confessions/numberExisting', auth.authorize(2, 10), function(req, res){
+	app.get('/confessional/numberExisting', auth.authorize(2, 10), function(req, res){
 		var start = 1;
 		Confession.find().sort('date').exec(function(err, confessions){
 			for(var i=0; i<confessions.length; i++){
@@ -36,20 +36,20 @@ module.exports = function(app){
 				}
 			}
 			req.flash('info', 'Done numbering existing confessions.');
-			res.redirect('/confessions');
+			res.redirect('back');
 		});
 	});
 	
-	app.get('/confessions/flag/:id', function(req, res){
+	app.get('/confess/flag/:id', function(req, res){
 		if(!req.params.id){
 			req.flash('error', 'Confession ID required.');
-			res.redirect('/confessions');
+			res.redirect('back');
 			return;
 		}
 		Confession.findById(req.params.id).exec(function(err, confession){
 			if(err || !confession){
 				req.flash('error', 'Confession not found.');
-				res.redirect('/confessions');
+				res.redirect('back');
 				return;
 			}
 			confession.flags++;
@@ -65,73 +65,73 @@ module.exports = function(app){
 				email.sendMail(mailOptions, null);
 	
 				req.flash('info', 'Confession flagged.');
-				res.redirect('/confessions');
+				res.redirect('back');
 				return;
 			});
 			return;
 		});
 	});
 	
-	app.get('/confessions/promote/:id', function(req, res){
+	app.get('/confessional/promote/:id', function(req, res){
 		if(!req.params.id){
 			req.flash('error', 'Confession ID required.');
-			res.redirect('/confessions');
+			res.redirect('back');
 			return;
 		}
 		Confession.findById(req.params.id).exec(function(err, confession){
 			if(err || !confession){
 				req.flash('error', 'Confession not found.');
-				res.redirect('/confessions');
+				res.redirect('back');
 				return;
 			}
 			confession.promoted = !confession.promoted;
 			confession.save(function(err){
 				req.flash('info', 'Confession '+(confession.promoted ? 'promoted.' : 'demoted.'));
-				res.redirect('/confessions');
+				res.redirect('back');
 				return;
 			});
 			return;
 		});
 	});
 	
-	app.get('/confessions/publish/:id', auth.authorize(2, 10), function(req, res){
+	app.get('/confessional/publish/:id', auth.authorize(2, 10), function(req, res){
 		if(!req.params.id){
 			req.flash('error', 'Confession ID required.');
-			res.redirect('/confessions');
+			res.redirect('back');
 			return;
 		}
 		Confession.findById(req.params.id).exec(function(err, confession){
 			if(err || !confession){
 				req.flash('error', 'Confession not found.');
-				res.redirect('/confessions');
+				res.redirect('back');
 				return;
 			}
 			confession.active = true;
 			confession.save(function(err){
 				req.flash('info', 'Confession published.');
-				res.redirect('/confessions');
+				res.redirect('back');
 				return;
 			});
 			return;
 		});
 	});
 	
-	app.get('/confessions/unpublish/:id', auth.authorize(2, 10), function(req, res){
+	app.get('/confessional/unpublish/:id', auth.authorize(2, 10), function(req, res){
 		if(!req.params.id){
 			req.flash('error', 'Confession ID required.');
-			res.redirect('/confessions');
+			res.redirect('back');
 			return;
 		}
 		Confession.findById(req.params.id).exec(function(err, confession){
 			if(err || !confession){
 				req.flash('error', 'Confession not found.');
-				res.redirect('/confessions');
+				res.redirect('back');
 				return;
 			}
 			confession.active = false;
 			confession.save(function(err){
 				req.flash('info', 'Confession unpublished.');
-				res.redirect('/confessions');
+				res.redirect('back');
 				return;
 			});
 			return;
@@ -143,7 +143,7 @@ module.exports = function(app){
 	  , populate = []
 	  , template = 'confessions/form'
 	  , varNames = ['text']
-	  , redirect = '/confessional/thanks'
+	  , redirect = '/confess/thanks'
 	  , formValidate = form(
 			field('text').trim().required()
 		)
@@ -151,8 +151,11 @@ module.exports = function(app){
 			if(item.confession && req.params && req.params.number){
 				item.confession.text = 'This is in reply to confession #'+req.params.number+': ';
 			}
-			item.action = '/confessional';
-			return callback(item);
+			item.action = '/confess';
+			Confession.findRandom(req.user, function(confession){
+				item.random_confession = confession;
+				return callback(item);
+			});
 	/* 		return item; */
 		}
 	  , beforeSave = function(req, res, item, complete){
@@ -185,12 +188,17 @@ module.exports = function(app){
 		}
 	  , layout = 'layout-confessional';
 	
-	app.get('/confessional', utilities.doForm(as, populate, 'Confess.', Confession, template, varNames, redirect, beforeRender, null, layout));
-	app.get('/confessional/reply/:number', utilities.doForm(as, populate, 'Confess.', Confession, template, varNames, redirect, beforeRender, null, layout));
-	app.post('/confessional', formValidate, utilities.doForm(as, populate, 'Confess.', Confession, template, varNames, redirect, beforeRender, beforeSave, layout));
+	app.get('/confess', utilities.doForm(as, populate, 'Confess.', Confession, template, varNames, redirect, beforeRender, null, layout));
+	app.get('/confess/reply/:number', utilities.doForm(as, populate, 'Confess.', Confession, template, varNames, redirect, beforeRender, null, layout));
+	app.post('/confess', formValidate, utilities.doForm(as, populate, 'Confess.', Confession, template, varNames, redirect, beforeRender, beforeSave, layout));
 	
 	
-	app.get('/confessional/thanks', function(req, res){
+	app.get('/confess/thanks', function(req, res){
 		res.render('confessions/thanks', {title: 'Your confession has been recorded.'});
+	});
+	app.get('/confess/random', function(req, res){
+		Confession.findRandom(req.user, function(confession){
+			return res.render('confessions/single_confession', {confession: confession});
+		});
 	});
 }

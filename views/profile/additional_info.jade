@@ -1,0 +1,27 @@
+extends ../layout
+
+//include ../games/mixins
+include ../notifications
+include ../events
+
+block body
+	#container-inner.user-profile
+			//if u.email
+			//	img(src='http://www.gravatar.com/avatar/'+u.email_hash)
+			h1 #{title}
+			.row
+				haveDoneAQuestion = questions && questions.length > 0;
+				if questions && questions.length > 0
+					answer = null
+					each question, i in questions
+						active = (i == 0)
+						whiteCard = true
+						include mixins
+						//mixin do_question(question, null, i == 0)
+				if answers && answers.length > 0
+					each answer, i in answers
+						active = (!haveDoneAQuestion && i == 0)
+						question = answer.question
+						whiteCard = true
+						include mixins
+						//mixin do_question(answer.question, answer, !haveDoneAQuestion && i == 0)

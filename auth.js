@@ -108,11 +108,8 @@ module.exports = {
 			if(req.hasCheckedQuestions){
 				return next();
 			}
-			console.log('setting req.hasCheckedQuestions');
 			req.hasCheckedQuestions = true;
-			console.log('req.hasCheckedQuestions: ', req.hasCheckedQuestions ? 'YES' : 'NO');
 			req.user.checkProfileQuestions(req, function(questions, answers){
-				console.log('posing a question!');
 				// There are some un-answered questions!
 				// Pick a random question of those that aren't answered
 				var answered = {}
@@ -222,18 +219,8 @@ module.exports = {
 						]
 					});
 					res.locals.nav.push({
-						'name': 'Confessional'
-					  , 'link': '#'
-					  , 'children': [
-							{
-								'name': 'Confess!'
-							  , 'link': fullURL+'/confessional'
-							}
-						  , {
-								'name': 'View Confessions'
-							  , 'link': fullURL+'/confessions'
-							}
-						]
+						'name': 'Confess'
+					  , 'link': fullURL+'/confess'
 					});
 					res.locals.nav.push({
 						'name': 'News'
@@ -284,8 +271,6 @@ module.exports = {
 			// Grants = Enrollment
 			// Find all Experimonths that are under this kind and currently active
 			var Experimonth = mongoose.model('Experimonth');
-			console.log('looking for Experimonth with enrollments that match this user: ', req.user);
-			console.log('and this experimonth: ', client_id);
 			Experimonth.findActiveQuery().populate({
 				path: 'enrollments'
 			  , match: {
@@ -675,7 +660,6 @@ module.exports = {
 		}
 		return function(req, res, next){
 			var thisRoute = homeRoute;
-			console.log('woo? ', req.user ? req.user.state : 0, requiredState);
 			if(!req.user || req.user.state < requiredState){
 				if(req.user){
 					if(req.user.state == 0){
@@ -683,7 +667,6 @@ module.exports = {
 					}else if(req.user.state == 1){
 						message = 'Please supply your email address to proceed.';
 						thisRoute = '/profile';
-						console.log('setting thisRoute: ', thisRoute);
 					}else if(!message){
 						message = 'You don\'t have permission to access that page.';
 					}

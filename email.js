@@ -59,8 +59,12 @@ var emailQueue = []
 
 module.exports = {
 	sendMail: function(options, callback){
-		options.from = '"Experimonth" <experimonth@lifeandscience.org>';
-		emailQueue.push({options: options, callback: callback});
-		execQueue();
+		if(process.env.DO_NOTIFICATIONS){
+			options.from = '"Experimonth" <experimonth@lifeandscience.org>';
+			emailQueue.push({options: options, callback: callback});
+			execQueue();
+		}else if(callback){
+			callback();
+		}
 	}
 }
