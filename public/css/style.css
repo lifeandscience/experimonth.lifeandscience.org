@@ -11638,6 +11638,7 @@ footer a {
   margin-right: 20px;
   color: white;
   background-image: none;
+  text-shadow: none;
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 .btn-auth i {
@@ -11659,9 +11660,6 @@ footer a {
 .btn-auth:hover,
 .btn-auth:active {
   color: #EEE;
-}
-.btn-auth > i {
-  text-shadow: none;
 }
 input.btn-auth {
   margin-right: 0;
