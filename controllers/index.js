@@ -16,7 +16,7 @@ module.exports = {
   , news: require('./news')
   , notifications: require('./notifications')
   , home: function(app){
-		app.get('/home', function(req, res){
+		app.get('/', function(req, res){
 			async.parallel({
 				experimonths: function(callback){
 					Experimonth.getEnrollableExperimonths().sort('startDate').limit(4).exec(callback);
@@ -28,7 +28,7 @@ module.exports = {
 					NewsPost.find({active: true}).sort('-date').limit(3).exec(callback);
 				}
 			}, function(err, results){
-				res.render('index', { title: 'Home Page', currentlyRecruiting: results.experimonths, confessions: results.confessions, news: results.news });
+				res.render('index', { title: 'Experimonth | Know Yourself. Through Science.', currentlyRecruiting: results.experimonths, confessions: results.confessions, news: results.news });
 			});
 		});
 		app.get('/get-notified', function(req, res){

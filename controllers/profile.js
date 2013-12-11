@@ -38,17 +38,13 @@ module.exports = function(app){
 		  , field('choices_string').trim()
 		)
 	  , beforeRender = function(req, res, item, callback){
-	/*
-			if(item.confession && req.params && req.params.number){
-				item.confession.text = 'This is in reply to confession #'+req.params.number+': ';
-			}
-			item.action = '/confessional';
-	*/
+/*
 			if(item.published){
 				req.flash('error', 'This Profile Question has already been published and cannot be edited.');
 				res.redirect('back');
 				return;
 			}
+*/
 			return callback(item);
 		}
 	  , beforeSave = function(req, res, item, complete){
@@ -132,16 +128,18 @@ module.exports = function(app){
 				res.redirect('back');
 				return;
 			}
+/*
 			if(question.published){
 				req.flash('error', 'A published question may not be re-published.');
 				res.redirect('back');
 				return;
 			}
-			question.published = true;
+*/
+			question.published = !question.published;
 			question.publishDate = new Date();
 			question.save(function(err){
 				if(err){
-					req.flash('error', 'Error while publishing profile question: '+err);
+					req.flash('error', 'Error while '+(question.published ? 'publishing' : 'unpublishing')+' profile question: '+err);
 					res.redirect('back');
 					return;
 				}
@@ -154,7 +152,7 @@ module.exports = function(app){
 						return;
 					}
 */
-					req.flash('info', 'Profile Question published successfully.');
+					req.flash('info', 'Profile Question '+(question.published ? 'published' : 'unpublished')+' successfully.');
 					res.redirect('back');
 					return;
 /* 				}); */

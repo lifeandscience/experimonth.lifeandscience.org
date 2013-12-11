@@ -50,7 +50,7 @@ var em_navbar = function(){
 							<span class="icon-bar"></span> \
 							<span class="icon-bar"></span> \
 						</a> \
-						<a class="brand" href="'+EM_URL+'/home">Experimonth</a> \
+						<a class="brand" href="'+EM_URL+'/">Experimonth</a> \
 						<div class="nav-collapse">';
 	if(EM_NAV && EM_NAV.length){
 		toInsert += '<ul class="nav">'+do_nav(EM_NAV)+'</ul>';

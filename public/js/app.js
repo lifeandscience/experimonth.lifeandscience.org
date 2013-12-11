@@ -130,6 +130,23 @@ jQuery(function(){
 	jQuery(document).on('click', 'a[href^="/experimonths/unenroll/"]', function(){
 		return confirm('Are you sure you want to un-enroll from this Experimonth?');
 	});
+	
+	/* BootBox */
+	jQuery(document).on('click', 'a[data-bootbox-confirm]', function(){
+		var t = jQuery(this)
+		  , href = t.attr('href');
+		bootbox.confirm(t.data('bootbox-confirm'), function(confirmed){
+			if(confirmed){
+				document.location = href;
+			}
+		});
+		return false;
+	});
+	jQuery(document).on('click', 'a[data-bootbox-alert]', function(){
+		var t = jQuery(this);
+		bootbox.alert(t.data('bootbox-alert'));
+		return false;
+	});
 });
 
 (function() {

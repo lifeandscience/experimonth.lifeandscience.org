@@ -24,15 +24,15 @@ block body
 							td #{question.type}
 							td #{question.choices_string}
 							td 
-								- if(question.published)
-									a.btn.disabled(data-bootbox-alert="<p>You may not edit this question as it has already been published.</p>") Edit
-								- else
-									a.btn(href="/profile/questions/edit/#{question._id}") Edit
+								//- if(question.published)
+								//	a.btn.disabled(data-bootbox-alert="<p>You may not edit this question as it has already been published.</p>") Edit
+								//- else
+								a.btn(href="/profile/questions/edit/#{question._id}") Edit
 								| 
 								- if(question.published)
-									a.btn.btn-success.disabled(data-bootbox-alert="<p>You may not publish this question as it has already been published.</p>") Published
+									a.btn.btn-danger(href="/profile/questions/publish/#{question._id}", data-bootbox-confirm="<p>Are you sure you want to un-publish this question?</p><p>There may be unexpected consequences.</p>") Un-Publish
 								- else
-									a.btn.btn-success(href="/profile/questions/publish/#{question._id}", data-bootbox-confirm="<p>Are you sure you want to publish this question?</p><p>Publishing a question sets this question up as a new question for all users to fill in, with a notification sent to existing users that a new question has been published.</p><p>Note that, once published, this question may not be edited or deleted.</p>") Publish
+									a.btn.btn-success(href="/profile/questions/publish/#{question._id}", data-bootbox-confirm="<p>Are you sure you want to publish this question?</p><p>Publishing a question sets this question up as a new question for all users to fill in, with a notification sent to existing users that a new question has been published.</p><p>Note that, once published, this question may not be deleted.</p>") Publish
 								| 
 								- if(question.published)
 									a.btn.btn-danger.disabled(data-bootbox-alert="<p>You may not delete this question as it has already been published.</p>") Delete

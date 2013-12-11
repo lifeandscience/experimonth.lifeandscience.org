@@ -135,7 +135,7 @@ app.configure(function(){
 		var defaultNav = [
 			{
 				'name': 'Home'
-			  , 'link': fullURL+'/home'
+			  , 'link': fullURL+'/'
 			},
 			{
 				'name': 'What is this?'

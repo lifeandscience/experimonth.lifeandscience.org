@@ -20,6 +20,9 @@ var path = __dirname + '/../views/users/email/activation.jade'
   , path = __dirname + '/../views/users/email/confirm_email.jade'
   , str = fs.readFileSync(path, 'utf8')
   , confirmEmailTemplate = jade.compile(str, { filename: path, pretty: true })
+  , path = __dirname + '/../views/users/email/reset_password.jade'
+  , str = fs.readFileSync(path, 'utf8')
+  , resetPasswordEmailTemplate = jade.compile(str, { filename: path, pretty: true })
   , path = __dirname + '/../views/users/email/layout.jade'
   , str = fs.readFileSync(path, 'utf8')
   , layoutTemplate = jade.compile(str, { filename: path, pretty: true });
@@ -67,6 +70,9 @@ var shouldNextUserDefend = true
 		// Notification methods
 	  , do_sms_notifications: {type: Boolean, default: false}
 	  , do_email_notifications: {type: Boolean, default: false}
+	  
+	  , passwordResetTemporaryPassword: String
+	  , passwordResetTimeout: Date
 	})
   , User = null;
 
@@ -83,12 +89,41 @@ UserSchema.method('verifyPassword', function(password, callback) {
 	bcrypt.compare(password, this.hash, callback);
 });
 
+UserSchema.method('generateTemporaryPassword', function(){
+	var id = crypto.randomBytes(20).toString('hex');
+	this.passwordResetTemporaryPassword = id;
+	this.passwordResetTimeout = Date.now() + (1000 * 60 * 60); // 1 hour from now
+});
+UserSchema.method('sendTemporaryPasswordEmail', function(){
+	var theEmail = User.base64ish(this.email);
+	var passwordResetTemporaryPassword = User.base64ish(this.passwordResetTemporaryPassword);
+
+	var base_url = (process.env.BASEURL || 'http://app.dev:8000')
+	  , activation_url = base_url + '/reset-password/'+theEmail+'/'+passwordResetTemporaryPassword
+	  , html = resetPasswordEmailTemplate({email: this.email, base_url: base_url, activation_url: activation_url});
+	html = layoutTemplate({title: 'Reset Your Password', body: html, moment: moment});
+
+	// setup e-mail data with unicode symbols
+	var mailOptions = {
+	    to: this.email, // list of receivers
+	    subject: 'Experimonth: Reset Your Password', // Subject line
+	    generateTextFromHTML: true,
+	    html: html // html body
+	};
+	console.log('sending: ', mailOptions);
+
+	// send mail with defined transport object
+	email.sendMail(mailOptions);
+});
 UserSchema.method('generateActivationCode', function(){
 	this.activationCode = bcrypt.genSaltSync(10);
 });
 UserSchema.method('sendActivationEmail', function(){
+	var theEmail = User.base64ish(this.email);
+	var activationCode = User.base64ish(this.activationCode);
+
 	var base_url = (process.env.BASEURL || 'http://app.dev:8000')
-	  , activation_url = base_url + '/auth/local/confirm/'+new Buffer(this.email).toString('base64')+'/'+new Buffer(this.activationCode).toString('base64')
+	  , activation_url = base_url + '/auth/local/confirm/'+theEmail+'/'+activationCode
 	  , html = confirmEmailTemplate({email: this.email, base_url: base_url, activation_url: activation_url});
 	html = layoutTemplate({title: 'Confirm Your Email Address', body: html, moment: moment});
 
@@ -102,6 +137,20 @@ UserSchema.method('sendActivationEmail', function(){
 
 	// send mail with defined transport object
 	email.sendMail(mailOptions);
+});
+UserSchema.static('base64ish', function(str){
+	var toReturn = new Buffer(str).toString('base64');
+	toReturn = toReturn.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+	return toReturn;
+});
+UserSchema.static('unbase64ish', function(str){
+	var toReturn = str;
+	if (toReturn.length % 4 != 0){
+		toReturn += ('===').slice(0, 4 - (toReturn.length % 4));
+	}
+	toReturn = toReturn.replace(/-/g, '+').replace(/_/g, '/');
+	toReturn = new Buffer(toReturn, 'base64').toString('utf8');
+	return toReturn;
 });
 
 UserSchema.static('authenticate', function(email, password, callback) {

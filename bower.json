@@ -17,6 +17,7 @@
   "dependencies": {
     "bootstrap-wysiwyg": "*",
     "modernizr": "~2.6.2",
-    "bootstrap-datetimepicker": "~0.0.11"
+    "bootstrap-datetimepicker": "~0.0.11",
+    "bootbox": "3.3.0"
   }
 }

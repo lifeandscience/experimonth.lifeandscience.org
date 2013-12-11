@@ -8,7 +8,7 @@ var mongoose = require('mongoose')
   , TwitterStrategy = require('passport-twitter').Strategy
   , OAuth2Provider = require('oauth2-provider').OAuth2Provider;
 
-var homeRoute = '/home'
+var homeRoute = '/'
   , adminEmails = ['ben.schell@gmail.com', 'ben.schell@bluepanestudio.com', 'beck@becktench.com'];
 
 module.exports = {
@@ -528,8 +528,8 @@ module.exports = {
 				res.redirect('/signin');
 				return;
 			}
-			email = new Buffer(email, 'base64').toString('utf8');
-			activationCode = new Buffer(activationCode, 'base64').toString('utf8');
+			email = User.unbase64ish(email);
+			activationCode = User.unbase64ish(activationCode);
 			User.findOne({email: email, activationCode: activationCode}, function(err, user){
 				if(err || !user){
 					req.flash('error', 'Missing or invalid parameters');
@@ -557,6 +557,7 @@ module.exports = {
 						if(req.user){
 							res.redirect('/profile');
 						}else{
+							req.flash('info', 'Your email address has been confirmed. Thanks!');
 							res.redirect('/signin');
 						}
 						
@@ -566,7 +567,129 @@ module.exports = {
 						return;
 					});
 				});
-			})
+			});
+		});
+		app.get('/reset-password', function(req, res){
+			if(req.user){
+				if(req.session.redirect_url){
+					var url = req.session.redirect_url;
+					delete req.session.redirect_url;
+					return res.redirect(url);
+				}
+
+				req.flash('info', 'You are already logged in!');
+				res.redirect('/profile');
+				return;
+			}
+			if(req.param('next')){
+				req.session.redirect_url = req.param('next');
+			}
+			res.render('reset-password', {title: 'Reset Your Password'});
+		});
+		app.post('/reset-password', function(req, res){
+			var email = req.param('email');
+			User.findOne({email: email}, function(err, user){
+				if(err || !user){
+					req.flash('error', 'User not found.');
+					res.redirect('/reset-password');
+					return;
+				}
+				
+				if(user.fbid){
+					req.flash('error', 'You use Facebook to login to your account. Please use the \'Login with Facebook\' button below.');
+					res.redirect('/signin');
+					return;
+				}
+				if(user.twid){
+					req.flash('error', 'You use Twitter to login to your account. Please use the \'Login with Twitter\' button below.');
+					res.redirect('/signin');
+					return;
+				}
+
+				user.generateTemporaryPassword();
+				user.save(function(err){
+					if(err){
+						req.flash('error', 'An error occurred. Please try again.');
+						res.redirect('back');
+						return;
+					}
+					user.sendTemporaryPasswordEmail();
+	
+					req.flash('info', 'Please check your email for further instructions.');
+					res.redirect(homeRoute);
+					return;
+				});
+			});
+		});
+		app.get('/reset-password/:email/:temporaryPassword', function(req, res){
+			var email = req.param('email')
+			  , temporaryPassword = req.param('temporaryPassword');
+			if(!email || !temporaryPassword){
+				req.flash('error', 'Missing parameters' + email + '::' + temporaryPassword);
+				res.redirect('/reset-password');
+				return;
+			}
+			email = User.unbase64ish(email);
+			temporaryPassword = User.unbase64ish(temporaryPassword);
+			User.findOne({email: email, passwordResetTemporaryPassword: temporaryPassword}, function(err, user){
+				if(err || !user){
+					req.flash('error', 'Missing or invalid parameters ' + email + '::' + temporaryPassword);
+					res.redirect('/reset-password');
+					return;
+				}
+				
+				if(Date.now() > user.passwordResetTimeout){
+					req.flash('error', 'Your password reset attempt has expired. Please try again.');
+					res.redirect('/reset-password');
+					return;
+				}
+				
+				res.render('reset-password-form', {title: 'Reset Password', user: req.user});
+			});
+		});
+		app.post('/reset-password/:email/:temporaryPassword', function(req, res){
+			var email = req.param('email')
+			  , temporaryPassword = req.param('temporaryPassword');
+			if(!email || !temporaryPassword){
+				req.flash('error', 'Missing parameters');
+					res.redirect('/reset-password');
+				return;
+			}
+			email = User.unbase64ish(email);
+			temporaryPassword = User.unbase64ish(temporaryPassword);
+			User.findOne({email: email, passwordResetTemporaryPassword: temporaryPassword}, function(err, user){
+				if(err || !user){
+					req.flash('error', 'Missing or invalid parameters');
+					res.redirect('/reset-password');
+					return;
+				}
+				
+				if(Date.now() > user.passwordResetTimeout){
+					req.flash('error', 'Your password reset attempt has expired. Please try again.');
+					res.redirect('/reset-password');
+					return;
+				}
+				var password = req.param('password')
+				  , confirmPassword = req.param('confirm-password')
+
+				if(password != confirmPassword){
+					req.flash('error', 'Passwords do not match!');
+						res.redirect('back');
+					return;
+				}
+				user.password = password;
+				user.save(function(err){
+					if(err){
+						req.flash('error', 'There was an error resetting your password. '+err);
+						res.redirect('back');
+						return;
+					}
+					req.flash('info', 'Your password was successfully reset.');
+					res.redirect(homeRoute);
+					return;
+				})
+				
+			});
 		});
 		
 		// Redirect the user to Facebook for authentication.  When complete,

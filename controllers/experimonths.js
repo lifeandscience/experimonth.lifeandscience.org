@@ -40,13 +40,17 @@ module.exports = function(app){
 				res.render('experimonths', {title: 'Currently Recruiting', experimonths: experimonths, enrollGoesToProfile: enrollGoesToProfile});
 			});
 		}
-		req.user.checkProfileQuestions(req, function(questions, answers){
-			// The user did not complete all the required questions.
-			req.flash('error', 'You must answer all required profile questions before enrolling in an Experimonth.');
-			finish(true);
-		}, function(){
+		if(req.user){
+			req.user.checkProfileQuestions(req, function(questions, answers){
+				// The user did not complete all the required questions.
+				req.flash('error', 'You must answer all required profile questions before enrolling in an Experimonth.');
+				finish(true);
+			}, function(){
+				finish(false);
+			});
+		}else{
 			finish(false);
-		});;
+		}
 	});
 	
 	app.get('/experimonths/view/:id', auth.authorize(2), function(req, res){
@@ -413,12 +417,15 @@ module.exports = function(app){
 				res.redirect('back');
 				return;
 			}
+/*
 			if(experimonth.published){
 				req.flash('error', 'A published experimonth may not be re-published.');
 				res.redirect('back');
 				return;
 			}
-			experimonth.published = true;
+*/
+			experimonth.everPublished = true;
+			experimonth.published = !experimonth.published;
 			experimonth.publishDate = new Date();
 			experimonth.save(function(err){
 				if(err){
@@ -433,7 +440,7 @@ module.exports = function(app){
 						res.redirect('back');
 						return;
 					}
-					req.flash('info', 'Experimonth published successfully.');
+					req.flash('info', 'Experimonth '+(experimonth.published ? 'published' : 'unpublished')+' successfully.');
 					res.redirect('back');
 					return;
 				});
