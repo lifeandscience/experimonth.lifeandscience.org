@@ -36,16 +36,16 @@ mixin do_confession(confession, withRefresh)
 		.post-info-after
 			if u
 				if !confession.active
-					a(href="/confess/publish/"+confession._id) Publish
+					a(href="/confessional/publish/"+confession._id) Publish
 				else
-					a(href="/confess/unpublish/"+confession._id) Unpublish
+					a(href="/confessional/unpublish/"+confession._id) Unpublish
 				|  | 
-				a(href="/confess/promote/"+confession._id)
+				a(href="/confessional/promote/"+confession._id)
 					if confession.promoted
 						| Demote
 					else
 						| Promote
 				|  | 
-			a.flag(href="/confess/flag/"+confession._id) Flag
+			a.flag(href="/confessional/flag/"+confession._id) Flag
 			|  | 
 			a.reply(href="/confess/reply/"+confession.number) Reply

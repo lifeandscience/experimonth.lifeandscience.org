@@ -40,7 +40,7 @@ module.exports = function(app){
 		});
 	});
 	
-	app.get('/confess/flag/:id', function(req, res){
+	app.get('/confessional/flag/:id', function(req, res){
 		if(!req.params.id){
 			req.flash('error', 'Confession ID required.');
 			res.redirect('back');

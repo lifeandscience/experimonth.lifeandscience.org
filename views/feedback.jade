@@ -9,18 +9,17 @@ block body
 					li.error= error
 
 		h1 Feedback
-		p.big-text Some intro to the feedback page.
+		p.big-text Get help or give feedback.
 
 		.row
 			.span4.offset4.text-center
-				p Give us some feedback.
 				form(method="POST")#feedbackForm.well
 					#email-group.control-group
 						label.control-label(for='email') Email: 
 						.controls
 							input(type='text', name='email', placeholder='Email', tabindex=1, value=email)
 					#text-group.control-group
-						label.control-label(for='text') Password: 
+						label.control-label(for='text') Help or Feedback: 
 						.controls
 							textarea#text(type="text", placeholder="", name="text", rows="15", tabindex=2) !{text}
 							//.input-block-level
