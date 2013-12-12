@@ -17,7 +17,7 @@ var ProfileQuestion = mongoose.model('ProfileQuestion', ProfileQuestionSchema);
 
 var ProfileAnswerSchema = new Schema({
 	question: {type: Schema.ObjectId, ref: 'ProfileQuestion'}
-  , user: {type: Schema.ObjectId, ref: 'Player'}
+  , user: {type: Schema.ObjectId, ref: 'User'}
   , value: String
   , no_answer: {type: Boolean, default: false}
 });

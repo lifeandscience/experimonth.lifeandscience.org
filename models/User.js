@@ -384,6 +384,7 @@ UserSchema.static('reCheckAllUsersProfileQuestions', function(finished){
 	});
 });
 UserSchema.methods.reCheckProfileQuestions = function(questions, callback){
+	require('./ProfileQuestions');
 	var ProfileAnswer = mongoose.model('ProfileAnswer')
 	  , t = this;
 	var checkAnswers = function(err, questions){
