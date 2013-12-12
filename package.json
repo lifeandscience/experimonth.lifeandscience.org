@@ -35,6 +35,7 @@
     , "async": ">= 0.0.1"
     , "underscore": ">= 0.0.1"
     , "bower": ">= 0.0.1"
+    , "newrelic": ">= 0.0.1"
   },
   "devDependencies": {
       "simple-oauth2": "git://github.com/lifeandscience/simple-oauth2.git#add_client_credentials_support"

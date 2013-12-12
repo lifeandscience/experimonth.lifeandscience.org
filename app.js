@@ -22,7 +22,8 @@ process.env.TZ = 'America/New_York';
  * Module dependencies.
  */
 
-var express = require('express')
+var newrelic = require('newrelic')
+  , express = require('express')
   , cons = require('consolidate')
   , auth = require('./auth')
   , http = require('http')
