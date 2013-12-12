@@ -510,7 +510,7 @@ module.exports = {
 			User.findOne({email: email}, function(err, user){
 				if(err || !user){
 					req.flash('error', 'User not found.');
-					res.redirect('/signin');
+					res.redirect('/register');
 					return;
 				}
 

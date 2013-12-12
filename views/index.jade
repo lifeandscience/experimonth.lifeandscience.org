@@ -13,7 +13,7 @@ block body
 						if locals.user()
 							a.btn.btn-cta(href='/experimonths') Enroll &gt;
 						else
-							a.btn.btn-cta(href='/signin') Get Started (It's Free) &gt;
+							a.btn.btn-cta(href='/register') Get Started (It's Free) &gt;
 					.slider-browsers-w.clearfix
 						.slider-browser.slider-browser-left.hidden-phone(data-position-bottom='-8%')
 							img(alt='Experimonth: Freeloader', src='/img/carousel_freeloader.png')
@@ -80,7 +80,7 @@ block body
 									.fp-show-on-hover
 										h5.fp-title #{experimonth.name}
 										.fp-buttons
-											a.btn.fp-details-btn(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+experimonth.description+'</div></div>', data-bootbox-custom-action-button=(locals.user() ? "Enroll" : 'Get Started'), data-bootbox-custom-action=(locals.user() ? (!locals.user().hasAnsweredAllRequiredQuestions ? '/profile' : "/experimonths/enroll/#{experimonth._id}") : '/signin')) Learn More
+											a.btn.fp-details-btn(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+experimonth.description+'</div></div>', data-bootbox-custom-action-button=(locals.user() ? "Enroll" : 'Get Started'), data-bootbox-custom-action=(locals.user() ? (!locals.user().hasAnsweredAllRequiredQuestions ? '/profile' : "/experimonths/enroll/#{experimonth._id}") : '/register')) Learn More
 					//.span3
 					//	.white-card.clearfix
 					//		.img-w.hover-fader
@@ -94,7 +94,7 @@ block body
 					//		if locals.user()
 					//			a.btn.btn-primary.btn-extra.pull-right(href='/experimonths') Enroll &gt;
 					//		else
-					//			a.btn.btn-primary.btn-extra.pull-right(href='/signin') Get Started (It's Free) &gt;
+					//			a.btn.btn-primary.btn-extra.pull-right(href='/register') Get Started (It's Free) &gt;
 	section.section-wrapper
 		.container
 			.row
