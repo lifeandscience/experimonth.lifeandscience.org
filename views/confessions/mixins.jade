@@ -19,7 +19,7 @@ mixin do_confession(confession, withRefresh)
 						i.icon-flag
 						|  #{confession.flags}
 		.post-content
-			p #{confession.text}
+			p !{confession.text.replace(/<br\/?>/g, '</p><p>')}
 			if u && confession.recentEvents && confession.recentEvents.length
 				table.table
 					thead
