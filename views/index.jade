@@ -13,7 +13,7 @@ block body
 						if locals.user()
 							a.btn.btn-cta(href='/experimonths') Enroll &gt;
 						else
-							a.btn.btn-cta(href='/register') Get Started (It's Free) &gt;
+							a.btn.btn-cta(href='/signin') Get Started (It's Free) &gt;
 					.slider-browsers-w.clearfix
 						.slider-browser.slider-browser-left.hidden-phone(data-position-bottom='-8%')
 							img(alt='Experimonth: Freeloader', src='/img/carousel_freeloader.png')
@@ -69,20 +69,32 @@ block body
 					h3.section-header Currently Recruiting...
 				// TODO: Load 4 of these from the DB
 				for experimonth, i in currentlyRecruiting
-					.span3
-						.white-card.clearfix
-							.img-w.hover-fader
-								a(href='assets/images/test-square.png', data-rel='lightbox[gallery]')
-									if experimonth.image
-										img(src=experimonth.image)
-									//span.hover-fade
-										i.icon-zoom-in
-							h5 #{experimonth.name}
-							p #{experimonth.description}
-							if locals.user()
-								a.btn.btn-primary.btn-extra.pull-right(href='/experimonths') Enroll &gt;
-							else
-								a.btn.btn-primary.btn-extra.pull-right(href='features/pricing_tables.html') Get Started (It's Free) &gt;
+					.span4
+						.framed-post
+							figure
+								figcaption
+									.fp-show-always
+										if experimonth.image
+											.fp-featured-img
+												img(src=experimonth.image)
+									.fp-show-on-hover
+										h5.fp-title #{experimonth.name}
+										.fp-buttons
+											a.btn.fp-details-btn(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+experimonth.description+'</div></div>', data-bootbox-custom-action-button="Enroll", data-bootbox-custom-action=(enrollGoesToProfile ? '/profile' : "/experimonths/enroll/#{experimonth._id}")) Learn More
+					//.span3
+					//	.white-card.clearfix
+					//		.img-w.hover-fader
+					//			a(href='assets/images/test-square.png', data-rel='lightbox[gallery]')
+					//				if experimonth.image
+					//					img(src=experimonth.image)
+					//				//span.hover-fade
+					//					i.icon-zoom-in
+					//		h5 #{experimonth.name}
+					//		p #{experimonth.description}
+					//		if locals.user()
+					//			a.btn.btn-primary.btn-extra.pull-right(href='/experimonths') Enroll &gt;
+					//		else
+					//			a.btn.btn-primary.btn-extra.pull-right(href='/signin') Get Started (It's Free) &gt;
 	section.section-wrapper
 		.container
 			.row
@@ -118,17 +130,71 @@ block body
 				.span12
 					h3.section-header Meet the Scientists
 				.span2
-					img(alt='Client-1', src='/img/scientist_1.png')
+					.framed-post
+						figure
+							figcaption
+								.fp-show-always
+									.fp-featured-img
+										img(alt='Client-1', src='/img/scientist_1.png')
+								.fp-show-on-hover
+									h5.fp-title Scientist 1
+									.fp-buttons
+										a.btn.fp-details-btn(href="http://google.com") Learn More
 				.span2
-					img(alt='Client-1', src='/img/scientist_2.png')
+					.framed-post
+						figure
+							figcaption
+								.fp-show-always
+									.fp-featured-img
+										img(alt='Client-1', src='/img/scientist_2.png')
+								.fp-show-on-hover
+									h5.fp-title Scientist 2
+									.fp-buttons
+										a.btn.fp-details-btn(href="http://google.com") Learn More
 				.span2
-					img(alt='Client-1', src='/img/scientist_3.png')
+					.framed-post
+						figure
+							figcaption
+								.fp-show-always
+									.fp-featured-img
+										img(alt='Client-1', src='/img/scientist_3.png')
+								.fp-show-on-hover
+									h5.fp-title Scientist 3
+									.fp-buttons
+										a.btn.fp-details-btn(href="http://google.com") Learn More
 				.span2
-					img(alt='Client-1', src='/img/scientist_4.png')
+					.framed-post
+						figure
+							figcaption
+								.fp-show-always
+									.fp-featured-img
+										img(alt='Client-1', src='/img/scientist_4.png')
+								.fp-show-on-hover
+									h5.fp-title Scientist 4
+									.fp-buttons
+										a.btn.fp-details-btn(href="http://google.com") Learn More
 				.span2
-					img(alt='Client-1', src='/img/scientist_5.png')
+					.framed-post
+						figure
+							figcaption
+								.fp-show-always
+									.fp-featured-img
+										img(alt='Client-1', src='/img/scientist_5.png')
+								.fp-show-on-hover
+									h5.fp-title Scientist 5
+									.fp-buttons
+										a.btn.fp-details-btn(href="http://google.com") Learn More
 				.span2
-					img(alt='Client-1', src='/img/scientist_6.png')
+					.framed-post
+						figure
+							figcaption
+								.fp-show-always
+									.fp-featured-img
+										img(alt='Client-1', src='/img/scientist_6.png')
+								.fp-show-on-hover
+									h5.fp-title Scientist 6
+									.fp-buttons
+										a.btn.fp-details-btn(href="http://google.com") Learn More
 	section.section-wrapper.stripped
 		.container
 			.row

@@ -152,6 +152,13 @@ module.exports = function(app){
 						return;
 					}
 */
+					if(question.required){
+						return User.reCheckAllUsersProfileQuestions(function(){
+							req.flash('info', 'Profile Question '+(question.published ? 'published' : 'unpublished')+' successfully.');
+							res.redirect('back');
+							return;
+						});
+					}
 					req.flash('info', 'Profile Question '+(question.published ? 'published' : 'unpublished')+' successfully.');
 					res.redirect('back');
 					return;
@@ -231,9 +238,11 @@ module.exports = function(app){
 						res.redirect('back');
 						return;
 					}
-	
-					req.flash('info', 'Thanks for your answer.');
-					res.redirect('back');
+					
+					req.user.reCheckProfileQuestions(null, function(){
+						req.flash('info', 'Thanks for your answer.');
+						res.redirect('back');
+					});
 				});
 				return;
 			});
@@ -307,7 +316,9 @@ module.exports = function(app){
 				ProfileAnswer.find({user: user._id}).populate('question').exec(function(err, answers){
 					var questions = [];
 					for(var i=0; i<answers.length; i++){
-						questions.push(answers[i].question._id);
+						if(answers[i].question){
+							questions.push(answers[i].question._id);
+						}
 					}
 					ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).sort('-publishDate').exec(function(err, questions){
 						res.render('profile', {title: 'Your Experimonth Profile', u: user, enrollments: results.enrollments, questions: questions, answers: answers, timezones: utilities.getTimezones()/* , games: games */, events: results.events});

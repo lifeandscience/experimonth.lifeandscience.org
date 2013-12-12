@@ -22,13 +22,16 @@ module.exports = function(app){
 				res.render('experimonths/experimonths', {title: 'Experimonths', experimonths: experimonths, enrollGoesToProfile: enrollGoesToProfile});
 			});
 		}
-		req.user.checkProfileQuestions(req, function(questions, answers){
+		if(!req.user.hasAnsweredAllRequiredQuestions){
+/* 		req.user.checkProfileQuestions(req, function(questions, answers){ */
 			// The user did not complete all the required questions.
 			req.flash('error', 'You must answer all required profile questions before enrolling in an Experimonth.');
 			finish(true);
-		}, function(){
+		}else{
+/* 		}, function(){ */
 			finish(false);
-		});
+		}
+/* 		}); */
 	});
 	app.get('/currently-recruiting', /* auth.authorize(2), */ function(req, res){
 		var params = {};
@@ -41,13 +44,16 @@ module.exports = function(app){
 			});
 		}
 		if(req.user){
-			req.user.checkProfileQuestions(req, function(questions, answers){
+			if(!req.user.hasAnsweredAllRequiredQuestions){
+/* 			req.user.checkProfileQuestions(req, function(questions, answers){ */
 				// The user did not complete all the required questions.
 				req.flash('error', 'You must answer all required profile questions before enrolling in an Experimonth.');
 				finish(true);
-			}, function(){
+			}else{
+/* 			}, function(){ */
 				finish(false);
-			});
+			}
+/* 			}); */
 		}else{
 			finish(false);
 		}
@@ -71,11 +77,13 @@ module.exports = function(app){
 			return;
 		}
 		// Check if the user has answered all the required profile questions
-		req.user.checkProfileQuestions(req, function(questions, answers){
+		if(!req.user.hasAnsweredAllRequiredQuestions){
+/* 		req.user.checkProfileQuestions(req, function(questions, answers){ */
 			// The user did not complete all the required questions.
 			req.flash('error', 'You must answer all required profile questions before enrolling in an Experimonth.');
 			res.redirect('back');
-		}, function(){
+		}else{
+/* 		}, function(){ */
 			Experimonth.findById(req.param('id')).exec(function(err, experimonth){
 				if(err || !experimonth){
 					req.flash('error', 'Error finding Experimonth with ID '+req.param('id')+'. '+err);
@@ -142,7 +150,8 @@ module.exports = function(app){
 				// We have a survey / consent form. Let's present it.
 				res.render('experimonths/enroll', {title: 'Experimonth: '+experimonth.name, experimonth: experimonth});
 			});
-		});
+		}
+/* 		}); */
 	});
 	
 	app.post('/experimonths/enroll/:id', auth.authorize(2), function(req, res){
@@ -152,11 +161,13 @@ module.exports = function(app){
 			return;
 		}
 		// Check if the user has answered all the required profile questions
-		req.user.checkProfileQuestions(req, function(questions, answers){
+		if(!req.user.hasAnsweredAllRequiredQuestions){
+/* 		req.user.checkProfileQuestions(req, function(questions, answers){ */
 			// The user did not complete all the required questions.
 			req.flash('error', 'You must answer all required profile questions before enrolling in an Experimonth.');
 			res.redirect('back');
-		}, function(){
+		}else{
+/* 		}, function(){ */
 			Experimonth.findById(req.param('id')).exec(function(err, experimonth){
 				if(err || !experimonth){
 					req.flash('error', 'Error finding Experimonth with ID '+req.param('id')+'. '+err);
@@ -217,7 +228,8 @@ module.exports = function(app){
 				});
 				return;
 			});
-		});
+		}
+/* 		}); */
 	});
 	
 	app.get('/experimonths/unenroll/:id', auth.authorize(2), function(req, res){

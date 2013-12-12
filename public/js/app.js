@@ -147,6 +147,24 @@ jQuery(function(){
 		bootbox.alert(t.data('bootbox-alert'));
 		return false;
 	});
+	jQuery(document).on('click', 'a[data-bootbox-custom]', function(){
+		var t = jQuery(this)
+		  , actionButton = t.data('bootbox-custom-action-button')
+		  , actionHref = t.data('bootbox-custom-action')
+		  , closeButton = t.data('bootbox-custom-close-button');
+		if(!actionButton){
+			actionButton = 'OK';
+		}
+		if(!closeButton){
+			closeButton = 'Close';
+		}
+		bootbox.confirm(t.data('bootbox-custom'), closeButton, actionButton, function(result){
+			if(result && actionHref){
+				document.location = actionHref;
+			}
+		});
+		return false;
+	});
 });
 
 (function() {

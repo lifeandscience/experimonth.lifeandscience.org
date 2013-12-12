@@ -8,17 +8,17 @@ block body
 			thead
 				tr
 					th Experimonth
-					th Begins on...
-					th Open Spots
-					th Enroll
+					th.begins Begins on...
+					th.open Open Spots
+					th.enroll Enroll
 			tbody
 				each experimonth, i in experimonths
 					tr
 						td
-							strong #{experimonth.name}
+							span.em-name #{experimonth.name}
 							if experimonth.description
 								|  
-								span.description (#{experimonth.description})
+								a.em-description(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+experimonth.description+'</div></div>', data-bootbox-custom-action-button="Enroll", data-bootbox-custom-action=(enrollGoesToProfile ? '/profile' : "/experimonths/enroll/#{experimonth._id}")) [description]
 						td #{locals.moment(experimonth.startDate).utc().format('MMM. D, YYYY')}
 						td
 							if experimonth.unlimited

@@ -7,7 +7,9 @@ var mongoose = require('mongoose')
   , moment = require('moment')
   , bcrypt = require('bcrypt')
   , crypto = require('crypto')
-  , util = require('util');
+  , util = require('util')
+  , async = require('async')
+  , _ = require('underscore');
 
 
 
@@ -55,6 +57,7 @@ var shouldNextUserDefend = true
 	  , enrollments: [{type: Schema.ObjectId, ref: 'ExperimonthEnrollment'}]
 	  , requiredAnswers: [{type: Schema.ObjectId, ref: 'ProfileAnswer'}]
 	  , optionalAnswers: [{type: Schema.ObjectId, ref: 'ProfileAnswer'}]
+	  , hasAnsweredAllRequiredQuestions: {type: Boolean, default: false}
 	  
 	  , activationCode: String
 	  , fbid: String
@@ -352,33 +355,105 @@ UserSchema.static('randomAdmin', function(callback) {
 		this.findOne().skip(rand).exec(callback);
 	}.bind(this));
 });
-UserSchema.methods.checkProfileQuestions =  function(req, notComplete, complete){
-	var user = this
-	  , ProfileQuestion = mongoose.model('ProfileQuestion')
+UserSchema.static('reCheckAllUsersProfileQuestions', function(finished){
+	var ProfileQuestion = mongoose.model('ProfileQuestion')
 	  , ProfileAnswer = mongoose.model('ProfileAnswer');
-	ProfileQuestion.find({published: true}).exec(function(err, questions){
+	async.parallel({
+		users: function(callback){
+			User.find().exec(callback);
+		}
+	  , questions: function(callback){
+			ProfileQuestion.find({published: true, required: true}).exec(callback);
+		}
+	  , answers: function(callback){
+			ProfileAnswer.find().exec(callback);
+		}
+	}, function(err, results){
 		if(err){
-			console.log('error retrieving questions: ', arguments);
-			notComplete(null, null);
+			console.log('error while computing hasAnsweredAllRequiredQuestions', arguments);
 			return;
 		}
-		ProfileAnswer.find({user: user._id}).exec(function(err, answers){
-			if(err){
-				console.log('error retrieving answers: ', arguments);
-				notComplete(questions, null);
-				return;
-			}
-			req.flash('question');
-			if(questions.length > answers.length){
-				console.log('calling notComplete');
-				notComplete(questions, answers);
-			}else{
-				console.log('calling complete');
-				complete();
+		async.each(results.users, function(user, callback){
+			user.reCheckProfileQuestions(results.questions, callback);
+		}, function(err){
+			console.log('did finish updating all users!');
+			if(finished){
+				finished();
 			}
 		});
 	});
+});
+UserSchema.methods.reCheckProfileQuestions = function(questions, callback){
+	var ProfileAnswer = mongoose.model('ProfileAnswer')
+	  , t = this;
+	var checkAnswers = function(err, questions){
+		if(err || !questions || questions.length == 0){
+			return callback(err);
+		}
+		async.map(questions, function(question, callback){
+			callback(null, question._id.toString());
+		}, function(err, questionIds){
+			ProfileAnswer.find({user: t._id}).exec(function(err, answers){
+				if(err){
+					return callback(err);
+				}
+				var thisUsersQuestions = _.clone(questionIds);
+				console.log('comparing ', thisUsersQuestions, ' to ', answers);
+				for(var i=0; i<answers.length; i++){
+					var idx = thisUsersQuestions.indexOf(answers[i].question.toString());
+					if(idx !== -1){
+						thisUsersQuestions.splice(idx, 1);
+					}
+				}
+				console.log('result: ', thisUsersQuestions);
+				if(thisUsersQuestions.length > 0){
+					t.hasAnsweredAllRequiredQuestions = false;
+				}else{
+					t.hasAnsweredAllRequiredQuestions = true;
+				}
+				t.save(callback);
+			});
+		});
+	};
+	if(questions){
+		checkAnswers(null, questions);
+	}else{
+		var ProfileQuestion = mongoose.model('ProfileQuestion')
+		ProfileQuestion.find({published: true, required: true}).exec(checkAnswers);
+	}
+}
+UserSchema.methods.checkProfileQuestions =  function(req, notComplete, complete){
+	if(this.hasAnsweredAllRequiredQuestions){
+		req.flash('question');
+		complete();
+	}else{
+		var user = this
+		  , ProfileQuestion = mongoose.model('ProfileQuestion')
+		  , ProfileAnswer = mongoose.model('ProfileAnswer');
+		ProfileQuestion.find({published: true, required: true}).exec(function(err, questions){
+			if(err){
+				console.log('error retrieving questions: ', arguments);
+				notComplete(null, null);
+				return;
+			}
+			ProfileAnswer.find({user: user._id}).exec(function(err, answers){
+				if(err){
+					console.log('error retrieving answers: ', arguments);
+					notComplete(questions, null);
+					return;
+				}
+				req.flash('question');
+				if(questions.length > answers.length){
+					notComplete(questions, answers);
+				}else{
+					complete();
+				}
+			});
+		});
+	}
 };
 
 User = mongoose.model('User', UserSchema);
+// TODO: Later we'll remove this, but at startup, do the expensive work of checking whether a user hasAnsweredAllRequiredQuestions
+User.reCheckAllUsersProfileQuestions();
 exports = User;

@@ -2,7 +2,8 @@ var mongoose = require('mongoose')
   , Experimonth = mongoose.model('Experimonth')
   , Confession = mongoose.model('Confession')
   , NewsPost = mongoose.model('NewsPost')
-  , async = require('async');
+  , async = require('async')
+  , email = require('../email');
 
 /*
  * GET home page.
@@ -36,6 +37,35 @@ module.exports = {
 		});
 		app.get('/what-is-this', function(req, res){
 			res.render('what-is-this', { title: 'What Is This?' });
+		});
+		app.get('/feedback', function(req, res){
+			res.render('feedback', { title: 'Feedback', email: null, text: null });
+		});
+		app.post('/feedback', function(req, res){
+			var theEmail = req.param('email');
+			var text = req.param('text');
+			if(!theEmail || theEmail.length == 0){
+				req.flash('error', 'Please provide your email address.');
+				res.render('feedback', { title: 'Feedback', email: theEmail, text: text });
+				return;
+			}
+			if(!text || text.length == 0){
+				req.flash('error', 'Please provide your feedback.');
+				res.render('feedback', { title: 'Feedback', email: theEmail, text: text });
+				return;
+			}
+			var mailOptions = {
+		    	from: "Experimonth: Frenemy <experimonth@lifeandscience.org>", // sender address
+		    	to: 'experimonth+feedback@lifeandscience.org', // list of receivers
+		    	subject: 'Experimonth Feedback Box Submission', // Subject line
+		    	text: 'New feedback posted on '+moment().format('YYYY-MM-DD hh:mm A')+'\n\n---\n\n'+req.param('email')+'\n\n---\n\n'+req.param('text')
+		    };
+
+		    // send mail with defined transport object
+			email.sendMail(mailOptions, function(){
+				req.flash('info', 'Thank you for your feedback!');
+				res.redirect('/');
+			});
 		});
 /*
 		app.get('/empty', function(req, res){

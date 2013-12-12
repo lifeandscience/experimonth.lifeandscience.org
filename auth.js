@@ -440,6 +440,7 @@ module.exports = {
 		});
 		app.get('/logout', function(req, res){
 			req.logOut();
+			req.flash('question');
 			res.redirect(homeRoute);
 		});
 		app.get('/auth/finish', function(req, res){

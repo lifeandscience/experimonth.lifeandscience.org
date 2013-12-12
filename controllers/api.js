@@ -27,6 +27,7 @@ module.exports = function(app){
 					// TODO: We should iterate over all users and ensure that they've answered the appropriate number of conditions (ProfileQuestions)
 					
 					// Check all the users to determine if they have their profiles complete.
+/*
 					ProfileQuestion.count({
 						published: true
 					  , required: true
@@ -36,6 +37,7 @@ module.exports = function(app){
 							next();
 							return;
 						}
+*/
 						if(experimonths && experimonths.length){
 							// Iterate over every experimonth...
 							experimonths.forEach(function(experimonth, index){
@@ -45,7 +47,10 @@ module.exports = function(app){
 									for(var i=experimonth.users.length-1; i>=0; i--){
 										var user = experimonth.users[i];
 										// Check each user to determine if they've filled out the required questions
-										if(user.requiredAnswers.length != numRequiredQuestions){
+/* 										console.log('checking this user: ', user.requiredAnswers.length, numRequiredQuestions); */
+/* 										console.log(user.requiredAnswers); */
+/* 										if(user.requiredAnswers.length != numRequiredQuestions){ */
+										if(!user.hasAnsweredAllRequiredQuestions){
 											// This user hasn't filled out all their questions. So, we've got to exclude them from play.
 											// TODO: Notify the player that they've been skipped from playing because their profile is incomplete?
 											console.log('this player was excluded due to not filling out their questions.', user._id);
@@ -64,7 +69,7 @@ module.exports = function(app){
 						}
 						
 						return res.json(experimonths);
-					});
+/* 					}); */
 				});
 			});
 		});
