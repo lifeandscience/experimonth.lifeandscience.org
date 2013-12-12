@@ -356,6 +356,7 @@ UserSchema.static('randomAdmin', function(callback) {
 	}.bind(this));
 });
 UserSchema.static('reCheckAllUsersProfileQuestions', function(finished){
+	require('./ProfileQuestions');
 	var ProfileQuestion = mongoose.model('ProfileQuestion')
 	  , ProfileAnswer = mongoose.model('ProfileAnswer');
 	async.parallel({
@@ -384,7 +385,6 @@ UserSchema.static('reCheckAllUsersProfileQuestions', function(finished){
 	});
 });
 UserSchema.methods.reCheckProfileQuestions = function(questions, callback){
-	require('./ProfileQuestions');
 	var ProfileAnswer = mongoose.model('ProfileAnswer')
 	  , t = this;
 	var checkAnswers = function(err, questions){
