@@ -5,6 +5,7 @@ process.env.TZ = 'America/New_York';
   , 'S3_ACCESS_SECRET'
   , 'S3_BUCKET'
   , 'S3_SLUG'
+  , 'BASEURL'
 ].forEach(function(envVar, index){
 	if(!process.env[envVar]){
 		console.log(envVar+' environment variable is not set!');
@@ -14,7 +15,7 @@ process.env.TZ = 'America/New_York';
 [	'PORT'
 ].forEach(function(envVar, index){
 	if(!process.env[envVar]){
-		console.log('OPTIONAL: '+envVar+' environment variable is required!');
+		console.log('OPTIONAL: '+envVar+' environment variable is not set!');
 	}
 });
 
@@ -33,7 +34,8 @@ var newrelic = require('newrelic')
   , MongoStore = require('connect-mongo')(express)
   , flash = require('connect-flash')
   , moment = require('moment')
-  , send = require('send');
+  , send = require('send')
+  , url = require('url');
   
   
 // Database
@@ -72,7 +74,13 @@ app.configure(function(){
 	
 
 	var Notification = mongoose.model('Notification');
+	var baseUrl = url.parse(process.env.BASEURL);
 	app.use(function(req, res, next){
+		// Check BASEURL 
+		if(req.host != baseUrl.hostname){
+			// Request host doesn't match configured host. Redirect?
+			return res.redirect(process.env.BASEURL);
+		}
 		// Dynamic locals
 /* 		res.locals._ = _; */
 		res.locals.flash = req.flash.bind(req);
