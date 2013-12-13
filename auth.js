@@ -324,11 +324,11 @@ module.exports = {
 			if(client_id){
 				var ExperimonthKind = mongoose.model('ExperimonthKind');
 				ExperimonthKind.checkClientSecret(client_id, client_secret, function(err, kind){
-					console.log('looked up kind: ', kind._id);
 					if(err || !kind){
 						// Error!
 						return next(new Error('incorrect client credentials'));
 					}
+					console.log('looked up kind: ', kind._id);
 
 					// OK, we have a proper set of client credentials, so check our grants
 					for(var user in myGrants) {
