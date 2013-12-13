@@ -37,9 +37,17 @@ var newrelic = require('newrelic')
   , flash = require('connect-flash')
   , moment = require('moment')
   , send = require('send')
-  , url = require('url');
-  
-  
+  , url = require('url')
+  , mongooseCachebox = require('mongoose-cachebox');
+
+var options = {
+  cache: true, // start caching
+  ttl: 30 // 30 seconds
+};
+
+// adding mongoose cachebox
+mongooseCachebox(mongoose, options);
+
 // Database
 var dbURL = /* process.env.MONGO_URL ||  */process.env.MONGOHQ_URL || 'mongodb://localhost/experimonth'
   , db = mongoose.connect(dbURL);

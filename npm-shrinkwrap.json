@@ -1424,6 +1424,53 @@
           }
         }
       }
+    },
+    "mongoose-cachebox": {
+      "version": "1.2.0",
+      "from": "mongoose-cachebox@",
+      "resolved": "https://registry.npmjs.org/mongoose-cachebox/-/mongoose-cachebox-1.2.0.tgz",
+      "dependencies": {
+        "debug": {
+          "version": "0.7.4",
+          "from": "debug@0.7.x",
+          "resolved": "https://registry.npmjs.org/debug/-/debug-0.7.4.tgz"
+        },
+        "cacheman": {
+          "version": "1.0.1",
+          "from": "cacheman@~1.x.x",
+          "resolved": "https://registry.npmjs.org/cacheman/-/cacheman-1.0.1.tgz",
+          "dependencies": {
+            "cacheman-memory": {
+              "version": "0.1.1",
+              "from": "cacheman-memory@~0.1.x",
+              "resolved": "https://registry.npmjs.org/cacheman-memory/-/cacheman-memory-0.1.1.tgz",
+              "dependencies": {
+                "lru-cache": {
+                  "version": "2.3.1",
+                  "from": "lru-cache@~2.3.x"
+                }
+              }
+            },
+            "ms": {
+              "version": "0.6.2",
+              "from": "ms@~0.6.1",
+              "resolved": "https://registry.npmjs.org/ms/-/ms-0.6.2.tgz"
+            }
+          }
+        },
+        "cacheman-redis": {
+          "version": "0.1.0",
+          "from": "cacheman-redis@~0.1.0",
+          "resolved": "https://registry.npmjs.org/cacheman-redis/-/cacheman-redis-0.1.0.tgz",
+          "dependencies": {
+            "redis": {
+              "version": "0.9.1",
+              "from": "redis@>= 0.8.x",
+              "resolved": "https://registry.npmjs.org/redis/-/redis-0.9.1.tgz"
+            }
+          }
+        }
+      }
     }
   }
 }
