@@ -16,11 +16,12 @@ USERNAME=heroku
 
 case "$2" in
 experimonth)
-	APPID=app12860619
-	PORT=10089
+	APPID=app12860143
+	PORT=10004
 	HOST=linus.mongohq.com
 	USERNAME=heroku
-	PASSWORD=c40e91f65205ed699d253c42e73c176a
+	PASSWORD=V5cjPqgjBqJm8cQjYOWB-FuUGBNQs41p1TkHem9QHGjoFwAS72yWmEl9V_B-aitby0FU-TnkmUVCPQcpgCZiNg
+	# mongodb://heroku:V5cjPqgjBqJm8cQjYOWB-FuUGBNQs41p1TkHem9QHGjoFwAS72yWmEl9V_B-aitby0FU-TnkmUVCPQcpgCZiNg@linus.mongohq.com:10004/app12860143
 	;;
 dev)
 	echo "Dev is the default"

@@ -41,7 +41,7 @@ var newrelic = require('newrelic')
   
   
 // Database
-var dbURL = process.env.MONGO_URL || process.env.MONGOHQ_URL || 'mongodb://localhost/experimonth'
+var dbURL = /* process.env.MONGO_URL ||  */process.env.MONGOHQ_URL || 'mongodb://localhost/experimonth'
   , db = mongoose.connect(dbURL);
 
 // Models
