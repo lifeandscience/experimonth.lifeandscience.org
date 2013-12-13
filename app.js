@@ -145,13 +145,14 @@ app.configure(function(){
 	app.use(require('less-middleware')({ src: __dirname + '/public' }));
 	app.use(express.static(path.join(__dirname, 'public')));
 	app.get('/js/em-navbar.js', function(req, res){
+		var toWrite = '';
 		if(req.user){
-			res.write('var EM_USER = '+JSON.stringify(req.user)+';');
+			toWrite += 'var EM_USER = '+JSON.stringify(req.user)+';';
 		}else{
-			res.write('var EM_USER = null;');
+			toWrite += 'var EM_USER = null;';
 		}
 		var fullURL = req.protocol + "://" + req.get('host');
-		res.write('var EM_URL = "'+fullURL+'";');
+		toWrite += 'var EM_URL = "'+fullURL+'";';
 		var defaultNav = [
 			{
 				'name': 'Home'
@@ -175,8 +176,8 @@ app.configure(function(){
 			}
 		];
 		if(!req.user){
-			res.write('var EM_NAV = '+JSON.stringify(defaultNav)+';');
-			res.write('var EM_RIGHT_NAV = '+JSON.stringify([
+			toWrite += 'var EM_NAV = '+JSON.stringify(defaultNav)+';';
+			toWrite += 'var EM_RIGHT_NAV = '+JSON.stringify([
 				{
 					'name': 'Sign In'
 				  , 'link': fullURL+'/signin'
@@ -187,10 +188,10 @@ app.configure(function(){
 				  , 'link': fullURL+'/register'
 				  , 'class': 'create-account'
 				}
-			])+';');
+			])+';';
 		}else{
-			res.write('var EM_DEFAULT_NAV = '+JSON.stringify(res.locals.nav || defaultNav)+';');
-			res.write('var EM_RIGHT_NAV = '+JSON.stringify([
+			toWrite += 'var EM_DEFAULT_NAV = '+JSON.stringify(res.locals.nav || defaultNav)+';';
+			toWrite += 'var EM_RIGHT_NAV = '+JSON.stringify([
 				{
 					'name': 'Profile'
 				  , 'link': fullURL+'/profile'
@@ -199,8 +200,9 @@ app.configure(function(){
 					'name': 'Logout'
 				  , 'link': fullURL+'/logout'
 				}
-			])+';');
+			])+';';
 		}
+		res.write(toWrite);
 		var fileStream = fs.createReadStream('./public/js/em-navbar.js');
         fileStream.pipe(res);
 	});

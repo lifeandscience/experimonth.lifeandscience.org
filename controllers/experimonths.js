@@ -18,7 +18,7 @@ module.exports = function(app){
 			params.published = true;
 		}
 		var finish = function(enrollGoesToProfile){
-			Experimonth.find(params).populate('kind').exec(function(err, experimonths){
+			Experimonth.find(params).sort('startDate').populate('kind').exec(function(err, experimonths){
 				res.render('experimonths/experimonths', {title: 'Experimonths', experimonths: experimonths, enrollGoesToProfile: enrollGoesToProfile});
 			});
 		}
@@ -39,7 +39,7 @@ module.exports = function(app){
 			params.published = true;
 		}
 		var finish = function(enrollGoesToProfile){
-			Experimonth.find(params).populate('kind').exec(function(err, experimonths){
+			Experimonth.find(params).sort('startDate').populate('kind').exec(function(err, experimonths){
 				res.render('experimonths', {title: 'Currently Recruiting', experimonths: experimonths, enrollGoesToProfile: enrollGoesToProfile});
 			});
 		}

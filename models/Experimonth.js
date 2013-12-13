@@ -58,11 +58,11 @@ var ExperimonthSchema = new Schema({
 
 ExperimonthSchema.statics.findActiveQuery = function(){
 	var today = new Date();
-	return this.find({startDate: {$lte: today}, endDate: {$gte: today}, published: true});
+	return this.find({startDate: {$lte: today}, endDate: {$gte: today}, published: true}).sort('startDate');
 };
-ExperimonthSchema.statics.getEnrollableExperimonths = function(){
+ExperimonthSchema.statics.findEnrollableExperimonths = function(){
 	var today = new Date();
-	return this.find({endDate: {$gte: today}, published: true, open: true});
+	return this.find({endDate: {$gte: today}, published: true, open: true}).sort('startDate');
 };
 var Experimonth = mongoose.model('Experimonth', ExperimonthSchema);
 exports = Experimonth;
