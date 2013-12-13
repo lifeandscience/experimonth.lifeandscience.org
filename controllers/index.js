@@ -23,7 +23,7 @@ module.exports = {
 					Experimonth.getEnrollableExperimonths().sort('startDate').limit(4).exec(callback);
 				}
 			  , confessions: function(callback){
-					Confession.find({active: true, promoted: true}).sort('-date').limit(4).exec(callback);
+					Confession.find({active: true, promoted: true}).sort('-date').limit(6).exec(callback);
 				}
 			  , news: function(callback){
 					NewsPost.find({active: true}).sort('-date').limit(3).exec(callback);

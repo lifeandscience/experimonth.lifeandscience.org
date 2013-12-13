@@ -85,6 +85,7 @@ app.configure(function(){
 		}
 		// Dynamic locals
 /* 		res.locals._ = _; */
+		res.locals.host = req.host;
 		res.locals.flash = req.flash.bind(req);
 		res.locals.moment = moment;
 		res.locals.user = function(minimumState, minimumRole){
