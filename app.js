@@ -12,6 +12,8 @@ process.env.TZ = 'America/New_York';
 		process.exit();
 	}
 });
+
+// Check optional ENV vars
 [	'PORT'
 ].forEach(function(envVar, index){
 	if(!process.env[envVar]){
