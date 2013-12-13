@@ -11630,8 +11630,16 @@ body .notifications h5 {
 .pre-footer .footer-header {
   border-bottom-color: #3d3d3d;
 }
+.pre-footer ul.footer-address li {
+  text-transform: none;
+}
 footer a {
   color: #c9d3cd;
+}
+.deep-footer a.social {
+  text-decoration: none;
+  font-size: 1.2em;
+  margin-right: 5px;
 }
 .btn-auth {
   padding: 25px 60px;

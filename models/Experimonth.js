@@ -27,7 +27,7 @@ ExperimonthKindSchema.statics.checkClientSecret = function(id, clientSecret, cal
 		var testHash = require('crypto').createHash('md5').update(hashSalt+'|'+clientSecret).digest("hex");
 		// Doesn't match, callback nothing.
 		if(testHash != kind.hash){
-			callback(null, null);
+			return callback(null, null);
 		}
 		// Matches! Callback with kind (client)!
 		callback(null, kind);

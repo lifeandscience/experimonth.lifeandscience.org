@@ -326,9 +326,9 @@ module.exports = {
 				ExperimonthKind.checkClientSecret(client_id, client_secret, function(err, kind){
 					if(err || !kind){
 						// Error!
-						return next(new Error('incorrect client credentials'));
+						next(new Error('incorrect client credentials'));
+						return;
 					}
-					console.log('looked up kind: ', kind._id);
 
 					// OK, we have a proper set of client credentials, so check our grants
 					for(var user in myGrants) {
@@ -347,6 +347,7 @@ module.exports = {
 				return;
 			}
 			// We didn't have a client_id for some reason
+			console.log('no such grant found');
 			return next(new Error('no such grant found'));
 		});
 		
