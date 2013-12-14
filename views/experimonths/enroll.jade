@@ -6,7 +6,7 @@ block body
 		h4 Begins #{locals.moment(experimonth.startDate).utc().format('MMMM D, YYYY')} and ends #{locals.moment(experimonth.endDate).utc().format('MMMM D, YYYY')}.
 
 		p Donate your anonymized experimonth data to scientists:
-		p #{experimonth.survey}
+		p !{experimonth.survey}
 		
 		form(action="/experimonths/enroll/"+experimonth._id, method="POST")
 			.form-actions
