@@ -147,6 +147,15 @@ app.configure(function(){
 		var toWrite = '';
 		if(req.user){
 			toWrite += 'var EM_USER = '+JSON.stringify(req.user)+';';
+			var n = null;
+			if(res.locals && res.locals.userNotifications){
+				n = res.locals.userNotifications;
+			}else if(res.locals.notifications){
+				n = res.locals.notifications;
+			}
+			if(n && n.length > 0){
+				toWrite += 'var EM_USER_NUM_NOTIF = '+n.length+';';
+			}
 		}else{
 			toWrite += 'var EM_USER = null;';
 		}
