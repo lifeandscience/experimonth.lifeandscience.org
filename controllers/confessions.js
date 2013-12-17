@@ -152,10 +152,23 @@ module.exports = function(app){
 				item.confession.text = 'This is in reply to confession #'+req.params.number+': ';
 			}
 			item.action = '/confess';
-			Confession.findRandom(req.user, function(confession){
-				item.random_confession = confession;
-				return callback(item);
-			});
+			if(req.params.number){
+				Confession.find({number: req.params.number}).exec(function(err, confessions){
+					if(!err && confessions && confessions.length){
+						item.random_confession = confessions[0];
+						return callback(item);
+					}
+					Confession.findRandom(req.user, function(confession){
+						item.random_confession = confession;
+						return callback(item);
+					});
+				});
+			}else{
+				Confession.findRandom(req.user, function(confession){
+					item.random_confession = confession;
+					return callback(item);
+				});
+			}
 	/* 		return item; */
 		}
 	  , beforeSave = function(req, res, item, complete){
