@@ -16,12 +16,14 @@ block body
 					each question, i in questions
 						active = (i == 0)
 						whiteCard = true
-						include mixins
+						if question
+							include mixins
 						//mixin do_question(question, null, i == 0)
 				if answers && answers.length > 0
 					each answer, i in answers
 						active = (!haveDoneAQuestion && i == 0)
 						question = answer.question
 						whiteCard = true
-						include mixins
+						if question
+							include mixins
 						//mixin do_question(answer.question, answer, !haveDoneAQuestion && i == 0)

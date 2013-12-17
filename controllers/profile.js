@@ -253,7 +253,9 @@ module.exports = function(app){
 		ProfileAnswer.find({user: user._id}).populate('question').exec(function(err, answers){
 			var questions = [];
 			for(var i=0; i<answers.length; i++){
-				questions.push(answers[i].question._id);
+				if(answers[i].question){
+					questions.push(answers[i].question._id);
+				}
 			}
 			ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).sort('-publishDate').exec(function(err, questions){
 				res.render('profile/additional_info', {title: 'Your Additional Info', u: user, questions: questions, answers: answers});
