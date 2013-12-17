@@ -386,6 +386,13 @@ UserSchema.static('reCheckAllUsersProfileQuestions', function(finished){
 UserSchema.methods.reCheckProfileQuestions = function(questions, callback){
 	var ProfileAnswer = mongoose.model('ProfileAnswer')
 	  , t = this;
+
+	if(!t.email || !t.name || !t.timezone || !t.zipcode || !t.birthday || !t.ethnicity || !t.gender){
+		t.hasAnsweredAllRequiredQuestions = false;
+		t.save(callback);
+		return;
+	}
+
 	var checkAnswers = function(err, questions){
 		if(err || !questions || questions.length == 0){
 			return callback(err);

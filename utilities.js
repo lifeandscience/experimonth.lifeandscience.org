@@ -2,7 +2,7 @@ var sockets = []
   , timezones = false;
 
 module.exports = {
-	doForm: function(as, populate, title, object, template, varNames, redirect, beforeRender, beforeSave, layout){
+	doForm: function(as, populate, title, object, template, varNames, redirect, beforeRender, beforeSave, layout, afterSave){
 		return function(req, res){
 	
 			var validated = false;
@@ -55,7 +55,11 @@ module.exports = {
 	*/
 									return;
 								}
-								res.redirect(redirect);
+								if(afterSave){
+									afterSave(result, req, res);
+								}else{
+									res.redirect(redirect);
+								}
 								return;
 							});
 						};

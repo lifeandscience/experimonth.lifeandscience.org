@@ -60,6 +60,11 @@ module.exports = function(app){
 	*/
 			item.timezones = utilities.getTimezones();
 			return callback(item);
+		}
+	  , afterSave = function(user, req, res){
+			user.reCheckProfileQuestions(null, function(){
+				res.redirect(redirect);
+			});
 		};
 	
 	/*
@@ -68,7 +73,7 @@ module.exports = function(app){
 	app.post('/users/add', auth.authorize(2, 10), formValidate, utilities.doForm(as, populate, 'Add New User', User, template, varNames, redirect));
 	*/
 	app.get('/users/edit/:id', auth.authorizeOrSelf(2, 10, 'id'), utilities.doForm(as, populate, 'Edit User', User, template, varNames, redirect, beforeRender));
-	app.post('/users/edit/:id', auth.authorizeOrSelf(2, 10, 'id'), formValidate, utilities.doForm(as, populate, 'Edit User', User, template, varNames, redirect, beforeRender));
+	app.post('/users/edit/:id', auth.authorizeOrSelf(2, 10, 'id'), formValidate, utilities.doForm(as, populate, 'Edit User', User, template, varNames, redirect, beforeRender, null, null, afterSave));
 	
 	/*
 	// Saving for now.
