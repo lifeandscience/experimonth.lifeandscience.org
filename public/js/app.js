@@ -137,7 +137,14 @@ jQuery(function(){
 		  , href = t.attr('href');
 		bootbox.confirm(t.data('bootbox-confirm'), function(confirmed){
 			if(confirmed){
-				document.location = href;
+				if(href){
+					document.location = href;
+					return;
+				}
+				href = t.data('bootbox-confirm-href');
+				if(href){
+					document.location = href;
+				}
 			}
 		});
 		return false;

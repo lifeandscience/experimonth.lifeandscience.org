@@ -46,6 +46,6 @@ mixin do_confession(confession, withRefresh)
 					else
 						| Promote
 				|  | 
-			a.flag(href="/confessional/flag/"+confession._id) Report Abuse
+			a.flag(href="#", data-bootbox-confirm-href="/confessional/flag/"+confession._id, data-bootbox-confirm="<p>Are you sure you want to report this confession for abuse?</p>") Report Abuse
 			|  | 
 			a.reply(href="/confess/reply/"+confession.number) Reply
