@@ -24,7 +24,7 @@ var do_nav = function(nav){
 			toReturn += '<li class="dropdown'+(n.link == document.location.toString() || is_active_nav(n.children) ? ' active' : '')+'"> \
 				<a class="dropdown-toggle" href="'+n.link+'" data-toggle="em-dropdown">'+n.name+' <i class="icon-caret-down" /></a><ul class="dropdown-menu">'+do_nav(n.children)+'</ul></li>';
 		}else{
-			if(n.name == 'Profile' && EM_USER_NUM_NOTIF){
+			if(n.name == 'Profile' && typeof EM_USER_NUM_NOTIF !== 'undefined' && EM_USER_NUM_NOTIF){
 				n.name = '<span class="badge">'+EM_USER_NUM_NOTIF+'</span> ' + n.name;
 			}
 			toReturn += '<li class="'+(n.link == document.location.toString() ? 'active' : '')+'"><a href="'+n.link+'" class="'+(n.class ? n.class : '')+'">'+n.name+'</a></li>';
