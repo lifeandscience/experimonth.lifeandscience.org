@@ -1,6 +1,8 @@
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
-  , util = require('util');
+  , util = require('util')
+  , async = require('async')
+  , email = require('../email');
 
 var NotificationSchema = new Schema({
 	date: {type: Date, default: function(){ return new Date(); }}
@@ -17,19 +19,63 @@ var NotificationSchema = new Schema({
 NotificationSchema.pre('save', function(next){
 	if(!this.format || this.format.length == 0){
 		// TODO: Set this.format based on User preferences?
-		this.format = ['web'];
+		this.format = ['web', 'email'];
 	}
+	var toDoParallel = null;
 	if(this.format && this.format.length && this.format.indexOf('email') !== -1 && !this.email_sent){
 		// This is an email notification!
 		// TODO: Send an email
 		// TODO: DO: this.email_sent = true;
+		var t = this;
+		if(!toDoParallel){
+			toDoParallel = {};
+		}
+		toDoParallel.email = function(callback){
+			var finish = function(user){
+				if(user.email){
+					var mailOptions = {
+						to: user.email,
+						subject: t.subject,
+						generateTextFromHTML: true,
+						html: t.text
+					};
+		
+					// send mail with defined transport object
+					email.sendMail(mailOptions, function(){
+						t.email_sent = true;
+						callback();
+					});
+				}else{
+					console.log('would\'ve emailed the user but they had no email address!');
+					callback();
+				}
+			};
+
+			if(t.user && !t.user._id){
+				var User = mongoose.model('User');
+				User.findById(t.user).exec(function(err, user){
+					finish(user);
+				});
+			}else{
+				finish(t.user);
+			}
+		};
 	}
 	if(this.format && this.format.length && this.format.indexOf('sms') !== -1 && !this.sms_sent){
 		// This is an SMS notification!
 		// TODO: Send the text message
 		// TODO: DO: this.sms_sent = true;
 	}
-	next();
+	if(toDoParallel){
+		async.parallel(toDoParallel, function(err, results){
+			if(err){
+				console.log('Error while saving Notification: ', err);
+			}
+			next();
+		});
+	}else{
+		next();
+	}
 });
 
 NotificationSchema.static('notify', function(type, format, subject, text, user, callback){
