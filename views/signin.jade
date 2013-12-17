@@ -8,22 +8,22 @@ block body
 				- each error in errors
 					li.error= error
 
-		h1 Login to Experimonth
-		p.big-text Please login to access your profile and enroll in Experimonths.
+		h1 Log in to Experimonth
+		p.big-text Please log in to access your profile and enroll in Experimonths.
 		
 		.row
 			.span8.offset2.text-center
 				.well
 					a.btn.btn-auth.btn-twitter(href="/auth/twitter")
 						i.icon-twitter
-						|  Login with Twitter
+						|  Log in with Twitter
 					a.btn.btn-auth.btn-facebook(href="/auth/facebook") 
 						i.icon-facebook-sign
-						|  Login with Facebook
+						|  Log in with Facebook
 		.row
 			.span6.offset3.text-center
 				h2 Don't use one of the above services? 
-				p Login with your email address and Experimonth password.
+				p Log in with your email address and Experimonth password.
 		.row
 			.span4.offset4.text-center
 				form.well(action='/auth/local/login', method='POST')
@@ -37,7 +37,7 @@ block body
 							input(type='password', name='password', placeholder='Password', tabindex=2)
 					#submit.control-group
 						.controls
-							input.btn-auth.btn-login(type='submit', value='Login with Email', tabindex=3) Login with Email
+							input.btn-auth.btn-login(type='submit', value='Log in with Email', tabindex=3) Log in with Email
 				p
 					| If you need an account, 
 					a(href="/register") sign up for one here
