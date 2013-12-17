@@ -113,7 +113,6 @@ UserSchema.method('sendTemporaryPasswordEmail', function(){
 	    generateTextFromHTML: true,
 	    html: html // html body
 	};
-	console.log('sending: ', mailOptions);
 
 	// send mail with defined transport object
 	email.sendMail(mailOptions);
