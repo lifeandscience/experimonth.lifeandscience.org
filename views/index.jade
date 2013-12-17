@@ -67,7 +67,7 @@ block body
 			.row
 				.span12
 					h3.section-header Currently Recruiting...
-				// TODO: Load 4 of these from the DB
+				u = user()
 				for experimonth, i in currentlyRecruiting
 					.span4
 						.framed-post
@@ -80,7 +80,8 @@ block body
 									.fp-show-on-hover
 										h5.fp-title #{experimonth.name}
 										.fp-buttons
-											a.btn.fp-details-btn(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+experimonth.description+'</div></div>', data-bootbox-custom-action-button=(locals.user() ? "Enroll" : 'Get Started'), data-bootbox-custom-action=(locals.user() ? (!locals.user().hasAnsweredAllRequiredQuestions ? '/profile' : "/experimonths/enroll/#{experimonth._id}") : '/register')) Learn More
+											a.btn.fp-details-btn(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+experimonth.description+'</div></div>', data-bootbox-custom-action-button=(u ? (experimonth.users.indexOf(u._id.toString()) != -1 ? "Visit" : "Enroll") : "Get Started"), data-bootbox-custom-action=(u ? (experimonth.users.indexOf(u._id.toString()) == -1 ? (enrollGoesToProfile ? '/profile' : "/experimonths/enroll/#{experimonth._id}") : experimonth.kind.url) : '/register')) Learn More
+											//a.btn.fp-details-btn(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+experimonth.description+'</div></div>', data-bootbox-custom-action-button=(locals.user() ? "Enroll" : 'Get Started'), data-bootbox-custom-action=(locals.user() ? (!locals.user().hasAnsweredAllRequiredQuestions ? '/profile' : "/experimonths/enroll/#{experimonth._id}") : '/register')) Learn More
 					//.span3
 					//	.white-card.clearfix
 					//		.img-w.hover-fader
@@ -138,6 +139,7 @@ block body
 										img(alt='Frances Ulman', src='/img/scientist_1.png')
 								.fp-show-on-hover
 									h5.fp-title Frances Ulman
+									h6 (Mood, TBA)
 									.fp-buttons
 										a.btn.fp-details-btn(href="http://francesulmanphd.com/") Learn More
 				.span2
