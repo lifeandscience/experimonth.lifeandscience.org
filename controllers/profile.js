@@ -312,7 +312,7 @@ module.exports = function(app){
 					enrollment.experimonth.kindPopulated = kind;
 					return callback(null, enrollment);
 				});
-			}, function(err, results){
+			}, function(err, enrollments){
 				ProfileAnswer.find({user: user._id}).populate('question').exec(function(err, answers){
 					var questions = [];
 					for(var i=0; i<answers.length; i++){
@@ -321,7 +321,7 @@ module.exports = function(app){
 						}
 					}
 					ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).sort('-publishDate').exec(function(err, questions){
-						res.render('profile', {title: 'Your Experimonth Profile', u: user, enrollments: results.enrollments, questions: questions, answers: answers, timezones: utilities.getTimezones()/* , games: games */, events: results.events});
+						res.render('profile', {title: 'Your Experimonth Profile', u: user, enrollments: enrollments, questions: questions, answers: answers, timezones: utilities.getTimezones()/* , games: games */, events: results.events});
 					});
 				});
 			});
