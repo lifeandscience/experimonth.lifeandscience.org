@@ -130,7 +130,7 @@ app.configure(function(){
 		if(!req.user){
 			return next();
 		}
-		Notification.find({user: req.user, read: false}, function(err, notifications){
+		Notification.find({user: req.user, read: false}).sort('-date').exec(function(err, notifications){
 			res.locals.notifications = notifications;
 			next();
 		});
