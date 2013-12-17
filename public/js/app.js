@@ -12,7 +12,7 @@ jQuery(function(){
 		});
 	}
 
-	jQuery('.datepicker').datetimepicker({
+	jQuery('.datepicker').datepicker({
 		pickTime: false
 	});
 

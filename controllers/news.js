@@ -73,10 +73,11 @@ module.exports = function(app){
 	var as = 'newsPost'
 	  , populate = []
 	  , template = 'news/form'
-	  , varNames = ['title', 'text', 'image', 'link']
+	  , varNames = ['date', 'title', 'text', 'image', 'link']
 	  , redirect = '/news'
 	  , formValidate = form(
 			field('text').trim().required(),
+			field('date').trim().isDate(),
 			field('title').trim().required(),
 //			field('image').trim(),
 			field('link').trim().required()
@@ -92,8 +93,6 @@ module.exports = function(app){
 	/* 		return item; */
 		}
 	  , beforeSave = function(req, res, item, complete){
-			item.date = Date.now();
-			console.log('req.files: ', req.files);
 			if(req.files && req.files.image && req.files.image.size){
 				s3.uploadFile(req.files.image, null, function(err, url){
 					if(err){

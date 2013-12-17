@@ -7,6 +7,15 @@ block body
 				legend #{title}
 						
 				.control-group
+					label.control-label(for="date") Date:
+					.controls
+						.input-append
+							input#date.datepicker.span5(type="text", placeholder="", name="date", value=locals.moment(newsPost.date).utc().format('M/DD/YYYY'), data-date-format="m/dd/yyyy")
+							//span.add-on
+							//	i.icon-calendar(data-time-icon="icon-time", data-date-icon="icon-calendar")
+						p.help-block The date for this News Post.
+						
+				.control-group
 					label.control-label(for="title") Title:
 					.controls
 						input#title(type="text", placeholder="Title of the news post is awesome", name="title", value=newsPost.title)
