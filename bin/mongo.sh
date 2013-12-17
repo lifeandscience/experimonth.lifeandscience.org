@@ -15,7 +15,7 @@ PASSWORD=myEb51rOB8pZovUUMdZLvO-8Zcz4qAKztkCSg6fI-WxVW8wc4fOotLNhSeg6KxOfYeh6ZBH
 USERNAME=heroku
 
 case "$2" in
-experimonth)
+mls-experimonth)
 	APPID=app12860143
 	PORT=10004
 	HOST=linus.mongohq.com
@@ -23,7 +23,7 @@ experimonth)
 	PASSWORD=V5cjPqgjBqJm8cQjYOWB-FuUGBNQs41p1TkHem9QHGjoFwAS72yWmEl9V_B-aitby0FU-TnkmUVCPQcpgCZiNg
 	# mongodb://heroku:V5cjPqgjBqJm8cQjYOWB-FuUGBNQs41p1TkHem9QHGjoFwAS72yWmEl9V_B-aitby0FU-TnkmUVCPQcpgCZiNg@linus.mongohq.com:10004/app12860143
 	;;
-dev)
+mls-testing-experimonth)
 	echo "Dev is the default"
 	;;
 *)
