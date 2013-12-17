@@ -334,6 +334,21 @@ module.exports = function(app){
 		req.flash('question');
 		doProfile(req.user, res);
 	});
+	
+	app.get('/profile/mark-all-read', auth.authorize(1, 0, null, true), function(req, res){
+		if(res.locals.notifications && res.locals.notifications.length){
+			async.each(res.locals.notifications, function(notification, callback){
+				notification.read = true;
+				notification.save(callback);
+			}, function(err){
+				res.redirect('back');
+				return;
+			})
+			return;
+		}
+		res.redirect('back');
+	});
+
 	app.get('/profile/:id', auth.authorize(2, 10), function(req, res){
 		if(!req.param('id')){
 			req.flash('error', 'Missing Profile Question ID.');
@@ -349,6 +364,4 @@ module.exports = function(app){
 			doProfile(user, res);
 		});
 	});
-
-
 };

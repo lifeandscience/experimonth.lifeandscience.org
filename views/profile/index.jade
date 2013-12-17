@@ -87,16 +87,19 @@ block body
 
 				.span4
 					.notifications
+						if locals.userNotifications
+							n = locals.userNotifications
+						else if locals.notifications
+							n = locals.notifications
+						n = n ? n.length : 0
+						n = n + (questions ? questions.length : 0)
 						.pull-right
 							// TODO: Add correct number of messages
-							if locals.userNotifications
-								n = locals.userNotifications
-							else if locals.notifications
-								n = locals.notifications
-							n = n ? n.length : 0
-							n = n + (questions ? questions.length : 0)
 							h6.bubble #{n}
-						h5 Experimonth Messages
+						h5 
+							| Experimonth Messages
+							if n > 0
+								a.mark-all-read(href="/profile/mark-all-read") Mark all as Read
 						
 						if questions && questions.length > 0
 							
@@ -111,6 +114,10 @@ block body
 										//mixin do_question(question, null, i == 0)
 
 						mixin do_notifications()
+
+						if n > 0
+							p.text-right
+								a.mark-all-read(href="/profile/mark-all-read") Mark all as Read
 
 			loggedInU = user()
 			if loggedInU && loggedInU.role == 10

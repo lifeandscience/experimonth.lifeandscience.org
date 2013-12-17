@@ -11698,7 +11698,8 @@ a {
   color: #730202;
   text-decoration: underline;
 }
-a.btn {
+a.btn,
+a.close {
   text-decoration: none;
 }
 h1 a,
@@ -12080,6 +12081,11 @@ footer {
 .notifications h5 {
   margin-top: 12px;
   padding-bottom: 12px;
+}
+.notifications h5 a.mark-all-read {
+  float: right;
+  margin-right: 10px;
+  font-size: 0.6em;
 }
 .notifications h6.bubble {
   font-size: 24px;

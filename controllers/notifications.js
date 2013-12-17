@@ -26,7 +26,7 @@ module.exports = function(app){
 				
 				res.redirect('back');
 				return;
-			})
+			});
 		});
 		
 	});
