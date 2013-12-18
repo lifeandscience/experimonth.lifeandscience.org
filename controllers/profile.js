@@ -332,6 +332,10 @@ module.exports = function(app){
 	app.get('/profile', auth.authorize(1, 0, null, true), function(req, res){
 //		console.log('user.timezone', utilities.getTimezoneFromOffset(req.user.timezone));
 		req.flash('question');
+		if(req.query.withError){
+			req.flash('error', 'You must fill out all the fields in red below and answer any other required profile questions before enrolling in Experimonth.');
+			res.locals.withError = true;
+		}
 		doProfile(req.user, res);
 	});
 	
