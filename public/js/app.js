@@ -19,6 +19,41 @@ jQuery(function(){
 	jQuery('.datepicker-decade').datepicker({
 		startView: 2
 	});
+	
+	var evenRows = function(selector){
+		var currentTallest = 0,
+			currentRowStart = 0,
+			rowDivs = new Array(),
+			$el,
+			topPosition = 0;
+	
+		$(selector).each(function() {
+			$el = $(this);
+			topPostion = $el.position().top;
+
+			if (currentRowStart != topPostion) {
+				// we just came to a new row.	Set all the heights on the completed row
+				for (currentDiv = 0 ; currentDiv < rowDivs.length ; currentDiv++) {
+					rowDivs[currentDiv].height(currentTallest);
+				 }
+				// set the variables for the new row
+				rowDivs.length = 0; // empty the array
+				currentRowStart = topPostion;
+				currentTallest = $el.height();
+				rowDivs.push($el);
+			} else {
+				// another div on the current row.	Add it to the list and check if it's taller
+				rowDivs.push($el);
+				currentTallest = (currentTallest < $el.height()) ? ($el.height()) : (currentTallest);
+			}
+			// do the last row
+			for (currentDiv = 0 ; currentDiv < rowDivs.length ; currentDiv++) {
+				rowDivs[currentDiv].height(currentTallest);
+			}
+		});
+	}
+	evenRows('#container-inner.user-profile .question .white-card');
+
 	jQuery('.editable').each(function(){
 		var t = jQuery(this);
 		t.before('<div class="btn-toolbar" data-role="editor-toolbar" data-target="#'+this.id+'">\
@@ -89,7 +124,7 @@ jQuery(function(){
 			overlay.css('opacity', 0).css('position', 'absolute').offset(target.offset()).width(target.outerWidth()).height(target.outerHeight());
 		});
 /*
-		if ("onwebkitspeechchange"  in document.createElement("input")) {
+		if ("onwebkitspeechchange"	in document.createElement("input")) {
 			var editorOffset = $('.editable').offset();
 			$('#voiceBtn').css('position','absolute').offset({top: editorOffset.top, left: editorOffset.left+$('#editor').innerWidth()-35});
 		} else {
@@ -137,7 +172,7 @@ jQuery(function(){
 	/* BootBox */
 	jQuery(document).on('click', 'a[data-bootbox-confirm]', function(){
 		var t = jQuery(this)
-		  , href = t.attr('href');
+			, href = t.attr('href');
 		bootbox.confirm(t.data('bootbox-confirm'), function(confirmed){
 			if(confirmed){
 				if(href && href != '#'){
@@ -159,9 +194,9 @@ jQuery(function(){
 	});
 	jQuery(document).on('click', 'a[data-bootbox-custom]', function(){
 		var t = jQuery(this)
-		  , actionButton = t.data('bootbox-custom-action-button')
-		  , actionHref = t.data('bootbox-custom-action')
-		  , closeButton = t.data('bootbox-custom-close-button');
+			, actionButton = t.data('bootbox-custom-action-button')
+			, actionHref = t.data('bootbox-custom-action')
+			, closeButton = t.data('bootbox-custom-close-button');
 		if(!actionButton){
 			actionButton = 'OK';
 		}
@@ -179,45 +214,45 @@ jQuery(function(){
 
 (function() {
 
-  $(function() {
-    $('.tooltip-examples a, .tooltip-paragraph-examples a').tooltip({
-      animation: false
-    });
-    $('.top-sign-in').on("click", function(e) {
-      $('.login-box').fadeIn("fast");
-      return false;
-    });
-    $('.login-box-close').on("click", function(e) {
-      $(this).closest(".login-box").fadeOut("fast");
-      return false;
-    });
-/*     prettyPrint(); */
-    $(".slider-browser-center").animate({
-      bottom: $(".slider-browser-center").data('position-bottom')
-    }, "fast", function() {
-      return $(".slider-browser-left").animate({
-        bottom: $(".slider-browser-left").data('position-bottom')
-      }, "fast", function() {
-        return $(".slider-browser-right").animate({
-          bottom: $(".slider-browser-right").data('position-bottom')
-        }, "fast");
-      });
-    });
-    $('.carousel').carousel({
-      interval: false
-    });
-    return $('a[data-toggle="testimonial"]').on("click", function(e) {
-      $(this).closest('.testimonials-users').find('a[data-toggle="testimonial"]').removeClass("active");
-      $(this).addClass("active");
-      $('.testimonials-speech').removeClass('active');
-      $('.testimonials-speech' + $(this).attr('href')).addClass('active');
-      return false;
-    });
-  });
-  $("body").on("touchstart.dropdown", ".dropdown-menu", function(e) {
-    return e.stopPropagation();
-  });
-  return $(document).on("click", ".dropdown-menu a", function() {
-    return document.location = $(this).attr("href");
-  });
+	$(function() {
+		$('.tooltip-examples a, .tooltip-paragraph-examples a').tooltip({
+			animation: false
+		});
+		$('.top-sign-in').on("click", function(e) {
+			$('.login-box').fadeIn("fast");
+			return false;
+		});
+		$('.login-box-close').on("click", function(e) {
+			$(this).closest(".login-box").fadeOut("fast");
+			return false;
+		});
+/*		 prettyPrint(); */
+		$(".slider-browser-center").animate({
+			bottom: $(".slider-browser-center").data('position-bottom')
+		}, "fast", function() {
+			return $(".slider-browser-left").animate({
+				bottom: $(".slider-browser-left").data('position-bottom')
+			}, "fast", function() {
+				return $(".slider-browser-right").animate({
+					bottom: $(".slider-browser-right").data('position-bottom')
+				}, "fast");
+			});
+		});
+		$('.carousel').carousel({
+			interval: false
+		});
+		return $('a[data-toggle="testimonial"]').on("click", function(e) {
+			$(this).closest('.testimonials-users').find('a[data-toggle="testimonial"]').removeClass("active");
+			$(this).addClass("active");
+			$('.testimonials-speech').removeClass('active');
+			$('.testimonials-speech' + $(this).attr('href')).addClass('active');
+			return false;
+		});
+	});
+	$("body").on("touchstart.dropdown", ".dropdown-menu", function(e) {
+		return e.stopPropagation();
+	});
+	return $(document).on("click", ".dropdown-menu a", function() {
+		return document.location = $(this).attr("href");
+	});
 }).call(this);
