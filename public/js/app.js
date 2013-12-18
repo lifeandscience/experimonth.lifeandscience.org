@@ -137,7 +137,7 @@ jQuery(function(){
 		  , href = t.attr('href');
 		bootbox.confirm(t.data('bootbox-confirm'), function(confirmed){
 			if(confirmed){
-				if(href){
+				if(href && href != '#'){
 					document.location = href;
 					return;
 				}
