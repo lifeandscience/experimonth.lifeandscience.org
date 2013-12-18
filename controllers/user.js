@@ -40,7 +40,7 @@ module.exports = function(app){
 	var as = 'u'
 	  , populate = 'votes'
 	  , template = 'users/form'
-	  , varNames = ['email', 'name', 'timezone', 'zipcode', 'birthday', 'ethnicity', 'gender']
+	  , varNames = ['email', 'name', 'timezone', 'zipcode', 'birthday', 'ethnicity', 'gender', 'do_email_notifications', 'do_sms_notifications']
 	  , redirect = 'back'
 	  , formValidate = form(
 			field('email').trim()
@@ -50,6 +50,8 @@ module.exports = function(app){
 		  , field('birthday').trim()
 		  , field('ethnicity').trim()
 		  , field('gender').trim()
+		  , field('do_email_notifications').trim()
+		  , field('do_sms_notifications').trim()
 		)
 	  , beforeRender = function(req, res, item, callback){
 	/*
@@ -60,6 +62,19 @@ module.exports = function(app){
 	*/
 			item.timezones = utilities.getTimezones();
 			return callback(item);
+		}
+	  , beforeSave = function(req, res, item, complete){
+			if(req.body.do_email_notifications){
+				item.do_email_notifications = true;
+			}else{
+				item.do_email_notifications = false;
+			}
+			if(req.body.do_sms_notifications){
+				item.do_sms_notifications = true;
+			}else{
+				item.do_sms_notifications = false;
+			}
+			complete(item);
 		}
 	  , afterSave = function(user, req, res){
 			user.reCheckProfileQuestions(null, function(){
@@ -73,7 +88,7 @@ module.exports = function(app){
 	app.post('/users/add', auth.authorize(2, 10), formValidate, utilities.doForm(as, populate, 'Add New User', User, template, varNames, redirect));
 	*/
 	app.get('/users/edit/:id', auth.authorizeOrSelf(2, 10, 'id'), utilities.doForm(as, populate, 'Edit User', User, template, varNames, redirect, beforeRender));
-	app.post('/users/edit/:id', auth.authorizeOrSelf(2, 10, 'id'), formValidate, utilities.doForm(as, populate, 'Edit User', User, template, varNames, redirect, beforeRender, null, null, afterSave));
+	app.post('/users/edit/:id', auth.authorizeOrSelf(2, 10, 'id'), formValidate, utilities.doForm(as, populate, 'Edit User', User, template, varNames, redirect, beforeRender, beforeSave, null, afterSave));
 	
 	/*
 	// Saving for now.

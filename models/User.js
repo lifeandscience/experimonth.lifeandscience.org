@@ -72,7 +72,7 @@ var shouldNextUserDefend = true
 	  
 		// Notification methods
 	  , do_sms_notifications: {type: Boolean, default: false}
-	  , do_email_notifications: {type: Boolean, default: false}
+	  , do_email_notifications: {type: Boolean, default: true}
 	  
 	  , passwordResetTemporaryPassword: String
 	  , passwordResetTimeout: Date

@@ -79,6 +79,16 @@ block body
 							label.control-label(for="gender") Gender:
 							.controls
 								input#gender.span5(type="text", placeholder="", name="gender", value=u.gender)
+
+						.control-group
+							label.control-label(for="do_email_notifications") Notifications:
+							.controls
+								label.checkbox
+									input#open(type="checkbox", name="do_email_notifications", value="true", checked=u.do_email_notifications)
+									|  Email
+								//label.checkbox
+								//	input#open(type="checkbox", name="do_sms_notifications", value="true", checked=u.do_sms_notifications)
+								//	|  SMS
 		
 						.control-group
 							.controls
