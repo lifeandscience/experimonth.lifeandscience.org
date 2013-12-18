@@ -10,7 +10,7 @@ block body
 					label.control-label(for="date") Date:
 					.controls
 						.input-append
-							input#date.datepicker.span5(type="text", placeholder="", name="date", value=locals.moment(newsPost.date).utc().format('M/DD/YYYY'), data-date-format="m/dd/yyyy")
+							input#date.datepicker.span5(type="text", placeholder="", name="date", value=locals.moment(newsPost.date).utc().format('M/D/YYYY'), data-date-format="m/d/yyyy")
 							//span.add-on
 							//	i.icon-calendar(data-time-icon="icon-time", data-date-icon="icon-calendar")
 						p.help-block The date for this News Post.

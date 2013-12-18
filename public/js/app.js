@@ -16,6 +16,9 @@ jQuery(function(){
 		pickTime: false
 	});
 
+	jQuery('.datepicker-decade').datepicker({
+		startView: 2
+	});
 	jQuery('.editable').each(function(){
 		var t = jQuery(this);
 		t.before('<div class="btn-toolbar" data-role="editor-toolbar" data-target="#'+this.id+'">\

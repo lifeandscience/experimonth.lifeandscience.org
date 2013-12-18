@@ -66,9 +66,10 @@ block body
 								input#zipcode.span5(type="text", placeholder="", name="zipcode", value=u.zipcode)
 				
 						.control-group(class=(locals.withError && !u.birthday ? 'error' : ''))
-							label.control-label(for="birthday") Birthday:
+							label.control-label(for="birthday") Birthdate:
 							.controls
-								input#birthday.span5(type="text", placeholder="", name="birthday", value=u.birthday)
+								input#birthday.datepicker-decade.span5(type="text", placeholder="", name="birthday", value=locals.moment(u.birthday).utc().format('M/D/YYYY'), data-date-format="m/d/yyyy")
+								//input#birthday.span5(type="text", placeholder="", name="birthday", value=u.birthday)
 				
 						.control-group(class=(locals.withError && !u.ethnicity ? 'error' : ''))
 							label.control-label(for="ethnicity") Ethnicity:
