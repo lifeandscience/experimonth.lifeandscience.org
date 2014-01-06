@@ -109,6 +109,9 @@ module.exports = function(app){
 					res.redirect('back');
 					return;
 				}
+				ProfileAnswer.remove({question: question._id}).exec(function(err){
+					console.log('removed all related answers also: ', err);
+				});
 				req.flash('info', 'Profile Question deleted successfully.');
 				res.redirect('back');
 				return;
@@ -152,15 +155,17 @@ module.exports = function(app){
 						return;
 					}
 */
-					if(question.required){
-						return User.reCheckAllUsersProfileQuestions(function(){
+/* 					if(question.required){ */
+/* 						return User.reCheckAllUsersProfileQuestions(function(){ */
 							req.flash('info', 'Profile Question '+(question.published ? 'published' : 'unpublished')+' successfully.');
 							res.redirect('back');
 							return;
-						});
+/* 						}); */
+/*
 					}
 					req.flash('info', 'Profile Question '+(question.published ? 'published' : 'unpublished')+' successfully.');
 					res.redirect('back');
+*/
 					return;
 /* 				}); */
 			});
@@ -227,11 +232,7 @@ module.exports = function(app){
 					return;
 				}
 				
-				if(question.required){
-					req.user.requiredAnswers.push(answer);
-				}else{
-					req.user.optionalAnswers.push(answer);
-				}
+				req.users.answers.push(answer);
 				req.user.save(function(err){
 					if(err){
 						req.flash('error', 'Error saving user.');
@@ -251,14 +252,27 @@ module.exports = function(app){
 
 	var doAdditionalInfo = function(user, res){
 		ProfileAnswer.find({user: user._id}).populate('question').exec(function(err, answers){
-			var questions = [];
+			var questionsToIgnore = [];
+/*
 			for(var i=0; i<answers.length; i++){
 				if(answers[i].question){
-					questions.push(answers[i].question._id);
+					questionsToIgnore.push(answers[i].question._id.toString());
 				}
 			}
-			ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).sort('-publishDate').exec(function(err, questions){
-				res.render('profile/additional_info', {title: 'Your Additional Info', u: user, questions: questions, answers: answers});
+*/
+			user.getProfileQuestions(questionsToIgnore, function(err, questions, questionIds, optionalQuestions, optionalQuestionIds){
+				for(var i=0; i<answers.length; i++){
+					var idx = questionIds.indexOf(answers[i].question._id.toString());
+					if(idx != -1){
+						answers[i].question.transientRequired = true;
+						questions.splice(idx, 1);
+					}
+					idx = optionalQuestionIds.indexOf(answers[i].question._id.toString());
+					if(idx != -1){
+						optionalQuestions.splice(idx, 1);
+					}
+				}
+				res.render('profile/additional_info', {title: 'Your Additional Info', u: user, questions: questions, optionalQuestions: optionalQuestions, answers: answers});
 			});
 		});
 	}
@@ -281,7 +295,7 @@ module.exports = function(app){
 		});
 	});
 
-	var doProfile = function(user, res){
+	var doProfile = function(user, req, res){
 		async.parallel({
 			enrollments: function(callback){
 				ExperimonthEnrollment.find({_id: {$in: user.enrollments}}).populate('experimonth').exec(callback);
@@ -316,14 +330,14 @@ module.exports = function(app){
 				});
 			}, function(err, enrollments){
 				ProfileAnswer.find({user: user._id}).populate('question').exec(function(err, answers){
-					var questions = [];
+					var questionsToIgnore = [];
 					for(var i=0; i<answers.length; i++){
 						if(answers[i].question){
-							questions.push(answers[i].question._id);
+							questionsToIgnore.push(answers[i].question._id.toString());
 						}
 					}
-					ProfileQuestion.find({published: true, _id: {$not: {$in: questions}}}).sort('-publishDate').exec(function(err, questions){
-						res.render('profile', {title: 'Your Experimonth Profile', u: user, enrollments: enrollments, questions: questions, answers: answers, timezones: utilities.getTimezones()/* , games: games */, events: results.events});
+					user.getProfileQuestions(questionsToIgnore, function(err, questions, questionIds, optionalQuestions, optionalQuestionIds){
+						res.render('profile', {title: 'Your Experimonth Profile', u: user, enrollments: enrollments, questions: questions, optionalQuestions: optionalQuestions, answers: answers, timezones: utilities.getTimezones()/* , games: games */, events: results.events, linkAppend: (user == req.user ? '' : '/'+user._id)});
 					});
 				});
 			});
@@ -332,11 +346,10 @@ module.exports = function(app){
 	app.get('/profile', auth.authorize(1, 0, null, true), function(req, res){
 //		console.log('user.timezone', utilities.getTimezoneFromOffset(req.user.timezone));
 		req.flash('question');
-		if(req.query.withError){
-			req.flash('error', 'You must fill out all the fields in red below and answer any other required profile questions before enrolling in Experimonth.');
-			res.locals.withError = true;
+		if(!req.user.hasAnsweredAllRequiredQuestions){
+			req.flash('error', 'You must answer any required profile questions before participating in an Experimonth.');
 		}
-		doProfile(req.user, res);
+		doProfile(req.user, req, res);
 	});
 	
 	app.get('/profile/mark-all-read', auth.authorize(1, 0, null, true), function(req, res){
@@ -365,7 +378,7 @@ module.exports = function(app){
 				res.redirect('back');
 				return;
 			}
-			doProfile(user, res);
+			doProfile(user, req, res);
 		});
 	});
 };

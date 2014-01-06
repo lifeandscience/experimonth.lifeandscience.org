@@ -12193,40 +12193,44 @@ footer {
   color: #730202;
 }
 /* Profile Page */
+/*
 #userForm {
-  background: transparent url('../img/profile_bracket.gif') scroll no-repeat 380px center;
-  position: relative;
-}
-#userForm .disclaimer {
-  font-weight: bold;
-  text-transform: uppercase;
-  color: #730202;
-  position: absolute;
-  right: 0;
-  top: 277px;
-  width: 90px;
-  background-color: white;
-  font-size: 0.8em;
-  line-height: 1.4em;
+	background: transparent url('../img/profile_bracket.gif') scroll no-repeat 380px center;
+	position: relative;
+
+	.disclaimer {
+		font-weight: bold;
+		text-transform: uppercase;
+		color: #730202;
+		position: absolute;
+		right: 0;
+		top: 277px;
+		width: 90px;
+		background-color: white;
+		font-size: 0.8em;
+		line-height: 1.4em;
+	}
 }
 @media (min-width: 1200px) {
-  #userForm {
-    background-position: 500px center;
-  }
+	#userForm {
+		background-position: 500px center;
+	}
 }
 @media (max-width: 979px) {
-  #userForm {
-    background-position: 290px center;
-  }
+	#userForm {
+		background-position: 290px center;
+	}
 }
 @media (max-width: 768px) {
-  #userForm {
-    background: none;
-  }
-  #userForm .disclaimer {
-    display: none;
-  }
+	#userForm {
+		background: none;
+
+		.disclaimer {
+			display: none;
+		}
+	}
 }
+*/
 #feedback {
   height: 104px;
   width: 104px;

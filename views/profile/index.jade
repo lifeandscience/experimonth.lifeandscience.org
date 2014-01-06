@@ -39,18 +39,17 @@ block body
 					//			button.btn.btn-primary(type="submit") Submit
 
 					form(method="POST", action="/users/edit/#{u._id}")#userForm
-						.disclaimer Answers to these questions are required before you can Experimonth.
 						.control-group
 							label.control-label(for="email") Email Address:
 							.controls
 								input#email.span5.disabled(type="text", placeholder="", name="email", value=u.email, disabled="disabled")
 		
-						.control-group(class=(locals.withError && !u.name ? 'error' : ''))
+						.control-group(class=(!u.name ? 'error' : ''))
 							label.control-label(for="name") Name:
 							.controls
 								input#name.span5(type="text", placeholder="", name="name", value=u.name)
 				
-						.control-group(class=(locals.withError && !u.timezone ? 'error' : ''))
+						.control-group(class=(!u.timezone ? 'error' : ''))
 							label.control-label(for="timezone") Timezone:
 							.controls
 								select#timezone.span5(name="timezone")
@@ -59,28 +58,7 @@ block body
 									- for(var i=-12; i<13; i++){
 										option(value=i, selected=(''+i == u.timezone)) #{i}
 									- }
-				
-						.control-group(class=(locals.withError && !u.zipcode ? 'error' : ''))
-							label.control-label(for="zipcode") Zip Code:
-							.controls
-								input#zipcode.span5(type="text", placeholder="", name="zipcode", value=u.zipcode)
-				
-						.control-group(class=(locals.withError && !u.birthday ? 'error' : ''))
-							label.control-label(for="birthday") Birthdate:
-							.controls
-								input#birthday.datepicker-decade.span5(type="text", placeholder="", name="birthday", value=locals.moment(u.birthday).utc().format('M/D/YYYY'), data-date-format="m/d/yyyy")
-								//input#birthday.span5(type="text", placeholder="", name="birthday", value=u.birthday)
-				
-						.control-group(class=(locals.withError && !u.ethnicity ? 'error' : ''))
-							label.control-label(for="ethnicity") Ethnicity:
-							.controls
-								input#ethnicity.span5(type="text", placeholder="", name="ethnicity", value=u.ethnicity)
-				
-						.control-group(class=(locals.withError && !u.gender ? 'error' : ''))
-							label.control-label(for="gender") Gender:
-							.controls
-								input#gender.span5(type="text", placeholder="", name="gender", value=u.gender)
-
+						
 						.control-group
 							label.control-label(for="do_email_notifications") Notifications:
 							.controls
@@ -94,7 +72,48 @@ block body
 						.control-group
 							.controls
 								button.btn.btn-primary(type="submit") Save
-					a(href="/profile/additional-info") See and/or edit my previous answers.
+
+					.row
+						haveDoneAQuestion = questions && questions.length > 0;
+						if questions && questions.length > 0
+							answer = null
+							each question, i in questions
+								active = (i == 0)
+								whiteCard = true
+								if question
+									- question.transientRequired = true
+									include mixins
+								//mixin do_question(question, null, i == 0)
+						if optionalQuestions && optionalQuestions.length > 0
+							answer = null
+							each question, i in optionalQuestions
+								active = (i == 0)
+								whiteCard = true
+								if question
+									include mixins
+								//mixin do_question(question, null, i == 0)
+
+					a(href="/profile/additional-info"+linkAppend) See and/or edit my previous answers.
+					
+					if enrollments && enrollments.length > 0
+						h2 Your Experimonths
+						table.table
+							thead
+								tr
+									th Name
+									th Start Date
+									th End Date
+							tbody
+								each enrollment, i in enrollments
+									if enrollment.experimonth
+										tr(class='experimonth')
+											td 
+												if enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url
+													a(href=enrollment.experimonth.kindPopulated.url) #{enrollment.experimonth.name}
+												else
+													| #{enrollment.experimonth.name}
+											td #{locals.moment(enrollment.experimonth.startDate).utc().format('YYYY-MM-DD')}
+											td #{locals.moment(enrollment.experimonth.endDate).utc().format('YYYY-MM-DD')}
 
 				.span4
 					.notifications
@@ -103,7 +122,7 @@ block body
 						else if locals.notifications
 							n = locals.notifications
 						n = n ? n.length : 0
-						n = n + (questions ? questions.length : 0)
+						// n = n + (questions ? questions.length : 0)
 						.pull-right
 							// TODO: Add correct number of messages
 							h6.bubble #{n}
@@ -117,12 +136,12 @@ block body
 							.notification.notification-questions
 								.notification-header
 									.notification-subject You have new questions
-									span.notification-date #{locals.moment(questions[0].publishDate).format('MMMM DD, YYYY, h:mm A')}
-								.notification-body 
-									each question, i in questions
-										active = (i == 0)
-										include mixins
-										//mixin do_question(question, null, i == 0)
+									//span.notification-date #{locals.moment(questions[0].publishDate).format('MMMM DD, YYYY, h:mm A')}
+								//.notification-body 
+								//	each question, i in questions
+								//		active = (i == 0)
+								//		include mixins
+								//		//mixin do_question(question, null, i == 0)
 
 						mixin do_notifications()
 

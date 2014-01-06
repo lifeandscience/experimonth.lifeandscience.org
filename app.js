@@ -59,6 +59,13 @@ fs.readdirSync(dir).forEach(function(file){
 	require('./models/'+file);
 });
 
+// Data Migrations
+var dir = __dirname + '/migrations';
+// grab a list of our route files
+fs.readdirSync(dir).forEach(function(file){
+	require('./migrations/'+file);
+});
+
 var app = express();
 
 app.configure(function(){

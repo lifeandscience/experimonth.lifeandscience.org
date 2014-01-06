@@ -42,12 +42,6 @@ block body
 						p.help-block The image for this Experimonth.
 						
 				.control-group
-					label.control-label(for="survey") Survey / Consent Text:
-					.controls
-						textarea#survey.span5(placeholder="'Can we use your data?'-like text", name="survey") !{experimonth.survey}
-						p.help-block The survey / consent text for this Experimonth.
-						
-				.control-group
 					label.control-label(for="startDate") Start Date:
 					.controls
 						.input-append
@@ -93,6 +87,32 @@ block body
 							p.help-block
 								em No Profile Questions created.
 						p.help-block What conditions should be used for this Experimonth?
+
+				.control-group
+					label.control-label(for="requiredQuestions") Required Questions:
+					.controls
+						if questions && questions.length
+							each question, i in questions
+								label.checkbox
+									input(type="checkbox", name="requiredQuestions", value=question._id, checked=(experimonth.requiredQuestions && experimonth.requiredQuestions.indexOf(question._id) != -1))
+									|  #{question.text}
+						else
+							p.help-block
+								em No Profile Questions created.
+						p.help-block What questions should a user be required to answer in order to participate in this Experimonth?
+
+				.control-group
+					label.control-label(for="optionalQuestions") Optional Questions:
+					.controls
+						if questions && questions.length
+							each question, i in questions
+								label.checkbox
+									input(type="checkbox", name="optionalQuestions", value=question._id, checked=(experimonth.optionalQuestions && experimonth.optionalQuestions.indexOf(question._id) != -1))
+									|  #{question.text}
+						else
+							p.help-block
+								em No Profile Questions created.
+						p.help-block What questions should a user be optionally allowed to answer as a part of participating in this Experimonth?
 
 				.control-group
 					label.control-label(for="kind") What kind of Experimonth is this?:

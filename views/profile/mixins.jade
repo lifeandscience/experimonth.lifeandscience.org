@@ -7,7 +7,7 @@
 			.control-group
 				label.control-label(for="value")
 					| #{question.text}
-					if question.required
+					if question.transientRequired
 						|  
 						div.pull-right.label.label-info Required
 				- if(question.type == 'open')

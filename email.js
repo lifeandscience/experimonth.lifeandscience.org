@@ -43,10 +43,10 @@ var emailQueue = []
 			// Send the email
 			email.sendMail(mail.options, function(error, response){
 			    if(error){
-			        util.log('Email message not sent: '+util.inspect(error));
+			        util.log('Email message not sent: ', error);
 			    }else{
-			        util.log("Message sent: "+util.inspect(mail.options));
-			        util.log("Got a response of " + util.inspect(response));
+			        util.log("Message sent: ", mail.options);
+			        util.log("Got a response of ", response.message);
 			    }
 			    if(mail.callback){
 			    	mail.callback();
@@ -59,7 +59,7 @@ var emailQueue = []
 
 module.exports = {
 	sendMail: function(options, callback){
-		if(process.env.DO_NOTIFICATIONS){
+		if('true' == process.env.DO_NOTIFICATIONS){
 			options.from = '"Experimonth" <experimonth@lifeandscience.org>';
 			emailQueue.push({options: options, callback: callback});
 			execQueue();

@@ -55,8 +55,7 @@ var shouldNextUserDefend = true
 	  , role: {type: Number, default: 0}
 	  , experimonths: [{type: Schema.ObjectId, ref: 'Experimonth'}]
 	  , enrollments: [{type: Schema.ObjectId, ref: 'ExperimonthEnrollment'}]
-	  , requiredAnswers: [{type: Schema.ObjectId, ref: 'ProfileAnswer'}]
-	  , optionalAnswers: [{type: Schema.ObjectId, ref: 'ProfileAnswer'}]
+	  , answers: [{type: Schema.ObjectId, ref: 'ProfileAnswer'}]
 	  , hasAnsweredAllRequiredQuestions: {type: Boolean, default: false}
 	  
 	  , activationCode: String
@@ -65,17 +64,22 @@ var shouldNextUserDefend = true
 	  , twid: String
 	  , tw: Schema.Types.Mixed // Twitter Profile
 	  
-	  , zipcode: String
-	  , birthday: String
-	  , ethnicity: String
-	  , gender: String
-	  
 		// Notification methods
 	  , do_sms_notifications: {type: Boolean, default: false}
 	  , do_email_notifications: {type: Boolean, default: true}
 	  
 	  , passwordResetTemporaryPassword: String
 	  , passwordResetTimeout: Date
+
+		// These are deprecated; they're converted to just 'answers'
+	  , requiredAnswers: [{type: Schema.ObjectId, ref: 'ProfileAnswer'}]
+	  , optionalAnswers: [{type: Schema.ObjectId, ref: 'ProfileAnswer'}]
+	  
+		// These are now deprecated as they're migrated to ProfileQuestions/Answers
+	  , zipcode: String
+	  , birthday: String
+	  , ethnicity: String
+	  , gender: String
 	})
   , User = null;
 
@@ -386,12 +390,27 @@ UserSchema.static('reCheckAllUsersProfileQuestions', function(finished){
 UserSchema.methods.reCheckProfileQuestions = function(questions, callback){
 	var ProfileAnswer = mongoose.model('ProfileAnswer')
 	  , t = this;
-
-	if(!t.email || !t.name || !t.timezone || !t.zipcode || !t.birthday || !t.ethnicity || !t.gender){
-		t.hasAnsweredAllRequiredQuestions = false;
+	
+	var Experimonth = mongoose.model('Experimonth')
+	  , ExperimonthEnrollment = mongoose.model('ExperimonthEnrollment')
+	  , i = 0;
+	async.eachSeries(this.enrollments, function(enrollment, callback){
+		ExperimonthEnrollment.findOne({_id: enrollment}).populate('experimonth').exec(function(err, enrollment){
+			if(enrollment){
+				i += enrollment.experimonth.conditions.length + enrollment.experimonth.requiredQuestions.length;
+			}
+			callback();
+		});
+	}, function(err){
+		console.log('done?', i);
+		if(i == t.answers.length){
+			t.hasAnsweredAllRequiredQuestions = true;
+		}else{
+			t.hasAnsweredAllRequiredQuestions = false;
+		}
 		t.save(callback);
-		return;
-	}
+	});
+	return;
 
 	var checkAnswers = function(err, questions){
 		if(err || !questions || questions.length == 0){
@@ -428,7 +447,56 @@ UserSchema.methods.reCheckProfileQuestions = function(questions, callback){
 		var ProfileQuestion = mongoose.model('ProfileQuestion')
 		ProfileQuestion.find({published: true, required: true}).exec(checkAnswers);
 	}
-}
+};
+UserSchema.methods.getProfileQuestions = function(questionsToIgnore, callback){
+	var ExperimonthEnrollment = mongoose.model('ExperimonthEnrollment')
+	  , requiredQuestions = []
+	  , optionalQuestions = [];
+	async.eachSeries(this.enrollments, function(enrollment, callback){
+		ExperimonthEnrollment.findOne({_id: enrollment}).populate('experimonth').exec(function(err, enrollment){
+			if(enrollment){
+				for(var idx=0; idx<enrollment.experimonth.conditions.length; idx++){
+					if(questionsToIgnore.indexOf(enrollment.experimonth.conditions[idx].toString()) == -1){
+						requiredQuestions.push(enrollment.experimonth.conditions[idx].toString());
+					}
+				}
+				for(var idx=0; idx<enrollment.experimonth.requiredQuestions.length; idx++){
+					if(questionsToIgnore.indexOf(enrollment.experimonth.requiredQuestions[idx].toString()) == -1){
+						requiredQuestions.push(enrollment.experimonth.requiredQuestions[idx].toString());
+					}
+				}
+				for(var idx=0; idx<enrollment.experimonth.optionalQuestions.length; idx++){
+					if(questionsToIgnore.indexOf(enrollment.experimonth.optionalQuestions[idx].toString()) == -1){
+						optionalQuestions.push(enrollment.experimonth.optionalQuestions[idx].toString());
+					}
+				}
+
+			}
+			callback();
+		});
+	}, function(err){
+		for(var i=optionalQuestions.length-1; i>=0; i--){
+			if(requiredQuestions.indexOf(optionalQuestions[i]) != -1){
+				optionalQuestions.splice(i, 1);
+			}
+		}
+		var ProfileQuestion = mongoose.model('ProfileQuestion');
+		ProfileQuestion.find({_id: {$in: requiredQuestions}}).sort('-publishDate').exec(function(err, requiredQuestions){
+			async.mapSeries(requiredQuestions, function(item, callback){
+				console.log(item.text, 'is required');
+				callback(null, item._id.toString());
+			}, function(mapErr, requiredQuestionIds){
+				ProfileQuestion.find({_id: {$in: optionalQuestions}}).sort('-publishDate').exec(function(err, optionalQuestions){
+					async.mapSeries(optionalQuestions, function(item, callback){
+						callback(null, item._id.toString());
+					}, function(mapErr, optionalQuestionIds){
+						callback(err, requiredQuestions, requiredQuestionIds, optionalQuestions, optionalQuestionIds);
+					});
+				});
+			});
+		});
+	});
+};
 UserSchema.methods.checkProfileQuestions =  function(req, notComplete, complete){
 	if(this.hasAnsweredAllRequiredQuestions){
 		req.flash('question');
@@ -461,6 +529,5 @@ UserSchema.methods.checkProfileQuestions =  function(req, notComplete, complete)
 };
 
 User = mongoose.model('User', UserSchema);
-// TODO: Later we'll remove this, but at startup, do the expensive work of checking whether a user hasAnsweredAllRequiredQuestions
 User.reCheckAllUsersProfileQuestions();
 exports = User;

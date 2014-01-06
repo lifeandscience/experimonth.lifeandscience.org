@@ -17,46 +17,18 @@ module.exports = function(app){
 		if(!req.user || req.user.role < 10){
 			params.published = true;
 		}
-		var finish = function(enrollGoesToProfile){
-			Experimonth.find(params).sort('startDate').populate('kind').exec(function(err, experimonths){
-				res.render('experimonths/experimonths', {title: 'Experimonths', experimonths: experimonths, enrollGoesToProfile: enrollGoesToProfile});
-			});
-		}
-		if(!req.user.hasAnsweredAllRequiredQuestions){
-/* 		req.user.checkProfileQuestions(req, function(questions, answers){ */
-			// The user did not complete all the required questions.
-			req.flash('error', 'You must answer all required profile questions before enrolling in an Experimonth.');
-			finish(true);
-		}else{
-/* 		}, function(){ */
-			finish(false);
-		}
-/* 		}); */
+		Experimonth.find(params).sort('startDate').populate('kind').exec(function(err, experimonths){
+			res.render('experimonths/experimonths', {title: 'Experimonths', experimonths: experimonths});
+		});
 	});
 	app.get('/currently-recruiting', /* auth.authorize(2), */ function(req, res){
 		var params = {};
 		if(!req.user || req.user.role < 10){
 			params.published = true;
 		}
-		var finish = function(enrollGoesToProfile){
-			Experimonth.find(params).sort('startDate').populate('kind').exec(function(err, experimonths){
-				res.render('experimonths', {title: 'Currently Recruiting', experimonths: experimonths, enrollGoesToProfile: enrollGoesToProfile});
-			});
-		}
-		if(req.user){
-			if(!req.user.hasAnsweredAllRequiredQuestions){
-/* 			req.user.checkProfileQuestions(req, function(questions, answers){ */
-				// The user did not complete all the required questions.
-				req.flash('error', 'You must answer all required profile questions before enrolling in an Experimonth.');
-				finish(true);
-			}else{
-/* 			}, function(){ */
-				finish(false);
-			}
-/* 			}); */
-		}else{
-			finish(false);
-		}
+		Experimonth.find(params).sort('startDate').populate('kind').exec(function(err, experimonths){
+			res.render('experimonths', {title: 'Currently Recruiting', experimonths: experimonths});
+		});
 	});
 	
 	app.get('/experimonths/view/:id', auth.authorize(2), function(req, res){
@@ -76,82 +48,65 @@ module.exports = function(app){
 			res.redirect('back');
 			return;
 		}
-		// Check if the user has answered all the required profile questions
-		if(!req.user.hasAnsweredAllRequiredQuestions){
-/* 		req.user.checkProfileQuestions(req, function(questions, answers){ */
-			// The user did not complete all the required questions.
-			req.flash('error', 'You must answer all required profile questions before enrolling in an Experimonth.');
-			res.redirect('back');
-		}else{
-/* 		}, function(){ */
-			Experimonth.findById(req.param('id')).exec(function(err, experimonth){
-				if(err || !experimonth){
-					req.flash('error', 'Error finding Experimonth with ID '+req.param('id')+'. '+err);
+		Experimonth.findById(req.param('id')).exec(function(err, experimonth){
+			if(err || !experimonth){
+				req.flash('error', 'Error finding Experimonth with ID '+req.param('id')+'. '+err);
+				res.redirect('back');
+				return;
+			}
+			if(experimonth.users.indexOf(req.user._id.toString()) != -1){
+				req.flash('info', 'You are already *partially* enrolled in this Experimonth.');
+				res.redirect('back');
+				return;
+			}
+			if(!experimonth.open){
+				req.flash('error', 'This Experimonth is not open for enrollment.');
+				res.redirect('back');
+				return;
+			}
+			if(!experimonth.unlimited && experimonth.users.length >= experimonth.userLimit){
+				req.flash('error', 'Player limit reached for this Experimonth.');
+				res.redirect('back');
+				return;
+			}
+			
+			// If there's not a consent form, add them and be done!
+			var enrollment = new ExperimonthEnrollment();
+			enrollment.user = req.user._id;
+			enrollment.experimonth = experimonth._id;
+			enrollment.save(function(err, enrollment){
+				if(err){
+					req.flash('error', 'Error saving Experimonth Enrollment. '+err);
 					res.redirect('back');
 					return;
 				}
-				if(experimonth.users.indexOf(req.user._id.toString()) != -1){
-					req.flash('info', 'You are already *partially* enrolled in this Experimonth.');
-					res.redirect('back');
-					return;
+				experimonth.enrollments.push(enrollment._id);
+				experimonth.users.push(req.user._id);
+				if(!experimonth.unlimited && experimonth.users.length == experimonth.userLimit){
+					experimonth.open = false;
 				}
-				if(!experimonth.open){
-					req.flash('error', 'This Experimonth is not open for enrollment.');
-					res.redirect('back');
-					return;
-				}
-				if(!experimonth.unlimited && experimonth.users.length >= experimonth.userLimit){
-					req.flash('error', 'Player limit reached for this Experimonth.');
-					res.redirect('back');
-					return;
-				}
-				
-				// If there's not a consent form, add them and be done!
-				if(!experimonth.survey){
-					var enrollment = new ExperimonthEnrollment();
-					enrollment.user = req.user._id;
-					enrollment.experimonth = experimonth._id;
-					enrollment.survey = 'N/A';
-					enrollment.save(function(err, enrollment){
+				experimonth.save(function(err){
+					if(err){
+						req.flash('error', 'Error saving Experimonth with ID '+req.param('id')+'. '+err);
+						res.redirect('back');
+						return;
+					}
+					req.user.enrollments.push(enrollment._id);
+					req.user.experimonths.push(experimonth._id);
+					req.user.save(function(err){
 						if(err){
-							req.flash('error', 'Error saving Experimonth Enrollment. '+err);
+							req.flash('error', 'Error saving user with ID '+req.user._id+'. '+err);
 							res.redirect('back');
 							return;
 						}
-						experimonth.enrollments.push(enrollment._id);
-						experimonth.users.push(req.user._id);
-						if(!experimonth.unlimited && experimonth.users.length == experimonth.userLimit){
-							experimonth.open = false;
-						}
-						experimonth.save(function(err){
-							if(err){
-								req.flash('error', 'Error saving Experimonth with ID '+req.param('id')+'. '+err);
-								res.redirect('back');
-								return;
-							}
-							req.user.enrollments.push(enrollment._id);
-							req.user.experimonths.push(experimonth._id);
-							req.user.save(function(err){
-								if(err){
-									req.flash('error', 'Error saving user with ID '+req.user._id+'. '+err);
-									res.redirect('back');
-									return;
-								}
-									
-								req.flash('info', 'You were enrolled successfully. Watch for notifications when the Experimonth is due to start.');
-								res.redirect('back');
-								return;
-							});
-						});
+							
+						req.flash('info', 'You were enrolled successfully. Watch for notifications when the Experimonth is due to start.');
+						res.redirect('back');
+						return;
 					});
-					return;
-				}
-				
-				// We have a survey / consent form. Let's present it.
-				res.render('experimonths/enroll', {title: 'Experimonth: '+experimonth.name, experimonth: experimonth});
+				});
 			});
-		}
-/* 		}); */
+		});
 	});
 	
 	app.post('/experimonths/enroll/:id', auth.authorize(2), function(req, res){
@@ -160,76 +115,65 @@ module.exports = function(app){
 			res.redirect('back');
 			return;
 		}
-		// Check if the user has answered all the required profile questions
-		if(!req.user.hasAnsweredAllRequiredQuestions){
-/* 		req.user.checkProfileQuestions(req, function(questions, answers){ */
-			// The user did not complete all the required questions.
-			req.flash('error', 'You must answer all required profile questions before enrolling in an Experimonth.');
-			res.redirect('back');
-		}else{
-/* 		}, function(){ */
-			Experimonth.findById(req.param('id')).exec(function(err, experimonth){
-				if(err || !experimonth){
-					req.flash('error', 'Error finding Experimonth with ID '+req.param('id')+'. '+err);
-					res.redirect('back');
+		Experimonth.findById(req.param('id')).exec(function(err, experimonth){
+			if(err || !experimonth){
+				req.flash('error', 'Error finding Experimonth with ID '+req.param('id')+'. '+err);
+				res.redirect('back');
+				return;
+			}
+			if(experimonth.users.indexOf(req.user._id.toString()) != -1){
+				req.flash('info', 'You are already *partially* enrolled in this Experimonth.');
+				res.redirect('back');
+				return;
+			}
+			if(!experimonth.open){
+				req.flash('error', 'This Experimonth is not open for enrollment.');
+				res.redirect('back');
+				return;
+			}
+			if(!experimonth.unlimited && experimonth.users.length >= experimonth.userLimit){
+				req.flash('error', 'Player limit reached for this Experimonth.');
+				res.redirect('back');
+				return;
+			}
+			
+			var enrollment = new ExperimonthEnrollment();
+			enrollment.user = req.user;
+			enrollment.experimonth = experimonth;
+			enrollment.save(function(err, enrollment){
+				if(err){
+					req.flash('error', 'Error saving Experimonth Enrollment. '+err);
+					res.redirect('/currently-recruiting');
 					return;
 				}
-				if(experimonth.users.indexOf(req.user._id.toString()) != -1){
-					req.flash('info', 'You are already *partially* enrolled in this Experimonth.');
-					res.redirect('back');
-					return;
+				experimonth.enrollments.push(enrollment._id);
+				experimonth.users.push(req.user._id);
+				if(!experimonth.unlimited && experimonth.users.length == experimonth.userLimit){
+					experimonth.open = false;
 				}
-				if(!experimonth.open){
-					req.flash('error', 'This Experimonth is not open for enrollment.');
-					res.redirect('back');
-					return;
-				}
-				if(!experimonth.unlimited && experimonth.users.length >= experimonth.userLimit){
-					req.flash('error', 'Player limit reached for this Experimonth.');
-					res.redirect('back');
-					return;
-				}
-				
-				var enrollment = new ExperimonthEnrollment();
-				enrollment.user = req.user;
-				enrollment.experimonth = experimonth;
-				enrollment.survey = req.param('submit');
-				enrollment.save(function(err, enrollment){
+				experimonth.save(function(err){
 					if(err){
-						req.flash('error', 'Error saving Experimonth Enrollment. '+err);
+						req.flash('error', 'Error saving Experimonth with ID '+req.param('id')+'. '+err);
 						res.redirect('/currently-recruiting');
 						return;
 					}
-					experimonth.enrollments.push(enrollment._id);
-					experimonth.users.push(req.user._id);
-					if(!experimonth.unlimited && experimonth.users.length == experimonth.userLimit){
-						experimonth.open = false;
-					}
-					experimonth.save(function(err){
+					req.user.enrollments.push(enrollment._id);
+					req.user.experimonths.push(experimonth._id);
+					req.user.save(function(err){
 						if(err){
-							req.flash('error', 'Error saving Experimonth with ID '+req.param('id')+'. '+err);
+							req.flash('error', 'Error saving user with ID '+req.user._id+'. '+err);
 							res.redirect('/currently-recruiting');
 							return;
 						}
-						req.user.enrollments.push(enrollment._id);
-						req.user.experimonths.push(experimonth._id);
-						req.user.save(function(err){
-							if(err){
-								req.flash('error', 'Error saving user with ID '+req.user._id+'. '+err);
-								res.redirect('/currently-recruiting');
-								return;
-							}
-								
-							req.flash('info', 'You were enrolled successfully. Watch for notifications when the Experimonth is due to start.');
-							res.redirect('/currently-recruiting');
-							return;
-						});
+							
+						req.flash('info', 'You were enrolled successfully. Watch for notifications when the Experimonth is due to start.');
+						res.redirect('/currently-recruiting');
+						return;
 					});
 				});
-				return;
 			});
-		}
-/* 		}); */
+			return;
+		});
 	});
 	
 	app.get('/experimonths/unenroll/:id', auth.authorize(2), function(req, res){
@@ -333,7 +277,7 @@ module.exports = function(app){
 	var as = 'experimonth'
 	  , populate = []
 	  , template = 'experimonths/form'
-	  , varNames = ['name', 'description', 'type', 'image', 'startDate', 'endDate', 'userLimit', 'unlimited', 'open', 'conditions', 'kind', 'survey']
+	  , varNames = ['name', 'description', 'type', 'image', 'startDate', 'endDate', 'userLimit', 'unlimited', 'open', 'conditions', 'requiredQuestions', 'optionalQuestions', 'kind']
 	  , redirect = '/experimonths'
 	  , formValidate = form(
 			field('name').trim()
@@ -346,8 +290,9 @@ module.exports = function(app){
 		  , field('unlimited').trim()
 		  , field('open').trim()
 		  , field('conditions').array().trim()
+		  , field('requiredQuestions').array().trim()
+		  , field('optionalQuestions').array().trim()
 		  , field('kind').trim()
-		  , field('survey').trim()
 		)
 	  , beforeRender = function(req, res, item, callback){
 	/*
@@ -364,7 +309,7 @@ module.exports = function(app){
 				item.kinds = kinds;
 				ProfileQuestion.find({published: true}).exec(function(err, questions){ 
 					if(err){
-						console.log('error finding questions to use as conditions: ', err);
+						console.log('error finding questions to use as conditions / requiredQuestions / optionalQuestions: ', err);
 						questions = [];
 					}
 					item.questions = questions;
@@ -381,10 +326,14 @@ module.exports = function(app){
 					}else if(url){
 						item.image = url;
 					}
-					return complete(item);
+					return User.reCheckAllUsersProfileQuestions(function(){
+						complete(item);
+					});
 				});
 			}else{
-				return complete(item);
+				return User.reCheckAllUsersProfileQuestions(function(){
+					complete(item);
+				});
 			}
 			
 	/*

@@ -27,26 +27,6 @@ block body
 							- for(var i=-12; i<13; i++){
 								option(value=i, selected=(''+i == u.timezone)) #{i}
 							- }
-		
-				.control-group
-					label.control-label(for="zipcode") Zip Code:
-					.controls
-						input#zipcode.span5(type="text", placeholder="", name="zipcode", value=u.zipcode)
-		
-				.control-group
-					label.control-label(for="birthday") Birthday:
-					.controls
-						input#birthday.span5(type="text", placeholder="", name="birthday", value=u.birthday)
-		
-				.control-group
-					label.control-label(for="ethnicity") Ethnicity:
-					.controls
-						input#ethnicity.span5(type="text", placeholder="", name="ethnicity", value=u.ethnicity)
-		
-				.control-group
-					label.control-label(for="gender") Gender:
-					.controls
-						input#gender.span5(type="text", placeholder="", name="gender", value=u.gender)
 			
 		
 			.form-actions

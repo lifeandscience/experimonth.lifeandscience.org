@@ -755,7 +755,7 @@ module.exports = {
 			if(!req.token_user_id){
 				return res.json({error: 'No User ID'});
 			}
-			User.findById(req.token_user_id).populate('experimonths').populate('optionalAnswers').populate('requiredAnswers').exec(function(err, user){
+			User.findById(req.token_user_id).populate('experimonths').populate('answers').exec(function(err, user){
 				if(err || !user){
 					console.log('user not found...');
 					return res.json({error: 'User Not Found'});

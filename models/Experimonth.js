@@ -44,16 +44,20 @@ var ExperimonthSchema = new Schema({
   , type: [{type: String}]
   , image: {type: String}
   , kind: {type: Schema.ObjectId, ref: 'ExperimonthKind'}
-  , survey: {type: String} // Maybe another object?
   , userLimit: {type: Number, default: 100}
   , unlimited: {type: Boolean, default: false}
   , users: [{type: Schema.ObjectId, ref: 'User'}]
   , enrollments: [{type: Schema.ObjectId, ref: 'ExperimonthEnrollment'}]
   , open: {type: Boolean, default: false}
   , conditions: [{type: Schema.ObjectId, ref: 'ProfileQuestion'}]
+  , requiredQuestions: [{type: Schema.ObjectId, ref: 'ProfileQuestion'}]
+  , optionalQuestions: [{type: Schema.ObjectId, ref: 'ProfileQuestion'}]
   , published: {type: Boolean, default: false}
   , everPublished: {type: Boolean, default: false}
   , publishDate: {type: Date, default: function(){ return Date.now(); }}
+
+	// Deprecated; will in the future be handled as required profile question
+  , survey: {type: String} // Maybe another object?
 });
 
 ExperimonthSchema.statics.findActiveQuery = function(){
