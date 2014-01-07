@@ -262,14 +262,16 @@ module.exports = function(app){
 */
 			user.getProfileQuestions(questionsToIgnore, function(err, questions, questionIds, optionalQuestions, optionalQuestionIds){
 				for(var i=0; i<answers.length; i++){
-					var idx = questionIds.indexOf(answers[i].question._id.toString());
-					if(idx != -1){
-						answers[i].question.transientRequired = true;
-						questions.splice(idx, 1);
-					}
-					idx = optionalQuestionIds.indexOf(answers[i].question._id.toString());
-					if(idx != -1){
-						optionalQuestions.splice(idx, 1);
+					if(answers[i].question){
+						var idx = questionIds.indexOf(answers[i].question._id.toString());
+						if(idx != -1){
+							answers[i].question.transientRequired = true;
+							questions.splice(idx, 1);
+						}
+						idx = optionalQuestionIds.indexOf(answers[i].question._id.toString());
+						if(idx != -1){
+							optionalQuestions.splice(idx, 1);
+						}
 					}
 				}
 				res.render('profile/additional_info', {title: 'Your Additional Info', u: user, questions: questions, optionalQuestions: optionalQuestions, answers: answers});
