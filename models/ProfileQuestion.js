@@ -8,6 +8,7 @@ var ProfileQuestionSchema = new Schema({
   , choices: [String]
   , published: {type: Boolean, default: false}
   , publishDate: {type: Date, default: function(){ return Date.now(); }}
+  , slug: String
 
 	// Deprecated; requirement is determined by it's usage on an EM
   , required: {type: Boolean, default: false}

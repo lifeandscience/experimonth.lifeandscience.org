@@ -29,13 +29,14 @@ module.exports = function(app){
 	var as = 'question'
 	  , populate = []
 	  , template = 'profile/questions/form'
-	  , varNames = ['text', 'type', 'required']
+	  , varNames = ['text', 'type', 'required', 'slug']
 	  , redirect = '/profile/questions'
 	  , formValidate = form(
 			field('text').trim().required()
 		  , field('type').trim().required()
 		  , field('required').trim()
 		  , field('choices_string').trim()
+		  , field('slug').trim()
 		)
 	  , beforeRender = function(req, res, item, callback){
 /*

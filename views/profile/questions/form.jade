@@ -33,6 +33,12 @@ block body
 				//			input#open(type="checkbox", name="required", checked=question.required)
 				//			|  Is this profile question required?
 				//		p.help-block If this profile question is required, users won't be included in gameplay until they've answered this question.
+						
+				.control-group
+					label.control-label(for="slug") Slug:
+					.controls
+						input#slug.span5(type="text", placeholder="simple-identifier", name="slug", value=question.slug)
+						p.help-block The slug for this question; used for uniquely identifying this question, so try to make sure it is unique compared to other questions.
 		
 			.form-actions
 				button.btn.btn-primary(type="submit") Submit
