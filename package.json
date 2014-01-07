@@ -46,5 +46,6 @@
   "engines": {
     "node": "0.10.x"
   },
+  "skip_cache": true,
   "rebuild_cache": true
 }
