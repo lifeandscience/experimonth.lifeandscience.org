@@ -8,4 +8,6 @@ then
 fi
 
 #bin/build.sh
-heroku push -b https://github.com/heroku/heroku-buildpack-nodejs.git\#diet --app $1
+#heroku push -b https://github.com/heroku/heroku-buildpack-nodejs.git\#diet --app $1
+#heroku push -b https://github.com/heroku/heroku-buildpack-nodejs.git\#legacy --app $1
+heroku push -b https://github.com/BluePaneLabs/heroku-buildpack-nodejs.git\#diet+bower+grunt --app $1

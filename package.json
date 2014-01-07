@@ -5,46 +5,45 @@
   "private": true,
   "scripts": {
     "start": "S3_ACCESS_KEY=\"AKIAIOEHUQ56M3GS6BEQ\" S3_ACCESS_SECRET=\"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\" S3_BUCKET=\"experimonth.lifeandscience.org\" S3_SLUG=\"dev\" DO_NOTIFICATIONS=false BASEURL=\"http://app.dev:8000\" node app.js",
-    "postinstall": "./node_modules/bower/bin/bower install"
+    "postinstall-old": "./node_modules/bower/bin/bower install"
   },
   "dependencies": {
       "express": "~= 3"
-    , "consolidate": ">= 0.0.1"
-    , "jade": ">= 0.0.1"
+    , "consolidate": "*"
+    , "jade": "*"
     , "less-middleware": "*"
     , "mongoose": "~= 3.6"
-    , "connect-mongo": ">= 0.0.1"
-    , "nodemailer": ">= 0.0.1"
-    , "moment": ">= 0.0.1"
-    , "connect-flash": ">= 0.0.1"
+    , "connect-mongo": "*"
+    , "nodemailer": "*"
+    , "moment": "*"
+    , "connect-flash": "*"
     , "express-form": "~= 0.10"
-    , "csv": ">= 0.0.1"
+    , "csv": "*"
 
-    , "bcrypt": ">= 0.0.1"
-    , "passport": ">= 0.0.1"
-    , "passport-local": ">= 0.0.1"
-    , "passport-facebook": ">= 0.0.1"
-    , "passport-twitter": ">= 0.0.1"
-    , "timezone": ">= 0.0.1"
+    , "bcrypt": "*"
+    , "passport": "*"
+    , "passport-local": "*"
+    , "passport-facebook": "*"
+    , "passport-twitter": "*"
+    , "timezone": "*"
 
     , "oauth2-provider": "git://github.com/lifeandscience/node-oauth2-provider.git#non_post_auth_flow"
     
-    , "send": ">= 0.0.1"
-    , "aws-sdk": ">= 0.0.1"
-    , "node-uuid": ">= 0.0.1"
-    , "async": ">= 0.0.1"
-    , "underscore": ">= 0.0.1"
-    , "bower": ">= 0.0.1"
-    , "newrelic": ">= 0.0.1"
-    , "mongoose-cachebox": ">= 0.0.1"
+    , "send": "*"
+    , "aws-sdk": "*"
+    , "node-uuid": "*"
+    , "async": "*"
+    , "underscore": "*"
+    , "newrelic": "*"
+    , "mongoose-cachebox": "*"
   },
   "devDependencies": {
       "simple-oauth2": "git://github.com/lifeandscience/simple-oauth2.git#add_client_credentials_support"
     , "should": "~1.2.1"
     , "mocha": "~1.8.1"
+    , "bower": "*"
   },
   "engines": {
-    "node": "0.8.x",
-    "npm":  "1.1.x"
+    "node": "0.10.x"
   }
 }
