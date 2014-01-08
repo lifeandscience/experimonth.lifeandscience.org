@@ -11,7 +11,7 @@ block body
 					h2.slider-sub-header Complete monthly challenges and collect data for curious and playful scientists.
 					.cta
 						if locals.user()
-							a.btn.btn-cta(href='/experimonths') Enroll &gt;
+							a.btn.btn-cta(href='/currently-recruiting') Enroll &gt;
 						else
 							a.btn.btn-cta(href='/register') Get Started (It's Free) &gt;
 					.slider-browsers-w.clearfix
@@ -81,21 +81,6 @@ block body
 										h5.fp-title #{experimonth.name}
 										.fp-buttons
 											a.btn.fp-details-btn(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+experimonth.description+'</div></div>', data-bootbox-custom-action-button=(u ? (experimonth.users.indexOf(u._id.toString()) != -1 ? "Visit" : "Enroll") : "Get Started"), data-bootbox-custom-action=(u ? (experimonth.users.indexOf(u._id.toString()) == -1 ? "/experimonths/enroll/#{experimonth._id}" : experimonth.kind.url) : '/register')) Learn More
-											//a.btn.fp-details-btn(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+experimonth.description+'</div></div>', data-bootbox-custom-action-button=(locals.user() ? "Enroll" : 'Get Started'), data-bootbox-custom-action=(locals.user() ? (!locals.user().hasAnsweredAllRequiredQuestions ? '/profile' : "/experimonths/enroll/#{experimonth._id}") : '/register')) Learn More
-					//.span3
-					//	.white-card.clearfix
-					//		.img-w.hover-fader
-					//			a(href='assets/images/test-square.png', data-rel='lightbox[gallery]')
-					//				if experimonth.image
-					//					img(src=experimonth.image)
-					//				//span.hover-fade
-					//					i.icon-zoom-in
-					//		h5 #{experimonth.name}
-					//		p #{experimonth.description}
-					//		if locals.user()
-					//			a.btn.btn-primary.btn-extra.pull-right(href='/experimonths') Enroll &gt;
-					//		else
-					//			a.btn.btn-primary.btn-extra.pull-right(href='/register') Get Started (It's Free) &gt;
 	section.section-wrapper
 		.container
 			.row
