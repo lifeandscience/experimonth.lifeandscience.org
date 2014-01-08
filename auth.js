@@ -109,23 +109,12 @@ module.exports = {
 				return next();
 			}
 			req.hasCheckedQuestions = true;
-			req.user.checkProfileQuestions(req, function(questions, answers){
+			req.user.checkProfileQuestions(req, function(requiredQuestions){
 				// There are some un-answered questions!
 				// Pick a random question of those that aren't answered
-				var answered = {}
-				  , availableQuestions = [];
-				for(var i=0; i<answers.length; i++){
-					answered[answers[i].question] = true;
-				}
-				for(var i=0; i<questions.length; i++){
-					if(!answered[questions[i]._id]){
-						availableQuestions.push(questions[i]);
-					}
-				}
-				var question = availableQuestions[Math.floor(Math.random()*availableQuestions.length)];
+				var question = requiredQuestions[Math.floor(Math.random()*requiredQuestions.length)];
 				app.render('profile/mixins', {question: question, answer: null, active: false}, function(err, html){
 					req.flash('question', '<p><strong>Your profile is incomplete!</strong> Please answer the following question:</p>'+html);
-/* 					res.redirect('/profile'); */
 					next();
 				});
 				return;

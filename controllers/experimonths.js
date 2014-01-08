@@ -319,6 +319,13 @@ module.exports = function(app){
 		}
 	  , beforeSave = function(req, res, item, complete){
 			// Take the image to S3!
+			if(!req.body.open){
+				item.open = false;
+			}
+			if(!req.body.unlimited){
+				item.unlimited = false;
+			}
+
 			if(req.files && req.files.image && req.files.image.size){
 				s3.uploadFile(req.files.image, null, function(err, url){
 					if(err){

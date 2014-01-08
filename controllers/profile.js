@@ -181,7 +181,7 @@ module.exports = function(app){
 		}
 		console.log('full: ', req.body);
 		if(!req.param('value') && !req.param('no_answer') && req.param('submit') != 'Choose not to answer'){
-			req.flash('error', 'Please answer the question or click\'Choose not to answer\'.');
+			req.flash('error', 'Please answer the question or click \'Choose not to answer\'.');
 			res.redirect('back');
 			return;
 		}
@@ -200,7 +200,7 @@ module.exports = function(app){
 						return;
 					}
 					answer.value = req.param('value');
-					answer.no_answer = req.param('no_answer') == 'on';
+					answer.no_answer = req.body.submit == 'Choose not to answer';
 					if(answer.no_answer){
 						answer.value = null;
 					}
@@ -222,7 +222,7 @@ module.exports = function(app){
 			answer.user = req.user._id;
 			answer.question = req.param('id');
 			answer.value = req.param('value');
-			answer.no_answer = req.param('no_answer') == 'on';
+			answer.no_answer = req.body.submit == 'Choose not to answer';
 			if(answer.no_answer){
 				answer.value = null;
 			}
@@ -233,7 +233,7 @@ module.exports = function(app){
 					return;
 				}
 				
-				req.users.answers.push(answer);
+				req.user.answers.push(answer._id);
 				req.user.save(function(err){
 					if(err){
 						req.flash('error', 'Error saving user.');
@@ -267,10 +267,12 @@ module.exports = function(app){
 						var idx = questionIds.indexOf(answers[i].question._id.toString());
 						if(idx != -1){
 							answers[i].question.transientRequired = true;
+							questionIds.splice(idx, 1);
 							questions.splice(idx, 1);
 						}
 						idx = optionalQuestionIds.indexOf(answers[i].question._id.toString());
 						if(idx != -1){
+							optionalQuestionIds.splice(idx, 1);
 							optionalQuestions.splice(idx, 1);
 						}
 					}

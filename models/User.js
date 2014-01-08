@@ -38,7 +38,7 @@ var shouldNextUserDefend = true
 	  , email: String
 	  , sms: String
 	  
-	  , timezone: {type: String, default: '0'}
+	  , timezone: {type: String, default: 'US/Eastern'}
 		// STATE
 		//	Replaces "active", known values:
 		//	 0: Newly-registered
@@ -362,23 +362,13 @@ UserSchema.static('reCheckAllUsersProfileQuestions', function(finished){
 	require('./ProfileQuestion');
 	var ProfileQuestion = mongoose.model('ProfileQuestion')
 	  , ProfileAnswer = mongoose.model('ProfileAnswer');
-	async.parallel({
-		users: function(callback){
-			User.find().exec(callback);
-		}
-	  , questions: function(callback){
-			ProfileQuestion.find({published: true, required: true}).exec(callback);
-		}
-	  , answers: function(callback){
-			ProfileAnswer.find().exec(callback);
-		}
-	}, function(err, results){
+	User.find().exec(function(err, users){
 		if(err){
 			console.log('error while computing hasAnsweredAllRequiredQuestions', arguments);
 			return;
 		}
-		async.each(results.users, function(user, callback){
-			user.reCheckProfileQuestions(results.questions, callback);
+		async.each(users, function(user, callback){
+			user.reCheckProfileQuestions(null, callback);
 		}, function(err){
 			console.log('did finish updating all users!');
 			if(finished){
@@ -390,63 +380,31 @@ UserSchema.static('reCheckAllUsersProfileQuestions', function(finished){
 UserSchema.methods.reCheckProfileQuestions = function(questions, callback){
 	var ProfileAnswer = mongoose.model('ProfileAnswer')
 	  , t = this;
-	
-	var Experimonth = mongoose.model('Experimonth')
-	  , ExperimonthEnrollment = mongoose.model('ExperimonthEnrollment')
-	  , i = 0;
-	async.eachSeries(this.enrollments, function(enrollment, callback){
-		ExperimonthEnrollment.findOne({_id: enrollment}).populate('experimonth').exec(function(err, enrollment){
-			if(enrollment){
-				i += enrollment.experimonth.conditions.length + enrollment.experimonth.requiredQuestions.length;
+	t.getProfileQuestions([], function(err, requiredQuestions, requiredQuestionIds, optionalQuestions, optionalQuestionIds){
+		ProfileAnswer.find({user: t._id}).exec(function(err, answers){
+			for(var i=0; i<answers.length; i++){
+				var idx = requiredQuestionIds.indexOf(answers[i].question.toString());
+				if(idx !== -1){
+					requiredQuestionIds.splice(idx, 1);
+					requiredQuestions.splice(idx, 1);
+				}
+				idx = optionalQuestionIds.indexOf(answers[i].question.toString());
+				if(idx !== -1){
+					optionalQuestionIds.splice(idx, 1);
+					optionalQuestions.splice(idx, 1);
+				}
 			}
-			callback();
-		});
-	}, function(err){
-		console.log('done?', i);
-		if(i == t.answers.length){
-			t.hasAnsweredAllRequiredQuestions = true;
-		}else{
-			t.hasAnsweredAllRequiredQuestions = false;
-		}
-		t.save(callback);
-	});
-	return;
-
-	var checkAnswers = function(err, questions){
-		if(err || !questions || questions.length == 0){
-			return callback(err);
-		}
-		async.map(questions, function(question, callback){
-			callback(null, question._id.toString());
-		}, function(err, questionIds){
-			ProfileAnswer.find({user: t._id}).exec(function(err, answers){
-				if(err){
-					return callback(err);
-				}
-				var thisUsersQuestions = _.clone(questionIds);
-				console.log('comparing ', thisUsersQuestions, ' to ', answers);
-				for(var i=0; i<answers.length; i++){
-					var idx = thisUsersQuestions.indexOf(answers[i].question.toString());
-					if(idx !== -1){
-						thisUsersQuestions.splice(idx, 1);
-					}
-				}
-				console.log('result: ', thisUsersQuestions);
-				if(thisUsersQuestions.length > 0){
-					t.hasAnsweredAllRequiredQuestions = false;
-				}else{
-					t.hasAnsweredAllRequiredQuestions = true;
-				}
-				t.save(callback);
+			
+			if(requiredQuestionIds.length > 0 || optionalQuestionIds.length > 0){
+				t.hasAnsweredAllRequiredQuestions = false;
+			}else{
+				t.hasAnsweredAllRequiredQuestions = true;
+			}
+			t.save(function(err){
+				callback(err, requiredQuestions, requiredQuestionIds, optionalQuestions, optionalQuestionIds);
 			});
 		});
-	};
-	if(questions){
-		checkAnswers(null, questions);
-	}else{
-		var ProfileQuestion = mongoose.model('ProfileQuestion')
-		ProfileQuestion.find({published: true, required: true}).exec(checkAnswers);
-	}
+	});
 };
 UserSchema.methods.getProfileQuestions = function(questionsToIgnore, callback){
 	var ExperimonthEnrollment = mongoose.model('ExperimonthEnrollment')
@@ -483,7 +441,6 @@ UserSchema.methods.getProfileQuestions = function(questionsToIgnore, callback){
 		var ProfileQuestion = mongoose.model('ProfileQuestion');
 		ProfileQuestion.find({_id: {$in: requiredQuestions}}).sort('-publishDate').exec(function(err, requiredQuestions){
 			async.mapSeries(requiredQuestions, function(item, callback){
-				console.log(item.text, 'is required');
 				callback(null, item._id.toString());
 			}, function(mapErr, requiredQuestionIds){
 				ProfileQuestion.find({_id: {$in: optionalQuestions}}).sort('-publishDate').exec(function(err, optionalQuestions){
@@ -502,24 +459,21 @@ UserSchema.methods.checkProfileQuestions =  function(req, notComplete, complete)
 		req.flash('question');
 		complete();
 	}else{
-		var user = this
-		  , ProfileQuestion = mongoose.model('ProfileQuestion')
-		  , ProfileAnswer = mongoose.model('ProfileAnswer');
-		ProfileQuestion.find({published: true, required: true}).exec(function(err, questions){
-			if(err){
-				console.log('error retrieving questions: ', arguments);
-				notComplete(null, null);
-				return;
-			}
-			ProfileAnswer.find({user: user._id}).exec(function(err, answers){
-				if(err){
-					console.log('error retrieving answers: ', arguments);
-					notComplete(questions, null);
-					return;
+		var ProfileAnswer = mongoose.model('ProfileAnswer')
+		  , t = this;
+		t.getProfileQuestions([], function(err, requiredQuestions, requiredQuestionIds, optionalQuestions, optionalQuestionIds){
+			ProfileAnswer.find({user: t._id}).exec(function(err, answers){
+				for(var i=0; i<answers.length; i++){
+					var idx = requiredQuestionIds.indexOf(answers[i].question.toString());
+					if(idx !== -1){
+						requiredQuestionIds.splice(idx, 1);
+						requiredQuestions.splice(idx, 1);
+					}
 				}
+
 				req.flash('question');
-				if(questions.length > answers.length){
-					notComplete(questions, answers);
+				if(requiredQuestionIds.length > 0 || optionalQuestionIds.length > 0){
+					notComplete(requiredQuestions);
 				}else{
 					complete();
 				}
