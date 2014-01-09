@@ -170,10 +170,6 @@ app.configure(function(){
 		toWrite += 'var EM_URL = "'+fullURL+'";';
 		var defaultNav = [
 			{
-				'name': 'Home'
-			  , 'link': fullURL+'/'
-			},
-			{
 				'name': 'What is this?'
 			  , 'link': fullURL+'/what-is-this'
 			},
