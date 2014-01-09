@@ -102,6 +102,9 @@ app.configure(function(){
 		res.locals.host = req.host;
 		res.locals.flash = req.flash.bind(req);
 		res.locals.moment = moment;
+		res.locals.bodyClass = function(){
+			return req.host.indexOf('.dev') != -1 ? 'dev' : (req.host.indexOf('testing.') != -1 ? 'testing' : '');
+		};
 		res.locals.user = function(minimumState, minimumRole){
 			if(minimumState == undefined){
 				minimumState = 0

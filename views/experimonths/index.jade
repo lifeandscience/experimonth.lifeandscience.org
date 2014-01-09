@@ -14,7 +14,7 @@ block body
 			tbody
 				u = user()
 				each experimonth, i in experimonths
-					if experimonth.open || u.role == 10
+					if experimonth.open || (u && u.role == 10)
 						tr
 							td
 								span.em-name #{experimonth.name}

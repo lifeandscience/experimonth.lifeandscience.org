@@ -11009,6 +11009,34 @@
 .em-navbar-wrapper .navbar .nav > li.dropdown.open.active > a:focus {
   color: #960000;
 }
+body.testing .em-navbar-wrapper .navbar-inner .nav > li > a.create-account {
+  background-color: #FFCC00;
+}
+body.testing .em-navbar-wrapper .navbar .nav-tabs .open .dropdown-toggle,
+body.testing .em-navbar-wrapper .navbar .nav-pills .open .dropdown-toggle,
+body.testing .em-navbar-wrapper .navbar .nav > li.dropdown.open.active > a:hover,
+body.testing .em-navbar-wrapper .navbar .nav > li.dropdown.open.active > a:focus {
+  color: #FFCC00;
+}
+body.testing .em-navbar-wrapper .navbar .nav > .active > a,
+body.testing .em-navbar-wrapper .navbar .nav > .active > a:hover,
+body.testing .em-navbar-wrapper .navbar .nav > .active > a:focus {
+  background-color: #FFCC00;
+}
+body.dev .em-navbar-wrapper .navbar-inner .nav > li > a.create-account {
+  background-color: #FF00CC;
+}
+body.dev .em-navbar-wrapper .navbar .nav-tabs .open .dropdown-toggle,
+body.dev .em-navbar-wrapper .navbar .nav-pills .open .dropdown-toggle,
+body.dev .em-navbar-wrapper .navbar .nav > li.dropdown.open.active > a:hover,
+body.dev .em-navbar-wrapper .navbar .nav > li.dropdown.open.active > a:focus {
+  color: #FF00CC;
+}
+body.dev .em-navbar-wrapper .navbar .nav > .active > a,
+body.dev .em-navbar-wrapper .navbar .nav > .active > a:hover,
+body.dev .em-navbar-wrapper .navbar .nav > .active > a:focus {
+  background-color: #FF00CC;
+}
 body {
   padding-top: 100px;
 }

@@ -29,10 +29,10 @@ block body
 					label.control-label(for="type") Type:
 					.controls
 						label.checkbox
-							input#open(type="checkbox", name="type[]", value="Daily", checked=(experimonth.type && experimonth.type.indexOf('Daily') != -1))
+							input#type(type="checkbox", name="type[]", value="Daily", checked=(experimonth.type && experimonth.type.indexOf('Daily') != -1))
 							|  Daily
 						label.checkbox
-							input#open(type="checkbox", name="type[]", value="Weekly", checked=(experimonth.type && experimonth.type.indexOf('Weekly') != -1))
+							input#type(type="checkbox", name="type[]", value="Weekly", checked=(experimonth.type && experimonth.type.indexOf('Weekly') != -1))
 							|  Weekly
 
 				//.control-group
@@ -64,13 +64,13 @@ block body
 					.controls
 						input#userLimit.span5(type="text", placeholder="100", name="userLimit", value=experimonth.userLimit)
 						label.checkbox(for="unlimited")
-							input#open(type="checkbox", name="unlimited", checked=experimonth.unlimited)
+							input#unlimited(type="checkbox", name="unlimited", checked=experimonth.unlimited)
 							|  Unlimited
 						p.help-block How many users will this Experimonth allow for? If the "Unlimited" checkbox is checked, the User Limit box will be ignored.
 		
 				.control-group
 					.controls
-						label.checkbox(for="open")
+						label.checkbox
 							input#open(type="checkbox", name="open", checked=experimonth.open)
 							|  Open?
 						p.help-block Is this Experimonth presently open for enrollment?
