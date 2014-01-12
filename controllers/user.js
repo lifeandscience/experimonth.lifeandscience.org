@@ -21,6 +21,25 @@ module.exports = function(app){
 			res.render('users/index', {title: 'All Users', users: users, moment: moment});
 		});
 	});
+	app.get('/users/impersonate/:id', auth.authorize(2, 10), function(req, res){
+		if(!req.params.id){
+			req.flash('error', 'User ID required.');
+			res.redirect('/users');
+			return;
+		}
+		User.findOne({_id: req.params.id}).exec(function(err, user){
+			if(err || !user){
+				req.flash('error', 'User '+req.params.id+' not found.');
+			}else{
+				req.session.impersonation_id = req.params.id;
+			}
+			return res.redirect('/users');
+		});
+	});
+	app.get('/users/stop-impersonating', function(req, res){
+		delete req.session.impersonation_id;
+		return res.redirect('back');
+	});
 	
 	/*
 	// Saving for now.

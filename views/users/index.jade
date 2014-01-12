@@ -8,16 +8,17 @@ block body
 			thead
 				tr
 					th Email
-					th Score
-					th Last Played
+					th Name
 					th Actions
 			tbody
 				each user, i in users
 					tr
 						td 
 							a(href="/profile/"+user._id) #{user.email}
-						td #{user.score}
-						td #{locals.moment(user.lastPlayed).format('YYYY-MM-DD hh:mm A')}
+							u = locals.user()
+							if u && u._id.toString() == user._id.toString()
+								|  [This is you]
+						td #{user.name}
 						td
 							a.btn(href="/users/edit/#{user._id}") Edit
 							| 
@@ -40,3 +41,5 @@ block body
 								a.btn.btn-primary(href="/users/activate/#{user._id}")
 									i.icon-ok.icon-white
 									|  Activate
+							| 
+							a.btn.btn-info(href="/users/impersonate/#{user._id}") Impersonate

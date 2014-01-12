@@ -99,6 +99,21 @@ module.exports = {
 	
 		app.use(passport.initialize());
 		app.use(passport.session());
+
+		app.use(function(req, res, next){
+			if(req.session.impersonation_id){
+				User.findById(req.session.impersonation_id, function(err, user){
+					if(!err && user){
+						// Override the user!
+						req.original_user = req.user;
+						req.user = user;
+					}
+					next();
+				});
+			}else{
+				next();
+			}
+		});
 		
 		var checkProfile = function(req, res, next){
 			// If the user hasn't yet finished their registration (including email address), skip the question posts.
@@ -744,7 +759,13 @@ module.exports = {
 			if(!req.token_user_id){
 				return res.json({error: 'No User ID'});
 			}
-			User.findById(req.token_user_id).populate('experimonths').populate('answers').exec(function(err, user){
+			var id = req.token_user_id;
+			if(req.session.impersonation_id){
+				console.log('impersonation_id');
+				id = req.session.impseronation_id;
+			}
+			
+			User.findById(id).populate('experimonths').populate('answers').exec(function(err, user){
 				if(err || !user){
 					console.log('user not found...');
 					return res.json({error: 'User Not Found'});

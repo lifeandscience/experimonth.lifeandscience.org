@@ -205,7 +205,7 @@ app.configure(function(){
 			])+';';
 		}else{
 			toWrite += 'var EM_DEFAULT_NAV = '+JSON.stringify(res.locals.nav || defaultNav)+';';
-			toWrite += 'var EM_RIGHT_NAV = '+JSON.stringify([
+			var rightNav = [
 				{
 					'name': 'Profile'
 				  , 'link': fullURL+'/profile'
@@ -214,7 +214,15 @@ app.configure(function(){
 					'name': 'Logout'
 				  , 'link': fullURL+'/logout'
 				}
-			])+';';
+			];
+			
+			if(req.session.impersonation_id){
+				rightNav.push({
+					'name': 'End Impersonation'
+				  , 'link': fullURL+'/users/stop-impersonating'
+				});
+			}
+			toWrite += 'var EM_RIGHT_NAV = '+JSON.stringify(rightNav)+';';
 		}
 		res.write(toWrite);
 		var fileStream = fs.createReadStream('./public/js/em-navbar.js');
