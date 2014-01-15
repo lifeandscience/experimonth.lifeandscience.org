@@ -274,6 +274,10 @@ module.exports = {
 		});
 */
 		myOAP.on('check_authorization', function(req, res, client_id, next){
+			if(req.user.role >= 10){
+				return next();
+			}
+
 			// Grants = Enrollment
 			// Find all Experimonths that are under this kind and currently active
 			var Experimonth = mongoose.model('Experimonth');
@@ -287,6 +291,7 @@ module.exports = {
 					req.flash('info', 'This Experimonth is not presently active.');
 					return res.redirect('/profile');
 				}
+
 				// Find an experimonth with enrollments!
 				for(var i in experimonths){
 					if(experimonths[i].enrollments && experimonths[i].enrollments.length > 0 && experimonths[i].kind == client_id){
