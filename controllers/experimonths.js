@@ -401,17 +401,23 @@ module.exports = function(app){
 					res.redirect('back');
 					return;
 				}
-				// Send a notification to all existing users that a new question was published.
-				User.notifyAll('info', null, 'New Experimonth Available.', 'Please check out the new Experimonth that was just published.', function(err){
-					if(err){
-						req.flash('error', 'Error notifying users. '+err);
+				if(experimonth.published){
+					// Send a notification to all existing users that a new question was published.
+					User.notifyAll('info', null, 'New Experimonth Available.', 'Please check out the new Experimonth that was just published.', function(err){
+						if(err){
+							req.flash('error', 'Error notifying users. '+err);
+							res.redirect('back');
+							return;
+						}
+						req.flash('info', 'Experimonth published successfully.');
 						res.redirect('back');
 						return;
-					}
-					req.flash('info', 'Experimonth '+(experimonth.published ? 'published' : 'unpublished')+' successfully.');
+					});
+				}else{
+					req.flash('info', 'Experimonth unpublished successfully.');
 					res.redirect('back');
 					return;
-				});
+				}
 			});
 		});
 	});	

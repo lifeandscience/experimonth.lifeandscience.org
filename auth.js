@@ -127,7 +127,9 @@ module.exports = {
 			req.user.checkProfileQuestions(req, function(requiredQuestions){
 				// There are some un-answered questions!
 				// Pick a random question of those that aren't answered
-				var question = requiredQuestions[Math.floor(Math.random()*requiredQuestions.length)];
+				var idx = Math.floor(Math.random()*requiredQuestions.length);
+				console.log('trying to pick a question!', idx, requiredQuestions);
+				var question = requiredQuestions[idx];
 				app.render('profile/mixins', {question: question, answer: null, active: false}, function(err, html){
 					req.flash('question', '<p><strong>Your profile is incomplete!</strong> Please answer the following question:</p>'+html);
 					next();
