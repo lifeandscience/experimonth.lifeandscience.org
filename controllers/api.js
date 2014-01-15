@@ -55,6 +55,9 @@ module.exports = function(app){
 											// TODO: Notify the player that they've been skipped from playing because their profile is incomplete?
 											console.log('this player was excluded due to not filling out their questions.', user._id);
 											experimonth.users.splice(i, 1);
+										}else if(!user.active){
+											console.log('this player was excluded due to being de-activated.', user._id);
+											experimonth.users.splice(i, 1);
 										}else if(!fillInAdmin && user.role >= 10){
 											// Find an enrolled admin
 											fillInAdmin = user;

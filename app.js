@@ -81,6 +81,7 @@ app.configure(function(){
 		secret: "experimonthSecretForSession"
 		, store: new MongoStore({
 			url: dbURL
+		  , auto_reconnect: true
 		})
 	}));
 	app.use(flash());
