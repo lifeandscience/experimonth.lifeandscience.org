@@ -11037,6 +11037,45 @@ body.dev .em-navbar-wrapper .navbar .nav > .active > a:hover,
 body.dev .em-navbar-wrapper .navbar .nav > .active > a:focus {
   background-color: #FF00CC;
 }
+#em-feedback {
+  height: 104px;
+  width: 104px;
+  position: fixed;
+  top: 50%;
+  margin-left: -52px;
+  right: 0;
+  z-index: 999;
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+#em-feedback a {
+  display: block;
+  background: #1f1f1f;
+  height: 15px;
+  width: 60px;
+  padding: 8px 16px;
+  color: #fff;
+  font-family: "Oswald", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  font-size: 17px;
+  text-decoration: none;
+  text-transform: uppercase;
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  /*
+	border-bottom: solid 1px #333;
+	border-left: solid 1px #333;
+	border-right: solid 1px #fff;
+*/
+
+}
+#em-feedback a:hover {
+  background: #960000;
+}
 body {
   padding-top: 100px;
 }

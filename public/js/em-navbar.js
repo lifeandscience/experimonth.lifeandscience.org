@@ -45,7 +45,7 @@ var em_navbar = function(){
 		EM_RIGHT_NAV = [];
 	}
 	
-	var toInsert = '<div class="em-navbar-wrapper"><div class="navbar navbar-fixed-top"> \
+	var toInsert = '<div id="em-feedback"><a href="'+EM_URL+'/feedback">Feedback</a></div><div class="em-navbar-wrapper"><div class="navbar navbar-fixed-top"> \
 				<div class="navbar-inner"> \
 					<div class="container"> \
 						<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> \
