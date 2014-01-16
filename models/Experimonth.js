@@ -62,6 +62,10 @@ var ExperimonthSchema = new Schema({
 
 ExperimonthSchema.statics.findActiveQuery = function(){
 	var today = new Date();
+	today.setHours(0);
+	today.setMinutes(0);
+	today.setSeconds(0);
+	today.setMilliseconds(0);
 	return this.find({startDate: {$lte: today}, endDate: {$gte: today}, published: true}).sort('startDate');
 };
 ExperimonthSchema.statics.findEnrollableExperimonths = function(){
