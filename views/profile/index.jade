@@ -86,11 +86,6 @@ block body
 							label.control-label(for="email") Email Address:
 							.controls
 								input#email.span5.disabled(type="text", placeholder="", name="email", value=u.email, disabled="disabled")
-		
-						.control-group(class=(!u.name ? 'error' : ''))
-							label.control-label(for="name") Name:
-							.controls
-								input#name.span5(type="text", placeholder="", name="name", value=u.name)
 				
 						.control-group(class=(!u.timezone ? 'error' : ''))
 							label.control-label(for="timezone") Timezone:

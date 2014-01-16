@@ -32,8 +32,7 @@ var path = __dirname + '/../views/users/email/activation.jade'
 
 var shouldNextUserDefend = true
   , UserSchema = new Schema({
-		name: String
-	  , hash: String
+		hash: String
 	  , salt: String
 	  , email: String
 	  , sms: String
@@ -76,6 +75,7 @@ var shouldNextUserDefend = true
 	  , optionalAnswers: [{type: Schema.ObjectId, ref: 'ProfileAnswer'}]
 	  
 		// These are now deprecated as they're migrated to ProfileQuestions/Answers
+	  , name: String
 	  , zipcode: String
 	  , birthday: String
 	  , ethnicity: String

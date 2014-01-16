@@ -8,7 +8,6 @@ block body
 			thead
 				tr
 					th Email
-					th Name
 					th Actions
 			tbody
 				each user, i in users
@@ -18,7 +17,6 @@ block body
 							u = locals.user()
 							if u && u._id.toString() == user._id.toString()
 								|  [This is you]
-						td #{user.name}
 						td
 							a.btn(href="/users/edit/#{user._id}") Edit
 							| 

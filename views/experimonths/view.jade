@@ -11,13 +11,13 @@ block body
 			thead
 				tr
 					th ID
-					th Name
+					th Email
 					th Last Played
 			tbody
 				each user, i in experimonth.users
 					tr
 						td #{user._id}
-						td #{user.name}
+						td #{user.email}
 						td #{locals.moment(user.lastPlayed).format('YYYY-MM-DD hh:mm A')}
 		//- if(pages > 1)
 		//	.pagination
