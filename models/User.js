@@ -110,7 +110,7 @@ UserSchema.method('sendActivationEmail', function(){
 
 	var base_url = (process.env.BASEURL || 'http://app.dev:8000')
 	  , activation_url = base_url + '/auth/local/confirm/'+theEmail+'/'+activationCode
-	  , html = 'This email address was used to sign-up for Experimonth. Please click the address below to confirm your account (or copy and paste it in your browser).\n\n<a href="'+activation_url+'">'+activation_url'+</a>\n\nIf you did not sign-up for Experimonth, there is no need to take any action.';
+	  , html = 'This email address was used to sign-up for Experimonth. Please click the address below to confirm your account (or copy and paste it in your browser).\n\n<a href="'+activation_url+'">'+activation_url+'</a>\n\nIf you did not sign-up for Experimonth, there is no need to take any action.';
 
 	// setup e-mail data with unicode symbols
 	var mailOptions = {

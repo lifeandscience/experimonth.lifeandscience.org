@@ -2,7 +2,8 @@ var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , util = require('util')
   , async = require('async')
-  , email = require('../email');
+  , email = require('../email')
+  , urlRegex = require('../external/url_regex');
 
 var NotificationSchema = new Schema({
 	date: {type: Date, default: function(){ return new Date(); }}
@@ -33,7 +34,9 @@ NotificationSchema.pre('save', function(next){
 		toDoParallel.email = function(callback){
 			var finish = function(user){
 				if(user.email){
-					var html = t.text + '<small>If you would like to be unsubscribed from these notifications, login to '+process.env.BASEURL+' and uncheck the "Email Notifications" option on your profile page.</small>';
+					var html = t.text + '\n\n<small>If you would like to be unsubscribed from these notifications, login to '+process.env.BASEURL+' and uncheck the "Email Notifications" option on your profile page.</small>';
+					html = html.replace(urlRegex, '<a href="$1">$1</a>');
+					
 					var mailOptions = {
 						to: user.email,
 						subject: t.subject,
