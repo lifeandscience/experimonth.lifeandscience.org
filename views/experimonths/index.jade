@@ -37,7 +37,7 @@ block body
 									if experimonth.users.indexOf(u._id.toString()) != -1
 										if experimonth.kind && experimonth.kind.url
 											a.btn(href=experimonth.kind.url) Visit
-										a.btn.btn-warning(href="/experimonths/unenroll/#{experimonth._id}") Un-enroll
+										a.btn.btn-warning(href="/experimonths/unenroll/#{experimonth._id}", data-bootbox-confirm="<p>Are you sure you want to un-enroll from this Experimonth?</p>") Un-enroll
 									else
 										a.btn.btn-primary(href=(enrollGoesToProfile ? '/profile' : "/experimonths/enroll/#{experimonth._id}")) Enroll
 								else
