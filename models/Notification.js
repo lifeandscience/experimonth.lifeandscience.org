@@ -33,11 +33,12 @@ NotificationSchema.pre('save', function(next){
 		toDoParallel.email = function(callback){
 			var finish = function(user){
 				if(user.email){
+					var html = t.text + '<small>If you would like to be unsubscribed from these notifications, login to '+process.env.BASEURL+' and uncheck the "Email Notifications" option on your profile page.</small>';
 					var mailOptions = {
 						to: user.email,
 						subject: t.subject,
 						generateTextFromHTML: true,
-						html: t.text
+						html: html
 					};
 		
 					// send mail with defined transport object
