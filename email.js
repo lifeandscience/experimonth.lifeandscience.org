@@ -61,6 +61,11 @@ module.exports = {
 	sendMail: function(options, callback){
 		if('true' == process.env.DO_NOTIFICATIONS){
 			options.from = '"Experimonth" <experimonth@lifeandscience.org>';
+			
+			// Add a standard footer to each email.
+			options.html += '\n\n--\n\n<a href="'+process.env.BASEURL+'">Experimonth</a> | <a href="http://twitter.com/experimonth">Twitter</a> | <a href="http://facebook.com/experimonth">Facebook</a>';
+			options.html = options.html.replace('\n', '<br/>');
+
 			emailQueue.push({options: options, callback: callback});
 			execQueue();
 		}else if(callback){

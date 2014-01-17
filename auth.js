@@ -566,7 +566,7 @@ module.exports = {
 				user.state = 2;
 				user.save(function(err){
 					var Notification = mongoose.model('Notification');
-					Notification.notify('success', null, 'Thanks for confirming your email address!', 'Your email address was confirmed successfully. Thanks again!', user, function(err, notification){
+					Notification.notify('success', null, 'Your email address is confirmed.', 'Thank you for confirming your email address. You can now login to '+process.env.BASEURL+' and enroll in available Experimonths.', user, function(err, notification){
 						if(req.user){
 							res.redirect('/profile');
 						}else{

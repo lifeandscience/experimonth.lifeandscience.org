@@ -2,7 +2,6 @@ var mongoose = require('mongoose')
 //  , mongooseAuth = require('mongoose-auth')
   , Schema = mongoose.Schema
   , email = require('../email')
-  , jade = require('jade')
   , fs = require('fs')
   , moment = require('moment')
   , bcrypt = require('bcrypt')
@@ -10,24 +9,6 @@ var mongoose = require('mongoose')
   , util = require('util')
   , async = require('async')
   , _ = require('underscore');
-
-
-
-var path = __dirname + '/../views/users/email/activation.jade'
-  , str = fs.readFileSync(path, 'utf8')
-  , activationTemplate = jade.compile(str, { filename: path, pretty: true })
-  , path = __dirname + '/../views/users/email/deactivation.jade'
-  , str = fs.readFileSync(path, 'utf8')
-  , deactivationTemplate = jade.compile(str, { filename: path, pretty: true })
-  , path = __dirname + '/../views/users/email/confirm_email.jade'
-  , str = fs.readFileSync(path, 'utf8')
-  , confirmEmailTemplate = jade.compile(str, { filename: path, pretty: true })
-  , path = __dirname + '/../views/users/email/reset_password.jade'
-  , str = fs.readFileSync(path, 'utf8')
-  , resetPasswordEmailTemplate = jade.compile(str, { filename: path, pretty: true })
-  , path = __dirname + '/../views/users/email/layout.jade'
-  , str = fs.readFileSync(path, 'utf8')
-  , layoutTemplate = jade.compile(str, { filename: path, pretty: true });
 
 
 var shouldNextUserDefend = true
@@ -107,8 +88,7 @@ UserSchema.method('sendTemporaryPasswordEmail', function(){
 
 	var base_url = (process.env.BASEURL || 'http://app.dev:8000')
 	  , activation_url = base_url + '/reset-password/'+theEmail+'/'+passwordResetTemporaryPassword
-	  , html = resetPasswordEmailTemplate({email: this.email, base_url: base_url, activation_url: activation_url});
-	html = layoutTemplate({title: 'Reset Your Password', body: html, moment: moment});
+	  , html = 'A request was made to reset your Experimonth password. Please click the address below to complete the password reset (or copy and paste it in your browser).\n\n<a href="'+activation_url+'">'+activation_url+'</a>\n\nIf you did not request this password reset, there is no need to take any action.'
 
 	// setup e-mail data with unicode symbols
 	var mailOptions = {
@@ -130,8 +110,7 @@ UserSchema.method('sendActivationEmail', function(){
 
 	var base_url = (process.env.BASEURL || 'http://app.dev:8000')
 	  , activation_url = base_url + '/auth/local/confirm/'+theEmail+'/'+activationCode
-	  , html = confirmEmailTemplate({email: this.email, base_url: base_url, activation_url: activation_url});
-	html = layoutTemplate({title: 'Confirm Your Email Address', body: html, moment: moment});
+	  , html = 'This email address was used to sign-up for Experimonth. Please click the address below to confirm your account (or copy and paste it in your browser).\n\n<a href="'+activation_url+'">'+activation_url'+</a>\n\nIf you did not sign-up for Experimonth, there is no need to take any action.';
 
 	// setup e-mail data with unicode symbols
 	var mailOptions = {
@@ -325,14 +304,13 @@ UserSchema.methods.notifyOfActivation = function(isActivation, cb){
 	  , title = ''
 	  , user = this;
 	if(isActivation){
-		title = 'Your Experimonth Account has been Activated!';
-		html = activationTemplate({user: user});
+		title = 'Your Experimonth account is activated!';
+		html = 'This message is being sent to notify you that your account at '+process.env.BASEURL+' has been activated.';
 	}else { // deactivation
 		// Just round start!
-		title = 'Your Experimonth Account has been Deactivated!';
-		html = deactivationTemplate({user: user});
+		title = 'Your Experimonth account is deactivated!';
+		html = 'This message is being sent to notify you that your account at '+process.env.BASEURL+' has been deactivated. This has happened for one of two reasons, either you are signed up for an Experimonth and haven\'t played for several days in a row; or you chose to deactivate yourself.\n\nIf you want to keep playing or believe this was done in error, please send a message to experimonth@lifeandscience.org and we\'ll get your account reactivated.';
 	}
-	html = layoutTemplate({title: title, body: html, moment: moment});
 	
 	// setup e-mail data with unicode symbols
 	var mailOptions = {
