@@ -64,7 +64,7 @@ module.exports = {
 			
 			// Add a standard footer to each email.
 			options.html += '\n\n--\n\n<a href="'+process.env.BASEURL+'">Experimonth</a> | <a href="http://twitter.com/experimonth">Twitter</a> | <a href="http://facebook.com/experimonth">Facebook</a>';
-			options.html = options.html.replace('\n', '<br/>');
+			options.html = options.html.replace(/\n/g, '<br/>');
 
 			emailQueue.push({options: options, callback: callback});
 			execQueue();
