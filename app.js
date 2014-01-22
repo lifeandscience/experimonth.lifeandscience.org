@@ -153,6 +153,11 @@ app.configure(function(){
 	
 	app.use(app.router);
 	app.use(require('less-middleware')({ src: __dirname + '/public' }));
+	app.all('/venera/fonts/*', function(req, res, next) {
+		res.header("Access-Control-Allow-Origin", "*");
+		res.header("Access-Control-Allow-Headers", "X-Requested-With");
+		next();
+	});
 	app.use(express.static(path.join(__dirname, 'public')));
 	app.get('/js/em-navbar.js', function(req, res){
 		var toWrite = '';
