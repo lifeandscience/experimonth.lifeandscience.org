@@ -27,7 +27,7 @@ block body
 										li #{type}
 						td
 							if experimonth.unlimited
-								|  Unlimited
+								|  #{experimonth.users.length} / Unlimited
 							else
 								|  #{experimonth.users.length} / #{experimonth.userLimit}
 						td #{experimonth.open ? 'yes' : 'no'}

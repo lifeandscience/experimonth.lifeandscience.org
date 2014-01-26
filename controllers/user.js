@@ -18,7 +18,7 @@ var form = require('express-form')
 module.exports = function(app){
 	app.get('/users', auth.authorize(2, 10), function(req, res){
 		User.find({}).sort('name').exec(function(err, users){
-			res.render('users/index', {title: 'All Users', users: users, moment: moment});
+			res.render('users/index', {title: 'All '+users.length+' Users', users: users, moment: moment});
 		});
 	});
 	app.get('/users/impersonate/:id', auth.authorize(2, 10), function(req, res){
