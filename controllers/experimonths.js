@@ -99,10 +99,11 @@ module.exports = function(app){
 							res.redirect('back');
 							return;
 						}
-							
-						req.flash('info', 'You were enrolled successfully. Watch for notifications when the Experimonth is due to start.');
-						res.redirect('back');
-						return;
+
+						req.user.reCheckProfileQuestions(null, function(err){
+							req.flash('info', 'You were enrolled successfully. Watch for notifications when the Experimonth is due to start.');
+							res.redirect('back');
+						});
 					});
 				});
 			});
@@ -166,9 +167,10 @@ module.exports = function(app){
 							return;
 						}
 							
-						req.flash('info', 'You were enrolled successfully. Watch for notifications when the Experimonth is due to start.');
-						res.redirect('/currently-recruiting');
-						return;
+						req.user.reCheckProfileQuestions(null, function(err){
+							req.flash('info', 'You were enrolled successfully. Watch for notifications when the Experimonth is due to start.');
+							res.redirect('/currently-recruiting');
+						});
 					});
 				});
 			});
@@ -250,9 +252,10 @@ module.exports = function(app){
 								return;
 							}
 							
-							req.flash('info', 'You were un-enrolled successfully.');
-							res.redirect('back');
-							return;
+							req.user.reCheckProfileQuestions(null, function(err){
+								req.flash('info', 'You were un-enrolled successfully.');
+								res.redirect('back');
+							});
 						});
 					});
 				});
