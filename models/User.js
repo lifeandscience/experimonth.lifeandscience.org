@@ -448,10 +448,17 @@ UserSchema.methods.checkProfileQuestions =  function(req, notComplete, complete)
 						requiredQuestions.splice(idx, 1);
 					}
 				}
+				for(var i=0; i<answers.length; i++){
+					var idx = optionalQuestionIds.indexOf(answers[i].question.toString());
+					if(idx !== -1){
+						optionalQuestionIds.splice(idx, 1);
+						optionalQuestions.splice(idx, 1);
+					}
+				}
 
 				req.flash('question');
 				if(requiredQuestionIds.length > 0 || optionalQuestionIds.length > 0){
-					notComplete(requiredQuestions);
+					notComplete(requiredQuestions.concat(optionalQuestions));
 				}else{
 					complete();
 				}
