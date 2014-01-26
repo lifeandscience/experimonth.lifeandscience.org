@@ -57,8 +57,9 @@ module.exports = {
 			var mailOptions = {
 		    	from: "Experimonth: Frenemy <experimonth@lifeandscience.org>", // sender address
 		    	to: 'experimonth+feedback@lifeandscience.org', // list of receivers
-		    	subject: 'Experimonth Feedback Box Submission', // Subject line
-		    	text: 'New feedback posted on '+moment().format('YYYY-MM-DD hh:mm A')+'\n\n---\n\n'+req.param('email')+'\n\n---\n\n'+req.param('text')
+		    	subject: 'Experimonth Feedback Box Submission', // Subject line,
+				generateTextFromHTML: true,
+				html: 'New feedback posted on '+moment().format('YYYY-MM-DD hh:mm A')+'\n\n---\n\n'+req.param('email')+'\n\n---\n\n'+req.param('text')
 		    };
 
 		    // send mail with defined transport object

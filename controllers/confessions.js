@@ -57,8 +57,9 @@ module.exports = function(app){
 	
 				var mailOptions = {
 			    	to: 'experimonth+confessional@lifeandscience.org', // list of receivers
-			    	subject: 'Flagged Confession.', // Subject line
-			    	text: 'Confessional #'+confession.number+' was flagged, bringing it\'s total number of flags to '+confession.flags+' on '+moment().format('YYYY-MM-DD hh:mm A')+'\n\n---\n\n'+confession.text
+			    	subject: 'Flagged Confession.', // Subject line,
+					generateTextFromHTML: true,
+					html: 'Confessional #'+confession.number+' was flagged, bringing it\'s total number of flags to '+confession.flags+' on '+moment().format('YYYY-MM-DD hh:mm A')+'\n\n---\n\n'+confession.text
 			    };
 	
 			    // send mail with defined transport object
@@ -179,8 +180,9 @@ module.exports = function(app){
 	
 				var mailOptions = {
 			    	to: 'experimonth+confessional@lifeandscience.org', // list of receivers
-			    	subject: 'New confession.', // Subject line
-			    	text: 'New Confessional posted on '+moment(item.date).format('YYYY-MM-DD hh:mm A')+'\n\n---\n\n'+item.text
+			    	subject: 'New confession.', // Subject line,
+					generateTextFromHTML: true,
+					html: 'New Confessional posted on '+moment(item.date).format('YYYY-MM-DD hh:mm A')+'\n\n---\n\n'+item.text
 			    };
 	
 			    // send mail with defined transport object
