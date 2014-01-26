@@ -278,7 +278,7 @@ UserSchema.static('notifyAdmins', function(type, format, subject, text, callback
 });
 UserSchema.static('notifyAll', function(type, format, subject, text, callback){
 	var Notification = mongoose.model('Notification');
-	this.find().exec(function(err, users){
+	this.find({active: true}).exec(function(err, users){
 		if(err || !users || users.length == 0){
 			callback(new Error('Error finding users to notify.'));
 			return;
