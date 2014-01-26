@@ -4,6 +4,7 @@ var util = require('util')
   , field = form.field
   , auth = require('../auth')
   , mongoose = require('mongoose')
+  , Notification = mongoose.model('Notification')
   , Experimonth = mongoose.model('Experimonth')
   , ExperimonthKind = mongoose.model('ExperimonthKind')
   , ExperimonthEnrollment = mongoose.model('ExperimonthEnrollment')
@@ -101,6 +102,10 @@ module.exports = function(app){
 						}
 
 						req.user.reCheckProfileQuestions(null, function(err){
+							// Send the user the welcome message if it exists!
+							if(experimonth.welcomeMessage){
+								Notification.notify('success', ['web', 'email'], 'Welcome to '+experimonth.name, experimonth.welcomeMessage, req.user, null);
+							}
 							req.flash('info', 'You were enrolled successfully. Watch for notifications when the Experimonth is due to start.');
 							res.redirect('back');
 						});
@@ -212,11 +217,12 @@ module.exports = function(app){
 	var as = 'experimonth'
 	  , populate = []
 	  , template = 'experimonths/form'
-	  , varNames = ['name', 'description', 'type', 'image', 'startDate', 'endDate', 'userLimit', 'unlimited', 'open', 'conditions', 'requiredQuestions', 'optionalQuestions', 'kind']
+	  , varNames = ['name', 'description', 'welcomeMessage', 'type', 'image', 'startDate', 'endDate', 'userLimit', 'unlimited', 'open', 'conditions', 'requiredQuestions', 'optionalQuestions', 'kind']
 	  , redirect = '/experimonths'
 	  , formValidate = form(
 			field('name').trim()
 		  , field('description').trim()
+		  , field('welcomeMessage').trim()
 		  , field('type').array().trim()
 //		  , field('image').trim()
 		  , field('startDate').trim().required().isDate()

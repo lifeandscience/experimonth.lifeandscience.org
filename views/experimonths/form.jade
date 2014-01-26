@@ -19,6 +19,12 @@ block body
 						p.help-block The description of this Experimonth.
 
 				.control-group
+					label.control-label(for="welcomeMessage") Welcome Message:
+					.controls
+						textarea#welcomeMessage.span5(placeholder="Welcome to Experimonth X!", name="welcomeMessage") !{experimonth.welcomeMessage}
+						p.help-block The Welcome Message for this Experimonth. Newlines should be retained; links will ideally be auto-linked. Should be plain text, not any kind of markup.
+
+				.control-group
 					label.control-label(for="image") Image:
 					.controls
 						img.span2(src=experimonth.image)

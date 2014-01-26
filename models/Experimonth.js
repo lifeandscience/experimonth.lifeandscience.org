@@ -41,6 +41,7 @@ var ExperimonthSchema = new Schema({
   , endDate: {type: Date, default: function(){ return Date.now(); }}
   , name: {type: String}
   , description: {type: String}
+  , welcomeMessage: {type: String}
   , type: [{type: String}]
   , image: {type: String}
   , kind: {type: Schema.ObjectId, ref: 'ExperimonthKind'}
