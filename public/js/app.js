@@ -205,6 +205,30 @@ jQuery(function(){
 		});
 		return false;
 	});
+	
+	jQuery(document).on('submit', 'form.question', function(event){
+		var t = this;
+		jQuery('form.question').each(function(){
+			// Ignore this one since it'll get submitted as the final one
+			if(this != t){
+				// Other form
+				var input = jQuery(this).find('input[name="value"]');
+				var thisForm = jQuery(this);
+				var val = null;
+				if(input && (val = input.val())){
+					// Submit this form!
+					console.log('submitting? ', thisForm.serialize());
+					jQuery.post(thisForm.attr('action'), thisForm.serialize());
+				}
+				input = jQuery(this).find('select[name="value"]');
+				if(input && (val = input.val())){
+					console.log('submitting? ', thisForm.serialize());
+					jQuery.post(thisForm.attr('action'), thisForm.serialize());
+				}
+			}
+		});
+		return true;
+	});
 });
 
 (function() {

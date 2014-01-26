@@ -1,7 +1,7 @@
 //mixin do_question(question, answer, active)
 .item.question(class=(active ? 'active ' : '')+(whiteCard ? 'span4' : 'clearfix'))
 	div(class=(whiteCard ? 'white-card clearfix' : ''))
-		form(method="POST", action="/profile/questions/answer/#{question._id}")
+		form.question(method="POST", action="/profile/questions/answer/#{question._id}")
 			- if(answer)
 				input(type="hidden", name="answerid", value=answer._id)
 			.control-group
