@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "S3_ACCESS_KEY=\"AKIAIOEHUQ56M3GS6BEQ\" S3_ACCESS_SECRET=\"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\" S3_BUCKET=\"experimonth.lifeandscience.org\" S3_SLUG=\"dev\" DO_NOTIFICATIONS=false BASEURL=\"http://app.dev:8000\" node app.js",
-    "postinstall": "./node_modules/bower/bin/bower install"
+    "postinstall": "./bin/build.sh"
   },
   "dependencies": {
       "express": "~= 3"
