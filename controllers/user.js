@@ -212,74 +212,144 @@ module.exports = function(app){
 	*/
 	});
 	
+	app.get('/users/notifyAll', auth.authorize(2, 10), function(req, res){
+		res.render('users/notifyAll', {title: 'Notify All Users', subject: '', message: ''});
+	});
+	app.post('/users/notifyAll', auth.authorize(2, 10), function(req, res){
+		var subject = req.param('subject');
+		var message = req.param('message');
+		if(!subject || subject.length == 0){
+			req.flash('error', 'Please provide a subject.');
+			res.render('users/notifyAll', { title: 'Notify All Users', subject: subject, message: message });
+			return;
+		}
+		if(!message || message.length == 0){
+			req.flash('error', 'Please provide a message.');
+			res.render('users/notifyAll', { title: 'Notify All Users', subject: subject, message: message });
+			return;
+		}
+	
+		User.notifyAll('info', null, subject, message, function(err){
+			if(err){
+				req.flash('error', 'Error notifying users. '+err);
+				res.redirect('back');
+				return;
+			}
+			req.flash('info', 'Users notified successfully!');
+			res.redirect('back');
+			return;
+		});
+	});
+	
 	app.get('/users/export', auth.authorize(2, 10), function(req, res, next){
 		var start = Date.now();
 		util.log('starting the log up. '+start);
 		// Export all game data as a CSV
-		var User = mongoose.model('User');
+		var User = mongoose.model('User')
+		  , ProfileQuestion = mongoose.model('ProfileQuestion')
+		  , Experimonth = mongoose.model('Experimonth');
 	
 	/* 	res.contentType('.csv'); */
 	
-		var csv = 'name\temail\tID\tuser type\tuser score\tBirthdate\tZip\tGender\tEthnicity\tColor\tTransport\tSports\tPersonality\tPolitics\tGlasses\tPets\tBirthplace\n';
-		
-		res.writeHead(200, {
-			'Content-Type': 'text/tsv',
-			'Content-Disposition': 'attachment;filename=user-export-all.tsv'
-		});
-		
-		res.write(csv);
+		ProfileQuestion.find({published: true}).exec(function(err, questions){
+			var csv = 'email\tID\t'
+			  , questionIds = [];
+			for(var i=0; i<questions.length; i++){
+				csv += questions[i].text+'\t';
+				questionIds.push(questions[i]._id.toString());
+			}
+			Experimonth.find().exec(function(err, experimonths){
+				var experimonthIds = [];
+				for(var i=0; i<experimonths.length; i++){
+					csv += experimonths[i].name+'\t';
+					experimonthIds.push(experimonths[i]._id.toString());
+				}
+				csv += '\n';
 	
-		var numUsers = 0
-		  , stream = null
-		  , totallyDone = false
-		  , checkDone = function(){
-				if(--numUsers == 0){
-					if(totallyDone){
-						util.log('totally done.');
-						if(hasFoundUser){
-							// We found at least one game
-							// Maybe the query needs to be re-run starting at an offset of offset
-							createQueryStream(offset);
-						}else{
-							res.end();
+				res.writeHead(200, {
+					'Content-Type': 'text/tsv',
+					'Content-Disposition': 'attachment;filename=user-export-all.tsv'
+				});
+	
+				res.write(csv);
+			
+				var numUsers = 0
+				  , stream = null
+				  , totallyDone = false
+				  , checkDone = function(){
+						if(--numUsers == 0){
+							if(totallyDone){
+								util.log('totally done.');
+								if(hasFoundUser){
+									// We found at least one game
+									// Maybe the query needs to be re-run starting at an offset of offset
+									createQueryStream(offset);
+								}else{
+									res.end();
+								}
+							}
 						}
 					}
-				}
-			}
-		  , hasFoundUser = false
-		  , offset = 0
-		  , games = {}
-		  , queryDataFunction = function(user){
-		  		++offset;
+				  , hasFoundUser = false
+				  , offset = 0
+				  , games = {}
+				  , queryDataFunction = function(user){
+				  		++offset;
+			
+				  		++numUsers;
+				  		hasFoundUser = true;
+						var addToCSV = user.email + '\t' + user._id;
+						var answers = {};
+						for(var i=0; i<user.answers.length; i++){
+							answers[user.answers[i].question.toString()] = user.answers[i];
+						}
+						for(var i=0; i<questionIds.length; i++){
+							addToCSV += '\t';
+							if(answers[questionIds[i]]){
+								addToCSV += answers[questionIds[i]].value;
+							}
+						}
+						var enrollments = {};
+						for(var i=0; i<user.enrollments.length; i++){
+							enrollments[user.enrollments[i].experimonth.toString()] = true;
+						}
+						for(var i=0; i<experimonthIds.length; i++){
+							addToCSV += '\t';
+							if(enrollments[experimonthIds[i]]){
+								addToCSV += 'Enrolled';
+							}else{
+								addToCSV += 'Not Enrolled';
+							}
+						}
+						addToCSV += '\n';
 	
-		  		++numUsers;
-		  		hasFoundUser = true;
-				var addToCSV = user.name + '\t' + user.email + '\t' + user._id + '\t' + (user.defending ? 'defending' : 'accumulating') + '\t' + user.score + '\t' + user.Birthdate + '\t' + user.Zip + '\t' + user.Gender + '\t' + user.Ethnicity + '\t' + user.Color + '\t' + user.Transport + '\t' + user.Sports + '\t' + user.Personality + '\t' + user.Politics + '\t' + user.Glasses + '\t' + user.Pets + '\t' + user.Birthplace + '\n';
-				// Determine which of the users was this one in the round
-				res.write(addToCSV);
-				checkDone();
-			}
-		  , queryErrorFunction = function(){
-				res.end();
-			}
-		  , queryCloseFunction = function(){
-				totallyDone = true;
-				++numUsers;
-				checkDone();
-			}
-		  , createQueryStream = function(skip){
-		  		var query = User.find().sort('name');
-		  		if(skip){
-			  		query.skip(skip);
-		  		}
-		  		hasFoundUser = false;
-		  		stream = query.stream();
-				stream.on('data', queryDataFunction);
-				stream.on('error', queryErrorFunction);
-				stream.on('close', queryCloseFunction); //.run(function(err, games){
-		  	};
-		createQueryStream();
-		return;
+						// Determine which of the users was this one in the round
+						res.write(addToCSV);
+						checkDone();
+					}
+				  , queryErrorFunction = function(){
+						res.end();
+					}
+				  , queryCloseFunction = function(){
+						totallyDone = true;
+						++numUsers;
+						checkDone();
+					}
+				  , createQueryStream = function(skip){
+				  		var query = User.find().sort('name').populate('answers').populate('enrollments');
+				  		if(skip){
+					  		query.skip(skip);
+				  		}
+				  		hasFoundUser = false;
+				  		stream = query.stream();
+						stream.on('data', queryDataFunction);
+						stream.on('error', queryErrorFunction);
+						stream.on('close', queryCloseFunction); //.run(function(err, games){
+				  	};
+				createQueryStream();
+				return;
+			});
+		});
 	});
 	
 	/*

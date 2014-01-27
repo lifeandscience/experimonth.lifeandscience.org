@@ -215,6 +215,10 @@ module.exports = {
 							  , 'link': fullURL+'/users'
 							}
 						  , {
+								'name': 'Notify All'
+							  , 'link': fullURL+'/users/notifyAll'
+							}
+						  , {
 								'header': 'Export'
 							}
 						  , {

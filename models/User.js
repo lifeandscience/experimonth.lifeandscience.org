@@ -285,7 +285,6 @@ UserSchema.static('notifyAll', function(type, format, subject, text, callback){
 		}
 		var count = users.length
 		  , check = function(){
-				console.log('count', count);
 				if(--count == 0){
 					// Done iterating over users
 					callback(null);
