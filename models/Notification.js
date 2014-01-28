@@ -35,7 +35,7 @@ NotificationSchema.pre('save', function(next){
 			var finish = function(user){
 				if(user.email){
 					var html = t.text + '\n\n<small>If you would like to be unsubscribed from these notifications, login to '+process.env.BASEURL+' and uncheck the "Email Notifications" option on your profile page.</small>';
-					html = html.replace(urlRegex, '<a href="$1">$1</a>');
+					html = html.replace(urlRegex, '$1<a href="$2">$2</a>$3');
 					
 					var mailOptions = {
 						to: user.email,
