@@ -3,3 +3,6 @@ public/venera/premium_icons
 public/lib
 mongo.*/
 newrelic_agent.log
+.bower-cache
+.bower-registry
+.bower-tmp
