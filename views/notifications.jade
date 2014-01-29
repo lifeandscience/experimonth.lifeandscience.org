@@ -10,8 +10,10 @@ mixin do_notifications()
 					a.close(href='/notification/read/'+notification._id)
 						i.icon-remove
 					if notification.subject
-						.notification-subject #{notification.subject}
-					span.notification-date #{locals.moment(notification.date).format('MMMM DD, YYYY, h:mm A')}
-				.notification-body !{notification.text}
+						a.notification-subject(href="#", data-bootbox-alert=notification.getText()) #{notification.subject}
+						span.notification-date #{locals.moment(notification.date).format('MMMM DD, YYYY, h:mm A')}
+					else
+						span.notification-date #{locals.moment(notification.date).format('MMMM DD, YYYY, h:mm A')}
+				//.notification-body !{notification.text}
 	else
 		h2 No Notifications.

@@ -95,5 +95,10 @@ NotificationSchema.static('notify', function(type, format, subject, text, user, 
 	n.save(callback);
 });
 
+NotificationSchema.method('getText', function(){
+	// So, the regex doesn't like 'localhost' as a hostname, it wants something like localhost.tld
+	return this.text.replace('localhost', 'localhost.tld').replace(urlRegex, '$1<a href="$2">$2</a>$3').replace('localhost.tld', 'localhost').replace(/\n/g, '<br/>');
+});
+
 var Notification = mongoose.model('Notification', NotificationSchema);
 exports = Notification;

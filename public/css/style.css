@@ -12107,6 +12107,7 @@ footer {
   background: transparent url('../img/icon_notification.png') scroll no-repeat left center;
 }
 .notifications .notification .notification-header .notification-subject {
+  display: block;
   text-transform: uppercase;
   font-size: 14px;
   font-weight: normal;
