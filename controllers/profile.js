@@ -374,8 +374,11 @@ module.exports = function(app){
 						}
 					}
 					user.getProfileQuestions(questionsToIgnore, function(err, questions, questionIds, optionalQuestions, optionalQuestionIds){
-						var percentage = questionsToIgnore.length / (questions.length+optionalQuestions.length+questionsToIgnore.length);
-						percentage = Math.round(percentage * 100);
+						var percentage = 100;
+						if(questions.length > 0){
+							percentage = questionsToIgnore.length / (questions.length+optionalQuestions.length+questionsToIgnore.length);
+							percentage = Math.round(percentage * 100);
+						}
 						res.render('profile', {title: 'Your Experimonth Profile is '+percentage+'% Complete', u: user, enrollments: enrollments, questions: questions, optionalQuestions: optionalQuestions, answers: answers, timezones: utilities.getTimezones()/* , games: games */, events: results.events, linkAppend: (user == req.user ? '' : '/'+user._id)});
 					});
 				});

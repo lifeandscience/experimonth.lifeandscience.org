@@ -36,7 +36,7 @@ var shouldNextUserDefend = true
 	  , experimonths: [{type: Schema.ObjectId, ref: 'Experimonth'}]
 	  , enrollments: [{type: Schema.ObjectId, ref: 'ExperimonthEnrollment'}]
 	  , answers: [{type: Schema.ObjectId, ref: 'ProfileAnswer'}]
-	  , hasAnsweredAllRequiredQuestions: {type: Boolean, default: false}
+	  , hasAnsweredAllRequiredQuestions: {type: Boolean, default: true}
 	  
 	  , activationCode: String
 	  , fbid: String
