@@ -206,7 +206,7 @@ jQuery(function(){
 		return false;
 	});
 	
-	jQuery(document).on('submit', 'form.question', function(event){
+	jQuery(document).on('submit', '#userForm, form.question', function(event){
 		var t = this;
 		async.each(jQuery('form.question'), function(form, callback){
 			// Ignore this one since it'll get submitted as the final one
