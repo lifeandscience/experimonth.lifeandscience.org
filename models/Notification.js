@@ -45,10 +45,9 @@ NotificationSchema.pre('save', function(next){
 					};
 		
 					// send mail with defined transport object
-					email.sendMail(mailOptions, function(){
-						t.email_sent = true;
-						callback();
-					});
+					email.sendMail(mailOptions, null);
+					t.email_sent = true;
+					callback();
 				}else{
 					console.log('would\'ve emailed the user but they had no email address!');
 					callback();

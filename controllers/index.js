@@ -63,10 +63,9 @@ module.exports = {
 		    };
 
 		    // send mail with defined transport object
-			email.sendMail(mailOptions, function(){
-				req.flash('info', 'Thank you for your feedback!');
-				res.redirect('/');
-			});
+			email.sendMail(mailOptions, null);
+			req.flash('info', 'Thank you for your feedback!');
+			res.redirect('/');
 		});
 /*
 		app.get('/empty', function(req, res){

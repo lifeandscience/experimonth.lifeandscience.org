@@ -320,7 +320,8 @@ UserSchema.methods.notifyOfActivation = function(isActivation, cb){
 	}
 	
 	// send mail with defined transport object
-	email.sendMail(mailOptions, cb);
+	email.sendMail(mailOptions, null);
+	cb();
 };
 UserSchema.virtual('email_hash').get(function(){
 	return crypto.createHash('md5').update(this.email.toLowerCase().trim()).digest('hex');

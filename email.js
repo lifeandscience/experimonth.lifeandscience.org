@@ -1,5 +1,6 @@
 var nodemailer = require('nodemailer')
-  , util = require('util');
+  , util = require('util')
+  , mongoose = require('mongoose');
 
 var awsAccessKey = process.env.AWS_ACCESS_KEY || 'AKIAJGTS6FVN4QPODUUA'
   , awsSecret = process.env.AWS_SECRET || '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';
@@ -10,66 +11,69 @@ var email = nodemailer.createTransport("SES", {
   , AWSSecretKey: awsSecret
 });
 
-var emailQueue = []
-  , emailsInFlight = 0
-  , currentEmail = null
-  , lastSendingTime = null
-  , lastSendingTimeCount = 0
-  , numEmailsPerSecond = 4
+var currentlySending = false
   , execQueue = function(){
-		// TODO: Should the email queue be persisted to the database?!
-		// Grab the latest from the queue
-		if(emailQueue.length > 0 && emailsInFlight < numEmailsPerSecond){
-			var currentTime = Math.floor(Date.now()/1000);
-			if(currentTime == lastSendingTime){
-				// Check the count and possibly sleep
-				if(lastSendingTimeCount == numEmailsPerSecond){
-					// We've met our rate
-					// Sleep / postpone this iteration
-					setTimeout(execQueue, 1000);
-					return;
+		if(currentlySending){
+/* 			console.log('skipping because we\'re currently sending'); */
+		}else{
+/* 			console.log('starting to send!'); */
+			// TODO: Should the email queue be persisted to the database?!
+			// Grab the latest from the queue
+			currentlySending = true;
+			var Email = mongoose.model('Email');
+			Email.find().sort('date').limit(1).exec(function(err, emails){
+				if(!err && emails && emails.length > 0){
+					// Send this email!
+					var theEmail = emails[0];
+					if('true' == process.env.DO_NOTIFICATIONS){
+						email.sendMail(theEmail.ops, function(error, response){
+							if(error){
+								console.log('Email message not sent: ', error, response);
+/* 							}else{ */
+/* 								console.log("Message sent: ", theEmail.ops); */
+/* 								console.log("Got a response of ", response.message); */
+							}
+							theEmail.remove(function(err){
+								// run the queue again!
+								currentlySending = false;
+								execQueue();
+							});
+						});
+					}else{
+/* 						console.log('skipping due to DO_NOTIFICATIONS being disabled: ', theEmail.ops.to); */
+						theEmail.remove(function(err){
+							if(err){
+								console.log('error removing email!', err);
+							}
+							// run the queue again!
+							currentlySending = false;
+							execQueue();
+						});
+					}
+				}else{
+					currentlySending = false;
 				}
-				// We're below the max rate, so just increment and continue along.
-				lastSendingTimeCount++;
-			}else{
-				// We're at a new time interval, so we can update the time
-				lastSendingTime = currentTime;
-				lastSendingTimeCount = 1;
-			}
-		
-		
-			var mail = emailQueue.shift();
-			emailsInFlight++;
-			// Send the email
-			email.sendMail(mail.options, function(error, response){
-			    if(error){
-			        util.log('Email message not sent: ', error);
-			    }else{
-			        util.log("Message sent: ", mail.options);
-			        util.log("Got a response of ", response.message);
-			    }
-			    if(mail.callback){
-			    	mail.callback();
-			    }
-			    emailsInFlight--;
-			    execQueue();
 			});
 		}
 	};
 
 module.exports = {
-	sendMail: function(options, callback){
-		if('true' == process.env.DO_NOTIFICATIONS){
-			options.from = '"Experimonth" <experimonth@lifeandscience.org>';
-			
-			// Add a standard footer to each email.
-			options.html += '\n\n--\n\n<a href="'+process.env.BASEURL+'">Experimonth</a> | <a href="http://twitter.com/experimonth">Twitter</a> | <a href="http://facebook.com/experimonth">Facebook</a>';
-			options.html = options.html.replace(/\n/g, '<br/>');
-
-			emailQueue.push({options: options, callback: callback});
-			execQueue();
-		}else if(callback){
-			callback();
+	sendMail: function(options){
+		if(!options){
+			options = {};
 		}
+
+		options.from = '"Experimonth" <experimonth@lifeandscience.org>';
+		// Add a standard footer to each email.
+		options.html += '\n\n--\n\n<a href="'+process.env.BASEURL+'">Experimonth</a> | <a href="http://twitter.com/experimonth">Twitter</a> | <a href="http://facebook.com/experimonth">Facebook</a>';
+		options.html = options.html.replace(/\n/g, '<br/>');
+
+		var Email = mongoose.model('Email')
+		  , email = new Email();
+		email.ops = options;
+		email.markModified('ops');
+		email.save(function(err){
+			execQueue();
+		});
 	}
 }
