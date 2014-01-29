@@ -20,7 +20,7 @@ block body
 								span.em-name #{experimonth.name}
 								if experimonth.description
 									|  
-									a.em-description(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+experimonth.description+'</div></div>', data-bootbox-custom-action-button=(u ? (experimonth.users.indexOf(u._id.toString()) != -1 ? "Visit" : "Enroll") : "Get Started"), data-bootbox-custom-action=(u ? (experimonth.users.indexOf(u._id.toString()) == -1 ? "/experimonths/enroll/#{experimonth._id}" : experimonth.kind.url) : '/register')) [description]
+									a.em-description(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+experimonth.description.replace(/\n/g, '<br/>')+'</div></div>', data-bootbox-custom-action-button=(u ? (experimonth.users.indexOf(u._id.toString()) != -1 ? "Visit" : "Enroll") : "Get Started"), data-bootbox-custom-action=(u ? (experimonth.users.indexOf(u._id.toString()) == -1 ? "/experimonths/enroll/#{experimonth._id}" : experimonth.kind.url) : '/register')) [description]
 							td #{locals.moment(experimonth.startDate).utc().format('MMM. D, YYYY')}
 							td
 								if experimonth.unlimited || (experimonth.users.length / experimonth.userLimit) > 0.5
