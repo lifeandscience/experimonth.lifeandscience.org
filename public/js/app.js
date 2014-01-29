@@ -208,29 +208,41 @@ jQuery(function(){
 	
 	jQuery(document).on('submit', 'form.question', function(event){
 		var t = this;
-		jQuery('form.question').each(function(){
+		async.each(jQuery('form.question'), function(form, callback){
 			// Ignore this one since it'll get submitted as the final one
-			if(this != t){
+			if(form != t){
 				// Other form
-				var input = jQuery(this).find('input[name="value"]');
-				var thisForm = jQuery(this);
+				var thisForm = jQuery(form);
+				var input = thisForm.find('input[name="value"]');
 				var val = null;
 				if(input && (val = input.val())){
 					// Submit this form!
-					console.log('submitting? ', thisForm.serialize());
-					jQuery.post(thisForm.attr('action'), thisForm.serialize());
+					jQuery.post(thisForm.attr('action'), thisForm.serialize(), function(response, textStatus){
+						callback(textStatus != 'success');
+					});
+					return;
 				}
-				input = jQuery(this).find('select[name="value"]');
+				input = thisForm.find('select[name="value"]');
 				if(input && (val = input.val())){
-					console.log('submitting? ', thisForm.serialize());
-					jQuery.post(thisForm.attr('action'), thisForm.serialize());
+					jQuery.post(thisForm.attr('action'), thisForm.serialize(), function(response, textStatus){
+						callback(textStatus != 'success');
+					});
+					return;
 				}
 			}
+			callback();
+		}, function(){
+			var thisForm = jQuery(t);
+			jQuery.post(thisForm.attr('action'), thisForm.serialize(), function(response, textStatus){
+				document.location.reload(true);
+			});
 		});
-		return true;
+		return false;
 	});
 });
 
+
+/* Copied in script from Venera */
 (function() {
 
 	$(function() {

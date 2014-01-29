@@ -176,19 +176,31 @@ module.exports = function(app){
 	app.post('/profile/questions/answer/:id', auth.authorize(2, 0, null, true), function(req, res){
 		if(!req.param('id')){
 			req.flash('error', 'Missing Profile Question ID.');
-			res.redirect('back');
+			if(req.xhr){
+				res.send(500);
+			}else{
+				res.redirect('back');
+			}
 			return;
 		}
 		console.log('full: ', req.body);
 		if(!req.param('value') && !req.param('no_answer') && req.param('submit') != 'Choose not to answer'){
 			req.flash('error', 'Please answer the question or click \'Choose not to answer\'.');
-			res.redirect('back');
+			if(req.xhr){
+				res.send(500);
+			}else{
+				res.redirect('back');
+			}
 			return;
 		}
 		ProfileQuestion.findById(req.param('id')).exec(function(err, question){
 			if(err || !question){
 				req.flash('error', 'Profile Question not found.');
-				res.redirect('back');
+				if(req.xhr){
+					res.send(500);
+				}else{
+					res.redirect('back');
+				}
 				return;
 			}
 
@@ -196,7 +208,11 @@ module.exports = function(app){
 				ProfileAnswer.findById(req.param('answerid')).exec(function(err, answer){
 					if(err || !answer){
 						req.flash('error', 'Previous answer couldn\'t be retrieved');
-						res.redirect('back');
+						if(req.xhr){
+							res.send(500);
+						}else{
+							res.redirect('back');
+						}
 						return;
 					}
 					answer.value = req.param('value');
@@ -211,7 +227,11 @@ module.exports = function(app){
 							return;
 						}
 						req.flash('info', 'Thanks for your answer.');
-						res.redirect('back');
+						if(req.xhr){
+							res.send(200);
+						}else{
+							res.redirect('back');
+						}
 						return;
 					});
 				});
@@ -229,7 +249,11 @@ module.exports = function(app){
 			answer.save(function(err){
 				if(err){
 					req.flash('error', 'Error saving new answer.');
-					res.redirect('back');
+					if(req.xhr){
+						res.send(500);
+					}else{
+						res.redirect('back');
+					}
 					return;
 				}
 				
@@ -237,13 +261,21 @@ module.exports = function(app){
 				req.user.save(function(err){
 					if(err){
 						req.flash('error', 'Error saving user.');
-						res.redirect('back');
+						if(req.xhr){
+							res.send(500);
+						}else{
+							res.redirect('back');
+						}
 						return;
 					}
 					
 					req.user.reCheckProfileQuestions(null, function(){
 						req.flash('info', 'Thanks for your answer.');
-						res.redirect('back');
+						if(req.xhr){
+							res.send(200);
+						}else{
+							res.redirect('back');
+						}
 					});
 				});
 				return;
