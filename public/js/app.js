@@ -206,8 +206,16 @@ jQuery(function(){
 		return false;
 	});
 	
+
+	jQuery(document).on('click', '#userForm, form.question', function(event) {
+		jQuery(this).data('clicked', jQuery(event.target));
+	});
 	jQuery(document).on('submit', '#userForm, form.question', function(event){
 		var t = this;
+		if(jQuery(this).data('clicked').val() == 'Choose not to answer'){
+			// Don't bother saving everything else as they just said 'Choose not to answer'!
+			return true;
+		}
 		async.each(jQuery('form.question'), function(form, callback){
 			// Ignore this one since it'll get submitted as the final one
 			if(form != t){
@@ -231,10 +239,23 @@ jQuery(function(){
 				}
 			}
 			callback();
-		}, function(){
+		}, function(err){
 			var thisForm = jQuery(t);
-			jQuery.post(thisForm.attr('action'), thisForm.serialize(), function(response, textStatus){
-				document.location.reload(true);
+			jQuery.ajax({
+				type: "POST",
+				dataType: "json",
+				url: thisForm.attr('action'),
+				data: thisForm.serialize(),
+				success: function(data){
+					if(data && data.message){
+						alert(data.message);
+					}else{
+						document.location.reload(true);
+					}
+				},
+				error: function(xhr, textStatus, message){
+					alert(message);
+				}
 			});
 		});
 		return false;

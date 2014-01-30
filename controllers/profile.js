@@ -175,30 +175,29 @@ module.exports = function(app){
 	
 	app.post('/profile/questions/answer/:id', auth.authorize(2, 0, null, true), function(req, res){
 		if(!req.param('id')){
-			req.flash('error', 'Missing Profile Question ID.');
 			if(req.xhr){
-				res.send(500);
+				res.json(200, {message: 'Missing Profile Question ID.'});
 			}else{
+				req.flash('error', 'Missing Profile Question ID.');
 				res.redirect('back');
 			}
 			return;
 		}
-		console.log('full: ', req.body);
 		if(!req.param('value') && !req.param('no_answer') && req.param('submit') != 'Choose not to answer'){
-			req.flash('error', 'Please answer the question or click \'Choose not to answer\'.');
 			if(req.xhr){
-				res.send(500);
+				res.json(200, {message: 'Please answer the question or click \'Choose not to answer\'.'});
 			}else{
+				req.flash('error', 'Please answer the question or click \'Choose not to answer\'.');
 				res.redirect('back');
 			}
 			return;
 		}
 		ProfileQuestion.findById(req.param('id')).exec(function(err, question){
 			if(err || !question){
-				req.flash('error', 'Profile Question not found.');
 				if(req.xhr){
-					res.send(500);
+					res.json(200, {message: 'Profile Question not found.'});
 				}else{
+					req.flash('error', 'Profile Question not found.');
 					res.redirect('back');
 				}
 				return;
@@ -207,10 +206,10 @@ module.exports = function(app){
 			if(req.param('answerid')){
 				ProfileAnswer.findById(req.param('answerid')).exec(function(err, answer){
 					if(err || !answer){
-						req.flash('error', 'Previous answer couldn\'t be retrieved');
 						if(req.xhr){
-							res.send(500);
+							res.json(200, {message: 'Previous answer couldn\'t be retrieved'});
 						}else{
+							req.flash('error', 'Previous answer couldn\'t be retrieved');
 							res.redirect('back');
 						}
 						return;
@@ -222,14 +221,18 @@ module.exports = function(app){
 					}
 					answer.save(function(err){
 						if(err){
-							req.flash('error', 'Error saving existing answer.');
-							res.redirect('back');
+							if(req.xhr){
+								res.json(200, {message: 'Error saving existing answer.'});
+							}else{
+								req.flash('error', 'Error saving existing answer.');
+								res.redirect('back');
+							}
 							return;
 						}
-						req.flash('info', 'Thanks for your answer.');
 						if(req.xhr){
-							res.send(200);
+							res.json(200, {message: 'Thanks for your answer.'});
 						}else{
+							req.flash('info', 'Thanks for your answer.');
 							res.redirect('back');
 						}
 						return;
@@ -248,10 +251,10 @@ module.exports = function(app){
 			}
 			answer.save(function(err){
 				if(err){
-					req.flash('error', 'Error saving new answer.');
 					if(req.xhr){
-						res.send(500);
+						res.json(200, {message: 'Error saving new answer.'});
 					}else{
+						req.flash('error', 'Error saving new answer.');
 						res.redirect('back');
 					}
 					return;
@@ -260,20 +263,20 @@ module.exports = function(app){
 				req.user.answers.push(answer._id);
 				req.user.save(function(err){
 					if(err){
-						req.flash('error', 'Error saving user.');
 						if(req.xhr){
-							res.send(500);
+							res.json(200, {message: 'Error saving user.'});
 						}else{
+							req.flash('error', 'Error saving user.');
 							res.redirect('back');
 						}
 						return;
 					}
 					
 					req.user.reCheckProfileQuestions(null, function(){
-						req.flash('info', 'Thanks for your answer.');
 						if(req.xhr){
-							res.send(200);
+							res.json(200, {message: 'Thanks for your answer.'});
 						}else{
+							req.flash('info', 'Thanks for your answer.');
 							res.redirect('back');
 						}
 					});
