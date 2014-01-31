@@ -233,7 +233,11 @@ jQuery(function(){
 						success: function(data){
 							if(data && data.message){
 								if(data.message == 'Thanks for your answer.'){
-									thisForm.parent().parent().remove();
+									if(jQuery('#additional-info').length == 0){
+										thisForm.parent().parent().remove();
+									}else{
+										thisForm.find('.label-warning').remove();
+									}
 								}
 							}
 							callback();
@@ -256,7 +260,11 @@ jQuery(function(){
 						success: function(data){
 							if(data && data.message){
 								if(data.message == 'Thanks for your answer.'){
-									thisForm.parent().parent().remove();
+									if(jQuery('#additional-info').length == 0){
+										thisForm.parent().parent().remove();
+									}else{
+										thisForm.find('.label-warning').remove();
+									}
 								}
 							}
 							callback();
@@ -282,7 +290,11 @@ jQuery(function(){
 					if(data && data.message){
 						bootbox.alert(data.message);
 						if(data.message == 'Thanks for your answer.'){
-							thisForm.parent().parent().remove();
+							if(jQuery('#additional-info').length == 0){
+								thisForm.parent().parent().remove();
+							}else{
+								thisForm.find('.label-warning').remove();
+							}
 						}
 					}else{
 						document.location.reload(true);
