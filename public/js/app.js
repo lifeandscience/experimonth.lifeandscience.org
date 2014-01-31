@@ -225,15 +225,47 @@ jQuery(function(){
 				var val = null;
 				if(input && (val = input.val())){
 					// Submit this form!
-					jQuery.post(thisForm.attr('action'), thisForm.serialize(), function(response, textStatus){
-						callback(textStatus != 'success');
+					jQuery.ajax({
+						type: "POST",
+						dataType: "json",
+						url: thisForm.attr('action'),
+						data: thisForm.serialize(),
+						success: function(data){
+							if(data && data.message){
+								if(data.message == 'Thanks for your answer.'){
+									thisForm.parent().parent().remove();
+								}
+							}
+							callback();
+						},
+						error: function(xhr, textStatus, message){
+							console.log('error input? ', message);
+							console.log(arguments);
+							callback(true);
+						}
 					});
 					return;
 				}
 				input = thisForm.find('select[name="value"]');
 				if(input && (val = input.val())){
-					jQuery.post(thisForm.attr('action'), thisForm.serialize(), function(response, textStatus){
-						callback(textStatus != 'success');
+					jQuery.ajax({
+						type: "POST",
+						dataType: "json",
+						url: thisForm.attr('action'),
+						data: thisForm.serialize(),
+						success: function(data){
+							if(data && data.message){
+								if(data.message == 'Thanks for your answer.'){
+									thisForm.parent().parent().remove();
+								}
+							}
+							callback();
+						},
+						error: function(xhr, textStatus, message){
+							console.log('error select? ', message);
+							console.log(arguments);
+							callback(true);
+						}
 					});
 					return;
 				}
@@ -243,17 +275,22 @@ jQuery(function(){
 			var thisForm = jQuery(t);
 			jQuery.ajax({
 				type: "POST",
-				dataType: "json",
+/* 				dataType: "json", */
 				url: thisForm.attr('action'),
 				data: thisForm.serialize(),
 				success: function(data){
 					if(data && data.message){
-						alert(data.message);
+						bootbox.alert(data.message);
+						if(data.message == 'Thanks for your answer.'){
+							thisForm.parent().parent().remove();
+						}
 					}else{
 						document.location.reload(true);
 					}
 				},
 				error: function(xhr, textStatus, message){
+					console.log('error? ', message);
+					console.log(arguments);
 					alert(message);
 				}
 			});
