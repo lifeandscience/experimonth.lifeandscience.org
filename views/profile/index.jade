@@ -35,17 +35,22 @@ block body
 									th Name
 									th Start Date
 									th End Date
+									th
 							tbody
 								each enrollment, i in enrollments
 									if enrollment.experimonth
-										tr(class='experimonth')
-											td 
-												if enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url
+										- var isPassed = locals.moment(enrollment.experimonth.endDate).isBefore()
+										tr(class=(isPassed ? 'experimonth passed' : 'experimonth'))
+											td
+												if !isPassed && enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url
 													a(href=enrollment.experimonth.kindPopulated.url+'/play') #{enrollment.experimonth.name}
 												else
 													| #{enrollment.experimonth.name}
 											td #{locals.moment(enrollment.experimonth.startDate).utc().format('MMMM Do, YYYY')}
 											td #{locals.moment(enrollment.experimonth.endDate).utc().format('MMMM Do, YYYY')}
+											td
+												if !isPassed && enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url
+													a.btn.btn-warning(href="/experimonths/unenroll/#{enrollment.experimonth._id}", data-bootbox-confirm="<p>Are you sure you want to un-enroll from this Experimonth?</p>") Un-enroll
 
 					.row
 						haveDoneAQuestion = questions && questions.length > 0;

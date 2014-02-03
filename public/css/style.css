@@ -11537,6 +11537,9 @@ body {
     padding-top: 0;
   }
 }
+.experimonth.passed {
+  color: #8b9191;
+}
 #notificationsPopover {
   width: 248px;
 }
