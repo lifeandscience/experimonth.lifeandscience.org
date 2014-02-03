@@ -92,14 +92,15 @@ UserSchema.method('sendTemporaryPasswordEmail', function(){
 
 	// setup e-mail data with unicode symbols
 	var mailOptions = {
-	    to: this.email, // list of receivers
+	    to: [{
+	    	email: this.email
+	    }], // list of receivers
 	    subject: 'Experimonth: Reset Your Password', // Subject line
-	    generateTextFromHTML: true,
 	    html: html // html body
 	};
 
 	// send mail with defined transport object
-	email.sendMail(mailOptions);
+	email.sendMail(mailOptions, this._id.toString());
 });
 UserSchema.method('generateActivationCode', function(){
 	this.activationCode = bcrypt.genSaltSync(10);
@@ -114,14 +115,15 @@ UserSchema.method('sendActivationEmail', function(){
 
 	// setup e-mail data with unicode symbols
 	var mailOptions = {
-	    to: this.email, // list of receivers
+	    to: [{
+	    	email: this.email
+	    }], // list of receivers
 	    subject: 'Experimonth: Confirm Your Email Address', // Subject line
-	    generateTextFromHTML: true,
 	    html: html // html body
 	}
 
 	// send mail with defined transport object
-	email.sendMail(mailOptions);
+	email.sendMail(mailOptions, this._id.toString());
 });
 UserSchema.static('base64ish', function(str){
 	var toReturn = new Buffer(str).toString('base64');
@@ -313,14 +315,15 @@ UserSchema.methods.notifyOfActivation = function(isActivation, cb){
 	
 	// setup e-mail data with unicode symbols
 	var mailOptions = {
-	    to: this.email, // list of receivers
+	    to: [{
+	    	email: this.email
+	    }], // list of receivers
 	    subject: title, // Subject line
-	    generateTextFromHTML: true,
 	    html: html // html body
 	}
 	
 	// send mail with defined transport object
-	email.sendMail(mailOptions, null);
+	email.sendMail(mailOptions, this._id.toString());
 	cb();
 };
 UserSchema.virtual('email_hash').get(function(){

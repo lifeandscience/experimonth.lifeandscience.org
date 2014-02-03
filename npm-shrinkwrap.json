@@ -520,77 +520,6 @@
         }
       }
     },
-    "nodemailer": {
-      "version": "0.5.7",
-      "from": "nodemailer@0.5.7",
-      "resolved": "https://registry.npmjs.org/nodemailer/-/nodemailer-0.5.7.tgz",
-      "dependencies": {
-        "mailcomposer": {
-          "version": "0.2.4",
-          "from": "mailcomposer@~0.2.4",
-          "resolved": "https://registry.npmjs.org/mailcomposer/-/mailcomposer-0.2.4.tgz",
-          "dependencies": {
-            "mimelib": {
-              "version": "0.2.14",
-              "from": "mimelib@~0.2.14",
-              "dependencies": {
-                "encoding": {
-                  "version": "0.1.7",
-                  "from": "encoding@~0.1",
-                  "dependencies": {
-                    "iconv-lite": {
-                      "version": "0.2.11",
-                      "from": "iconv-lite@~0.2.11"
-                    }
-                  }
-                },
-                "addressparser": {
-                  "version": "0.2.0",
-                  "from": "addressparser@~0.2.0"
-                }
-              }
-            },
-            "mime": {
-              "version": "1.2.9",
-              "from": "mime@1.2.9"
-            },
-            "ent": {
-              "version": "0.1.0",
-              "from": "ent@~0.1.0"
-            }
-          }
-        },
-        "simplesmtp": {
-          "version": "0.3.15",
-          "from": "simplesmtp@~0.2 || ~0.3",
-          "resolved": "https://registry.npmjs.org/simplesmtp/-/simplesmtp-0.3.15.tgz",
-          "dependencies": {
-            "rai": {
-              "version": "0.1.7",
-              "from": "rai@~0.1"
-            },
-            "xoauth2": {
-              "version": "0.1.8",
-              "from": "xoauth2@~0.1"
-            }
-          }
-        },
-        "readable-stream": {
-          "version": "1.1.9",
-          "from": "readable-stream@*",
-          "dependencies": {
-            "core-util-is": {
-              "version": "1.0.0",
-              "from": "core-util-is@~1.0.0"
-            },
-            "debuglog": {
-              "version": "0.0.2",
-              "from": "debuglog@0.0.2"
-            }
-          }
-        }
-      }
-    },
     "moment": {
       "version": "2.4.0",
       "from": "moment@2.4.0",
@@ -1458,6 +1387,11 @@
           "from": "p-throttler@~0.0.1"
         }
       }
+    },
+    "mandrill-api": {
+      "version": "1.0.37",
+      "from": "mandrill-api@*",
+      "resolved": "https://registry.npmjs.org/mandrill-api/-/mandrill-api-1.0.37.tgz"
     }
   }
 }

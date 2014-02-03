@@ -38,14 +38,15 @@ NotificationSchema.pre('save', function(next){
 					html = html.replace(urlRegex, '$1<a href="$2">$2</a>$3');
 					
 					var mailOptions = {
-						to: user.email,
+						to: [{
+							email: user.email
+						}],
 						subject: t.subject,
-						generateTextFromHTML: true,
 						html: html
 					};
 		
 					// send mail with defined transport object
-					email.sendMail(mailOptions, null);
+					email.sendMail(mailOptions, user._id);
 					t.email_sent = true;
 					callback();
 				}else{

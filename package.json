@@ -14,7 +14,6 @@
     , "less-middleware": "*"
     , "mongoose": "~= 3.6"
     , "connect-mongo": "*"
-    , "nodemailer": "*"
     , "moment": "*"
     , "connect-flash": "*"
     , "express-form": "~= 0.10"
@@ -37,6 +36,7 @@
     , "newrelic": "*"
     , "mongoose-cachebox": "*"
     , "bower": "*"
+    , "mandrill-api": "*"
   },
   "devDependencies": {
       "simple-oauth2": "git://github.com/lifeandscience/simple-oauth2.git#add_client_credentials_support"

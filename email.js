@@ -1,15 +1,7 @@
-var nodemailer = require('nodemailer')
-  , util = require('util')
-  , mongoose = require('mongoose');
-
-var awsAccessKey = process.env.AWS_ACCESS_KEY || 'AKIAJGTS6FVN4QPODUUA'
-  , awsSecret = process.env.AWS_SECRET || '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';
-
-// create reusable transport method (opens pool of SMTP connections)
-var email = nodemailer.createTransport("SES", {
-	AWSAccessKeyID: awsAccessKey
-  , AWSSecretKey: awsSecret
-});
+var mongoose = require('mongoose')
+  , _ = require('underscore')
+  , mandrill = require('mandrill-api/mandrill')
+  , mandrillClient = new mandrill.Mandrill(process.env.MANDRILL_API_KEY || 'eoz_qjt2dDQYBogWbOwk2w');
 
 var currentlySending = false
   , execQueue = function(){
@@ -21,29 +13,41 @@ var currentlySending = false
 			// Grab the latest from the queue
 			currentlySending = true;
 			var Email = mongoose.model('Email');
-			Email.find().sort('date').limit(1).exec(function(err, emails){
+			Email.find().where('sent').ne(true).sort('date').limit(1).exec(function(err, emails){
 				if(!err && emails && emails.length > 0){
 					// Send this email!
 					var theEmail = emails[0];
 					if('true' == process.env.DO_NOTIFICATIONS){
-						email.sendMail(theEmail.ops, function(error, response){
-							if(error){
-								console.log('Email message not sent: ', error, response);
-/* 							}else{ */
-/* 								console.log("Message sent: ", theEmail.ops); */
-/* 								console.log("Got a response of ", response.message); */
+						mandrillClient.messages.send({message: theEmail.ops}, function(result){
+							if(result && result.length){
+								theEmail.mandrillMessageId = result[0]._id;
+								theEmail.mandrillMessageStatus = result[0].status;
+								theEmail.mandrillMessageReason = result[0].reject_reason;
 							}
-							theEmail.remove(function(err){
+							theEmail.sent = true;
+							theEmail.save(function(err){
+								// run the queue again!
+								currentlySending = false;
+								execQueue();
+							});
+						}, function(error){
+							if(error){
+								theEmail.mandrillMessageStatus = error.name
+								theEmail.mandrillMessageReason = error.message
+							}
+							theEmail.sent = true;
+							theEmail.save(function(err){
 								// run the queue again!
 								currentlySending = false;
 								execQueue();
 							});
 						});
 					}else{
-/* 						console.log('skipping due to DO_NOTIFICATIONS being disabled: ', theEmail.ops.to); */
-						theEmail.remove(function(err){
+						console.log('skipping due to DO_NOTIFICATIONS being disabled: ', theEmail.ops.to);
+						theEmail.sent = true;
+						theEmail.save(function(err){
 							if(err){
-								console.log('error removing email!', err);
+								console.log('error saving email!', err);
 							}
 							// run the queue again!
 							currentlySending = false;
@@ -58,18 +62,28 @@ var currentlySending = false
 	};
 
 module.exports = {
-	sendMail: function(options){
+	sendMail: function(options, userID){
 		if(!options){
 			options = {};
 		}
 
-		options.from = '"Experimonth" <experimonth@lifeandscience.org>';
+		options.from_name = 'Experimonth';
+		options.from_email = 'experimonth@lifeandscience.org';
+		options.auto_text = true;
+		options.track_opens = true;
+		options.track_clicks = true;
+		options.google_analytics_domains = [
+			'science.experimonth.com'
+		  , 'frenemy.experimonth.com'
+		];
+
 		// Add a standard footer to each email.
 		options.html += '\n\n--\n\n<a href="'+process.env.BASEURL+'">Experimonth</a> | <a href="http://twitter.com/experimonth">Twitter</a> | <a href="http://facebook.com/experimonth">Facebook</a>';
 		options.html = options.html.replace(/\n/g, '<br/>');
 
 		var Email = mongoose.model('Email')
 		  , email = new Email();
+		email.user = userID;
 		email.ops = options;
 		email.markModified('ops');
 		email.save(function(err){

@@ -152,6 +152,28 @@ block body
 				#extra.accordion
 					.accordion-group
 						.accordion-heading
+							a.accordion-toggle(href="#emails-details", data-parent="#extra", data-toggle="collapse") Emails
+						#emails-details.accordion-body.collapse 
+							.accordion-inner 
+								if emails && emails.length > 0
+									table.table
+										thead
+											tr
+												th Date
+												th Subject
+												th Mandrill ID
+												th Status
+												th Reason
+										tbody
+											each email, i in emails
+												tr
+													td #{locals.moment(email.date).utc().format('lll')}
+													td #{email.ops.subject}
+													td #{email.mandrillMessageId}
+													td #{email.mandrillMessageStatus}
+													td #{email.mandrillMessageReason}
+					.accordion-group
+						.accordion-heading
 							a.accordion-toggle(href="#events-details", data-parent="#extra", data-toggle="collapse") Events
 						#events-details.accordion-body.collapse 
 							.accordion-inner 
