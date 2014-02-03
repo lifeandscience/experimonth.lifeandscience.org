@@ -10,7 +10,9 @@ var util = require('util')
   , ExperimonthEnrollment = mongoose.model('ExperimonthEnrollment')
   , ProfileQuestion = mongoose.model('ProfileQuestion')
   , User = mongoose.model('User')
-  , s3 = require('../s3');
+  , Event = mongoose.model('Event')
+  , s3 = require('../s3')
+  , moment = require('moment');
 
 module.exports = function(app){
 	app.get('/experimonths', auth.authorize(2), function(req, res){
@@ -400,5 +402,85 @@ module.exports = function(app){
 	
 	app.get('/experimonths/kinds/edit/:id', auth.authorize(2, 10), utilities.doForm(as, populate, 'Edit Kind of Experimonth', ExperimonthKind, template, varNames, redirect, beforeRender, null, layout));
 	app.post('/experimonths/kinds/edit/:id', auth.authorize(2, 10), formValidate, utilities.doForm(as, populate, 'Add Kind of Experimonth', ExperimonthKind, template, varNames, redirect, beforeRender, beforeSave, layout));
+	
+	app.get('/experimonths/events/export/:id', auth.authorize(2, 10), function(req, res){
+		if(!req.params.id){
+			req.flash('error', 'Experimonth ID missing.');
+			res.redirect('back');
+			return;
+		}
+		res.writeHead(200, {
+			'Content-Type': 'text/tsv',
+			'Content-Disposition': 'attachment;filename=experimonth-'+req.params.id+'.tsv'
+		});
+		var csv = 'Event ID\tEvent Timestamp\tEvent Name\tEvent Value\tStudy ID\n';
+		res.write(csv);
+
+		var numEvents = 0
+		  , stream = null
+		  , totallyDone = false
+		  , checkDone = function(){
+				if(--numEvents == 0){
+					if(totallyDone){
+						util.log('totally done.');
+						if(hasFoundEvent){
+							// We found at least one game
+							// Maybe the query needs to be re-run starting at an offset of offset
+							createQueryStream(offset);
+						}else{
+							res.end();
+						}
+					}
+				}
+			}
+		  , hasFoundEvent = false
+		  , offset = 0
+		  , games = {}
+		  , userTransformableValues = [
+				'frenemy:walkaway',
+				'frenemy:walkedAwayFrom',
+				'frenemy:viewedCompletedRoundScreen',
+				'frenemy:startGame'
+			]
+		  , queryDataFunction = function(event){
+		  		++offset;
+	
+		  		++numEvents;
+		  		hasFoundEvent = true;
+		  		
+				var addToCSV = event._id + '\t' + moment(event.date).format('YYYY-MM-DD hh:mm A') + '\t' + event.name + '\t';
+				if(userTransformableValues.indexOf(event.name) != -1){
+					addToCSV += User.getStudyID(event.value);
+				}else{
+					addToCSV += event.value;
+				}
+				addToCSV += '\t' + User.getStudyID(event.user) + '\n';
+
+				// Determine which of the users was this one in the round
+				res.write(addToCSV);
+				checkDone();
+			}
+		  , queryErrorFunction = function(){
+				res.end();
+			}
+		  , queryCloseFunction = function(){
+				totallyDone = true;
+				++numEvents;
+				checkDone();
+			}
+		  , createQueryStream = function(skip){
+		  		var query = Event.find({experimonth: req.params.id}).sort('date');
+		  		if(skip){
+			  		query.skip(skip);
+		  		}
+		  		hasFoundEvent = false;
+		  		stream = query.stream();
+				stream.on('data', queryDataFunction);
+				stream.on('error', queryErrorFunction);
+				stream.on('close', queryCloseFunction); //.run(function(err, games){
+		  	};
+		createQueryStream();
+		return;
+	});
 
 };
