@@ -8,7 +8,8 @@ var mongoose = require('mongoose')
   , crypto = require('crypto')
   , util = require('util')
   , async = require('async')
-  , _ = require('underscore');
+  , _ = require('underscore')
+  , crypto = require('crypto');
 
 
 var shouldNextUserDefend = true
@@ -71,6 +72,10 @@ UserSchema.virtual('password').get(function (){
 	this._password = password;
 	var salt = this.salt = bcrypt.genSaltSync(10);
 	this.hash = bcrypt.hashSync(password, salt);
+});
+
+UserSchema.static('getStudyID', function(userID){
+	return crypto.createHash('md5').update(userID.toString()).digest('hex');
 });
 
 UserSchema.method('verifyPassword', function(password, callback) {

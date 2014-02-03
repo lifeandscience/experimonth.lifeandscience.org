@@ -240,10 +240,9 @@ module.exports = function(app){
 			return;
 		});
 	});
-	
-	app.get('/users/export', auth.authorize(2, 10), function(req, res, next){
+
+	var doExport = function(req, res, next, doAnonymous){
 		var start = Date.now();
-		util.log('starting the log up. '+start);
 		// Export all game data as a CSV
 		var User = mongoose.model('User')
 		  , ProfileQuestion = mongoose.model('ProfileQuestion')
@@ -254,6 +253,9 @@ module.exports = function(app){
 		ProfileQuestion.find({published: true}).exec(function(err, questions){
 			var csv = 'email\tID\t'
 			  , questionIds = [];
+			if(doAnonymous){
+				csv = 'Study ID\t'
+			}
 			for(var i=0; i<questions.length; i++){
 				csv += questions[i].text+'\t';
 				questionIds.push(questions[i]._id.toString());
@@ -266,10 +268,17 @@ module.exports = function(app){
 				}
 				csv += '\n';
 	
-				res.writeHead(200, {
-					'Content-Type': 'text/tsv',
-					'Content-Disposition': 'attachment;filename=user-export-all.tsv'
-				});
+				if(doAnonymous){
+					res.writeHead(200, {
+						'Content-Type': 'text/tsv',
+						'Content-Disposition': 'attachment;filename=user-export-all-anonymous.tsv'
+					});
+				}else{
+					res.writeHead(200, {
+						'Content-Type': 'text/tsv',
+						'Content-Disposition': 'attachment;filename=user-export-all.tsv'
+					});
+				}
 	
 				res.write(csv);
 			
@@ -299,6 +308,9 @@ module.exports = function(app){
 				  		++numUsers;
 				  		hasFoundUser = true;
 						var addToCSV = user.email + '\t' + user._id;
+						if(doAnonymous){
+							addToCSV = User.getStudyID(user._id.toString());
+						}
 						var answers = {};
 						for(var i=0; i<user.answers.length; i++){
 							answers[user.answers[i].question.toString()] = user.answers[i];
@@ -350,6 +362,13 @@ module.exports = function(app){
 				return;
 			});
 		});
+	};
+
+	app.get('/users/export/anonymous', auth.authorize(2, 10), function(req, res, next){
+		doExport(req, res, next, true);
+	});
+	app.get('/users/export', auth.authorize(2, 10), function(req, res, next){
+		doExport(req, res, next, false);
 	});
 	
 	/*

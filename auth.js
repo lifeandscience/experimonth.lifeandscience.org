@@ -225,6 +225,10 @@ module.exports = {
 								'name': 'Standard'
 							  , 'link': fullURL+'/users/export'
 							}
+						  , {
+								'name': 'Anonymized'
+							  , 'link': fullURL+'/users/export/anonymous'
+							}
 						]
 					});
 					res.locals.nav.push({
