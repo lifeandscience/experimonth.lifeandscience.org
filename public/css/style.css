@@ -12138,6 +12138,9 @@ footer {
   text-decoration: underline;
 }
 /* Confess & Confessional Pages */
+#confessionForm {
+  overflow: auto;
+}
 #confessionForm textarea {
   margin-bottom: 1em;
 }
