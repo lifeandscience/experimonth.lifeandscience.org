@@ -12,6 +12,7 @@ var util = require('util')
   , User = mongoose.model('User')
   , Event = mongoose.model('Event')
   , Email = mongoose.model('Email')
+  , Notification = mongoose.model('Notification')
   , ProfileQuestion = mongoose.model('ProfileQuestion')
   , ProfileAnswer = mongoose.model('ProfileAnswer')
   , async = require('async');
@@ -347,6 +348,9 @@ module.exports = function(app){
 		  , emails: function(callback){
 				Email.find({user: user._id}).sort('-date').limit(20).exec(callback);
 			}
+		  , notifications: function(callback){
+				Notification.find({user: user, read: false}).sort('-date').exec(callback);
+			}
 		}, function(err, results){
 			if(err){
 				req.flash('error', err);
@@ -386,7 +390,7 @@ module.exports = function(app){
 							percentage = questionsToIgnore.length / (questions.length+optionalQuestions.length+questionsToIgnore.length);
 							percentage = Math.round(percentage * 100);
 						}
-						res.render('profile', {title: 'Your Experimonth Profile is '+percentage+'% Complete', u: user, enrollments: enrollments, questions: questions, optionalQuestions: optionalQuestions, answers: answers, timezones: utilities.getTimezones()/* , games: games */, events: results.events, emails: results.emails, linkAppend: (user == req.user ? '' : '/'+user._id)});
+						res.render('profile', {title: 'Your Experimonth Profile is '+percentage+'% Complete', u: user, enrollments: enrollments, questions: questions, optionalQuestions: optionalQuestions, answers: answers, timezones: utilities.getTimezones()/* , games: games */, events: results.events, emails: results.emails, notifications: results.notifications, linkAppend: (user == req.user ? '' : '/'+user._id)});
 					});
 				});
 			});
