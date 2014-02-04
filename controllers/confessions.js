@@ -280,7 +280,7 @@ module.exports = function(app){
 		  		var addToCSV = [
 		  			confession._id
 		  		  , confession.number
-		  		  , '"'+confession.text.replace(/"/g, '\"')+'"'
+		  		  , '"'+confession.text.replace(/\r\n/gmi, '<br/>').replace(/\r/gmi, '<br/>').replace(/\n/gmi, '<br/>').replace(/"/g, '\"')+'"'
 		  		  , moment(confession.date).format('YYYY-MM-DD hh:mm A')
 		  		  , confession.active ? 'Active' : 'Inactive'
 		  		  , confession.promoted ? 'Promoted' : 'Not Promoted'
