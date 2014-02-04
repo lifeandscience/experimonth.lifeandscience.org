@@ -370,6 +370,86 @@ module.exports = function(app){
 	app.get('/users/export', auth.authorize(2, 10), function(req, res, next){
 		doExport(req, res, next, false);
 	});
+	app.get('/users/exportIncomplete', auth.authorize(2, 10), function(req, res){
+		res.writeHead(200, {
+			'Content-Type': 'text/tsv',
+			'Content-Disposition': 'attachment;filename=incompleteUsers.tsv'
+		});
+		var Experimonth = mongoose.model('Experimonth');
+		var csv = 'Email Address\tEnrolled Experimonth Name\tEnrolled Experimonth ID\n';
+		res.write(csv);
+
+		var numExperimonths = 0
+		  , stream = null
+		  , totallyDone = false
+		  , checkDone = function(){
+				if(--numExperimonths == 0){
+					if(totallyDone){
+						util.log('totally done.');
+						if(hasFoundExperimonth){
+							// We found at least one game
+							// Maybe the query needs to be re-run starting at an offset of offset
+							createQueryStream(offset);
+						}else{
+							res.end();
+						}
+					}
+				}
+			}
+		  , hasFoundExperimonth = false
+		  , offset = 0
+		  , userTransformableValues = [
+				'frenemy:walkaway',
+				'frenemy:walkedAwayFrom',
+				'frenemy:viewedCompletedRoundScreen',
+				'frenemy:startGame'
+			]
+		  , queryDataFunction = function(experimonth){
+		  		++offset;
+	
+		  		++numExperimonths;
+		  		hasFoundExperimonth = true;
+				for(var j=0; j<experimonth.users.length; j++){
+					if(!experimonth.users[j].hasAnsweredAllRequiredQuestions){
+						var addToCSV = [
+							experimonth.users[j].email
+						  , experimonth.name
+						  , experimonth._id
+						];
+						addToCSV = addToCSV.join('\t') + '\n';
+						res.write(addToCSV);
+					}
+				}
+				checkDone();
+			}
+		  , queryErrorFunction = function(){
+				res.end();
+			}
+		  , queryCloseFunction = function(){
+				totallyDone = true;
+				++numExperimonths;
+				checkDone();
+			}
+		  , createQueryStream = function(skip){
+				var today = moment();
+				today.hours(0);
+				today.minutes(0);
+				today.seconds(0);
+				today.milliseconds(0);
+				var fourDays = today.clone().subtract(4, 'days')
+		  		var query = Experimonth.find({startDate: {$lte: today.toDate(), $gte: fourDays.toDate()}, endDate: {$gte: today.toDate()}}).populate('users').sort('date');
+		  		if(skip){
+			  		query.skip(skip);
+		  		}
+		  		hasFoundExperimonth = false;
+		  		stream = query.stream();
+				stream.on('data', queryDataFunction);
+				stream.on('error', queryErrorFunction);
+				stream.on('close', queryCloseFunction); //.run(function(err, games){
+		  	};
+		createQueryStream();
+		return;
+	});
 	
 	/*
 	// Saving for now.

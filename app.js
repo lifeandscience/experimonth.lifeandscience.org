@@ -32,6 +32,7 @@ var newrelic = require('newrelic')
   , http = require('http')
   , path = require('path')
   , fs = require('fs')
+  , db = require('./db')
   , mongoose = require('mongoose') 
   , MongoStore = require('connect-mongo')(express)
   , flash = require('connect-flash')
@@ -47,10 +48,6 @@ var options = {
 
 // adding mongoose cachebox
 mongooseCachebox(mongoose, options);
-
-// Database
-var dbURL = /* process.env.MONGO_URL ||  */process.env.MONGOHQ_URL || 'mongodb://localhost/experimonth'
-  , db = mongoose.connect(dbURL);
 
 // Models
 var dir = __dirname + '/models';
@@ -80,7 +77,7 @@ app.configure(function(){
 	app.use(express.session({
 		secret: "experimonthSecretForSession"
 		, store: new MongoStore({
-			url: dbURL
+			url: process.env.MONGOHQ_URL || 'mongodb://localhost/experimonth'
 		  , auto_reconnect: true
 		})
 	}));

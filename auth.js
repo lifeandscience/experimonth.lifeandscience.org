@@ -230,6 +230,10 @@ module.exports = {
 							  , 'link': fullURL+'/users/export/anonymous'
 							}
 						  , {
+								'name': 'Incomplete Profiles'
+							  , 'link': fullURL+'/users/exportIncomplete'
+							}
+						  , {
 								'header': 'Confession Export'
 							}
 						  , {
