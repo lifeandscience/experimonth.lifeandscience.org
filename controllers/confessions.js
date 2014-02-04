@@ -4,6 +4,7 @@ var form = require('express-form')
   , mongoose = require('mongoose')
   , Confession = mongoose.model('Confession')
   , Event = mongoose.model('Event')
+  , User = mongoose.model('User')
   , moment = require('moment')
   , email = require('../email')
   , util = require('util')
@@ -235,5 +236,92 @@ module.exports = function(app){
 		Confession.findRandom(req.user, function(confession){
 			return res.render('confessions/single_confession', {confession: confession});
 		});
+	});
+	
+	app.get('/confessional/export', auth.authorize(2, 10), function(req, res){
+		res.writeHead(200, {
+			'Content-Type': 'text/tsv',
+			'Content-Disposition': 'attachment;filename=confessions.tsv'
+		});
+		var csv = 'ID\tNumber\tText\tTimestamp\tIs Active\tIs Promoted\tNumber of Flags\tEvent #1 Name\tEvent #1 Value\tEvent #2 Name\tEvent #2 Value\tEvent #3 Name\tEvent #3 Value\tEvent #4 Name\tEvent #4 Value\tEvent #5 Name\tEvent #5 Value\n';
+		res.write(csv);
+
+		var numConfessions = 0
+		  , stream = null
+		  , totallyDone = false
+		  , checkDone = function(){
+				if(--numConfessions == 0){
+					if(totallyDone){
+						util.log('totally done.');
+						if(hasFoundConfession){
+							// We found at least one game
+							// Maybe the query needs to be re-run starting at an offset of offset
+							createQueryStream(offset);
+						}else{
+							res.end();
+						}
+					}
+				}
+			}
+		  , hasFoundConfession = false
+		  , offset = 0
+		  , userTransformableValues = [
+				'frenemy:walkaway',
+				'frenemy:walkedAwayFrom',
+				'frenemy:viewedCompletedRoundScreen',
+				'frenemy:startGame'
+			]
+		  , queryDataFunction = function(confession){
+		  		++offset;
+	
+		  		++numConfessions;
+		  		hasFoundConfession = true;
+		  		
+		  		var addToCSV = [
+		  			confession._id
+		  		  , confession.number
+		  		  , '"'+confession.text+'"'
+		  		  , moment(confession.date).format('YYYY-MM-DD hh:mm A')
+		  		  , confession.active ? 'Active' : 'Inactive'
+		  		  , confession.promoted ? 'Promoted' : 'Not Promoted'
+		  		  , confession.flags
+		  		];
+		  		if(confession.recentEvents && confession.recentEvents.length){
+			  		for(var i=0; i<confession.recentEvents.length; i++){
+			  			addToCSV.push(confession.recentEvents[i].name);
+						if(userTransformableValues.indexOf(confession.recentEvents[i].name) != -1){
+							addToCSV.push(User.getStudyID(confession.recentEvents[i].value));
+						}else{
+							addToCSV.push(confession.recentEvents[i].value);
+						}
+			  		}
+			  	}
+			  	addToCSV = addToCSV.join('\t') + '\n';
+
+				// Determine which of the users was this one in the round
+				res.write(addToCSV);
+				checkDone();
+			}
+		  , queryErrorFunction = function(){
+				res.end();
+			}
+		  , queryCloseFunction = function(){
+				totallyDone = true;
+				++numConfessions;
+				checkDone();
+			}
+		  , createQueryStream = function(skip){
+		  		var query = Confession.find().populate('recentEvents').sort('date');
+		  		if(skip){
+			  		query.skip(skip);
+		  		}
+		  		hasFoundConfession = false;
+		  		stream = query.stream();
+				stream.on('data', queryDataFunction);
+				stream.on('error', queryErrorFunction);
+				stream.on('close', queryCloseFunction); //.run(function(err, games){
+		  	};
+		createQueryStream();
+		return;
 	});
 }

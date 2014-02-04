@@ -229,6 +229,13 @@ module.exports = {
 								'name': 'Anonymized'
 							  , 'link': fullURL+'/users/export/anonymous'
 							}
+						  , {
+								'header': 'Confession Export'
+							}
+						  , {
+								'name': 'Standard'
+							  , 'link': fullURL+'/confessional/export'
+							}
 						]
 					});
 					res.locals.nav.push({
