@@ -16,6 +16,11 @@ block body
 
 				form(action=action, method="POST")#confessionForm.form-horizontal
 					textarea#text.input-block-level(type="text", placeholder="", name="text", rows="15") !{confession.text}
+					input(type="hidden", name="timestamp", value=locals.timestamp)
+					input(type="hidden", name="nonce", value=locals.nonce)
+					label.checkbox
+						input.checkbox(type="checkbox", name="whatareyou", value="hewmahn")
+						| Are you a human? If so, check this box.
 					button.btn.btn-inverse.pull-right(type="submit") confess
 
 			.span4

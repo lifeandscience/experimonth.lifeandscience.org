@@ -12141,6 +12141,12 @@ footer {
 #confessionForm textarea {
   margin-bottom: 1em;
 }
+#confessionForm label.checkbox {
+  float: right;
+}
+#confessionForm button {
+  clear: both;
+}
 .view-all-confessions {
   font-size: 1.5em;
   line-height: 1.2em;

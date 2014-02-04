@@ -7,7 +7,8 @@ var form = require('express-form')
   , moment = require('moment')
   , email = require('../email')
   , util = require('util')
-  , auth = require('../auth');
+  , auth = require('../auth')
+  , crypto = require('crypto');
 
 module.exports = function(app){
 	app.get('/confessional', function(req, res){
@@ -151,6 +152,9 @@ module.exports = function(app){
 			field('text').trim().required()
 		)
 	  , beforeRender = function(req, res, item, callback){
+			res.locals.timestamp = Date.now();
+			res.locals.nonce = crypto.createHash('md5').update(''+res.locals.timestamp).digest('hex');
+			
 			if(item.confession && req.params && req.params.number){
 				item.confession.text = 'This is in reply to confession #'+req.params.number+': ';
 			}
@@ -175,6 +179,19 @@ module.exports = function(app){
 	/* 		return item; */
 		}
 	  , beforeSave = function(req, res, item, complete){
+			if(!req.body.whatareyou || req.body.whatareyou != 'hewmahn'){
+				req.flash('error', 'Form not submitted correctly. Try again.');
+				return res.redirect('back');
+			}
+			if(!req.body.timestamp || !req.body.nonce){
+				req.flash('error', 'Form not submitted correctly. Try again.');
+				return res.redirect('back');
+			}
+			if(crypto.createHash('md5').update(''+req.body.timestamp).digest('hex') != req.body.nonce){
+				req.flash('error', 'Form not submitted correctly. Try again.');
+				return res.redirect('back');
+			}
+			
 			// Email to Beck
 			// setup e-mail data with unicode symbols
 			Confession.count(function(err, count){
