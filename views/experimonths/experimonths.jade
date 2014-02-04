@@ -44,6 +44,8 @@ block body
 									a.btn.btn-success(href="/experimonths/publish/#{experimonth._id}", data-bootbox-confirm="<p>Are you sure you want to publish this Experimonth</p><p>Publishing an Experimonth notifies users that a new Experimonth has been published.</p>") Publish
 								|  
 								a.btn.btn-success(href="/experimonths/events/export/"+experimonth._id) Export
+								|  
+								a.btn.btn-success(href="/experimonths/notify/"+experimonth._id) Notify
 							//|  
 							//a.btn.btn-danger(href="/experimonths/delete/#{experimonth._id}") Delete	
 							u = user(2)

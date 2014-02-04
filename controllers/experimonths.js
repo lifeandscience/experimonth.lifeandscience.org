@@ -12,7 +12,8 @@ var util = require('util')
   , User = mongoose.model('User')
   , Event = mongoose.model('Event')
   , s3 = require('../s3')
-  , moment = require('moment');
+  , moment = require('moment')
+  , async = require('async');
 
 module.exports = function(app){
 	app.get('/experimonths', auth.authorize(2), function(req, res){
@@ -481,6 +482,64 @@ module.exports = function(app){
 		  	};
 		createQueryStream();
 		return;
+	});
+	
+	
+	
+	app.get('/experimonths/notify/:id', auth.authorize(2, 10), function(req, res){
+		if(!req.params.id){
+			req.flash('error', 'Experimonth ID missing.');
+			res.redirect('back');
+			return;
+		}
+		Experimonth.findOne({_id: req.params.id}).exec(function(err, experimonth){
+			if(err || !experimonth){
+				req.flash('error', 'Experimonth not found.');
+				res.redirect('back');
+				return;
+			}
+			res.render('experimonths/notifyAll', {title: 'Notify All Users', subject: '', message: '', experimonth: experimonth});
+		});
+	});
+	app.post('/experimonths/notify/:id', auth.authorize(2, 10), function(req, res){
+		if(!req.params.id){
+			req.flash('error', 'Experimonth ID missing.');
+			res.redirect('back');
+			return;
+		}
+		var subject = req.param('subject');
+		var message = req.param('message');
+		if(!subject || subject.length == 0){
+			req.flash('error', 'Please provide a subject.');
+			res.render('experimonths/notifyAll', { title: 'Notify All Users Enrolled In '+experimonth.name, subject: subject, message: message, experimonth: experimonth });
+			return;
+		}
+		if(!message || message.length == 0){
+			req.flash('error', 'Please provide a message.');
+			res.render('experimonths/notifyAll', { title: 'Notify All Users Enrolled In '+experimonth.name, subject: subject, message: message, experimonth: experimonth });
+			return;
+		}
+
+		Experimonth.findOne({_id: req.params.id}).populate('users').exec(function(err, experimonth){
+			if(err || !experimonth){
+				req.flash('error', 'Experimonth not found.');
+				res.redirect('back');
+				return;
+			}
+			
+			async.each(experimonth.users, function(user, callback){
+				Notification.notify('info', null, subject, message, user, callback);
+			}, function(err){
+				if(err){
+					req.flash('error', 'Error notifying users. '+err);
+					res.redirect('back');
+					return;
+				}
+				req.flash('info', 'Users notified successfully!');
+				res.redirect('back');
+				return;
+			});
+		});
 	});
 
 };

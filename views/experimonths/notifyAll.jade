@@ -1,0 +1,29 @@
+extends ../layout
+
+block body
+	#container-inner
+
+		- if ('undefined' !== typeof errors && errors.length)
+			ul#errors
+				- each error in errors
+					li.error= error
+
+		h1 Notify All Users Enrolled In #{experimonth.name}
+		p.big-text Send a message to all users enrolled in this Experimonth:
+
+		.row
+			.span4.offset4.text-center
+				form(method="POST")#feedbackForm.well
+					#subject-group.control-group
+						label.control-label(for='subject') Subject: 
+						.controls
+							input(type='text', name='subject', placeholder='Subject', tabindex=1, value=subject)
+					#message-group.control-group
+						label.control-label(for='message') Message:
+						.controls
+							textarea#message(type="message", placeholder="", name="message", rows="15", tabindex=2) !{message}
+							//.input-block-level
+							//input(type='password', name='password', placeholder='Password', tabindex=2)
+					#submit.control-group
+						.controls
+							input.btn-auth.btn-login(type='submit', value='Submit', tabindex=3)
