@@ -41,7 +41,7 @@ block body
 								if experimonth.published
 									a.btn.btn-danger(href="/experimonths/publish/#{experimonth._id}", data-bootbox-confirm="<p>Are you sure you want to un-publish this Experimonth?.</p><p>There could be unexpected consequences.</p>") Un-publish
 								else
-									a.btn.btn-success(href="/experimonths/publish/#{experimonth._id}", data-bootbox-confirm="<p>Are you sure you want to publish this Experimonth</p><p>Publishing an Experimonth notifies users that a new Experimonth has been published.</p>") Publish
+									a.btn.btn-success(href="/experimonths/publish/#{experimonth._id}", data-bootbox-confirm="<p>Are you sure you want to publish this Experimonth</p><p>Publishing an Experimonth makes it show up on the Currently Recruiting page (but no longer notifies users that a new Experimonth has been published).</p>") Publish
 								|  
 								a.btn.btn-success(href="/experimonths/events/export/"+experimonth._id) Export
 								|  
