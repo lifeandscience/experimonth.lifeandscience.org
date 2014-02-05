@@ -345,23 +345,9 @@ module.exports = function(app){
 					res.redirect('back');
 					return;
 				}
-				if(experimonth.published){
-					// Send a notification to all existing users that a new question was published.
-					User.notifyAll('info', null, 'A new Experimonth is available.', 'There is a new Experimonth open for enrollment on '+process.env.BASEURL+'. Visit the site to read about it and sign-up.', function(err){
-						if(err){
-							req.flash('error', 'Error notifying users. '+err);
-							res.redirect('back');
-							return;
-						}
-						req.flash('info', 'Experimonth published successfully.');
-						res.redirect('back');
-						return;
-					});
-				}else{
-					req.flash('info', 'Experimonth unpublished successfully.');
-					res.redirect('back');
-					return;
-				}
+				req.flash('info', 'Experimonth '+(experimonth.published ? 'published' : 'unpublished')+' successfully.');
+				res.redirect('back');
+				return;
 			});
 		});
 	});	
