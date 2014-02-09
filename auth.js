@@ -395,7 +395,7 @@ module.exports = {
 		
 		// an access token was received in a URL query string parameter or HTTP header
 		myOAP.on('access_token', function(req, res, token, next) {
-			var TOKEN_TTL = 10 * 60 * 1000; // 10 minutes
+			var TOKEN_TTL = 24 * 60 * 60 * 1000; // 24h
 			if(token.grant_date.getTime() + TOKEN_TTL > Date.now()){
 				req.token_expires = token.grant_date.getTime() + TOKEN_TTL;
 				req.token_user_id = token.user_id;
