@@ -58,10 +58,10 @@ module.exports = function(app){
 			confession.save(function(err){
 	
 				var mailOptions = {
-			    	to: [{
-			    		email: 'experimonth+confessional@lifeandscience.org'
-			    	}], // list of receivers
-			    	subject: 'Flagged Confession.', // Subject line,
+			  	to: [{
+			  		email: 'experimonth+confessional@lifeandscience.org'
+			  	}], // list of receivers
+			  	subject: 'Flagged Confession.', // Subject line,
 					generateTextFromHTML: true,
 					html: 'Confessional #'+confession.number+' was flagged, bringing it\'s total number of flags to '+confession.flags+' on '+moment().format('YYYY-MM-DD hh:mm A')+'\n\n---\n\n'+confession.text
 			    };
@@ -202,7 +202,7 @@ module.exports = function(app){
 					to: [{
 						email: 'experimonth+confessional@lifeandscience.org'
 					}], // list of receivers
-			    	subject: 'New confession.', // Subject line,
+			  	subject: 'New confession.', // Subject line,
 					html: 'New Confessional posted on '+moment(item.date).format('YYYY-MM-DD hh:mm A')+'\n\n---\n\n'+item.text
 			    };
 	
@@ -243,7 +243,7 @@ module.exports = function(app){
 			'Content-Type': 'text/tsv',
 			'Content-Disposition': 'attachment;filename=confessions.tsv'
 		});
-		var csv = 'ID\tNumber\tText\tTimestamp\tIs Active\tIs Promoted\tNumber of Flags\tEvent #1 Name\tEvent #1 Value\tEvent #2 Name\tEvent #2 Value\tEvent #3 Name\tEvent #3 Value\tEvent #4 Name\tEvent #4 Value\tEvent #5 Name\tEvent #5 Value\n';
+		var csv = 'ID\tNumber\tText\tTimestamp\tIs Active\tIs Promoted\tNumber of Flags\tStudy ID\tEvent #1 Name\tEvent #1 Value\tEvent #2 Name\tEvent #2 Value\tEvent #3 Name\tEvent #3 Value\tEvent #4 Name\tEvent #4 Value\tEvent #5 Name\tEvent #5 Value\n';
 		res.write(csv);
 
 		var numConfessions = 0
@@ -272,31 +272,32 @@ module.exports = function(app){
 				'frenemy:startGame'
 			]
 		  , queryDataFunction = function(confession){
-		  		++offset;
+				++offset;
 	
-		  		++numConfessions;
-		  		hasFoundConfession = true;
-		  		
-		  		var addToCSV = [
-		  			confession._id
-		  		  , confession.number
-		  		  , '"'+confession.text.replace(/\r\n/gmi, '<br/>').replace(/\r/gmi, '<br/>').replace(/\n/gmi, '<br/>').replace(/"/g, '\"')+'"'
-		  		  , moment(confession.date).format('YYYY-MM-DD hh:mm A')
-		  		  , confession.active ? 'Active' : 'Inactive'
-		  		  , confession.promoted ? 'Promoted' : 'Not Promoted'
-		  		  , confession.flags
-		  		];
-		  		if(confession.recentEvents && confession.recentEvents.length){
-			  		for(var i=0; i<confession.recentEvents.length; i++){
-			  			addToCSV.push(confession.recentEvents[i].name);
+				++numConfessions;
+				hasFoundConfession = true;
+				
+				var addToCSV = [
+					confession._id
+				  , confession.number
+				  , '"'+confession.text.replace(/\r\n/gmi, '<br/>').replace(/\r/gmi, '<br/>').replace(/\n/gmi, '<br/>').replace(/"/g, '\"')+'"'
+				  , moment(confession.date).format('YYYY-MM-DD hh:mm A')
+				  , confession.active ? 'Active' : 'Inactive'
+				  , confession.promoted ? 'Promoted' : 'Not Promoted'
+				  , confession.flags
+				];
+				if(confession.recentEvents && confession.recentEvents.length){
+					addToCSV.push(User.getStudyID(confession.recentEvents[0].user));
+					for(var i=0; i<confession.recentEvents.length; i++){
+						addToCSV.push(confession.recentEvents[i].name);
 						if(userTransformableValues.indexOf(confession.recentEvents[i].name) != -1){
 							addToCSV.push(User.getStudyID(confession.recentEvents[i].value));
 						}else{
 							addToCSV.push(confession.recentEvents[i].value);
 						}
-			  		}
-			  	}
-			  	addToCSV = addToCSV.join('\t') + '\n';
+					}
+				}
+				addToCSV = addToCSV.join('\t') + '\n';
 
 				// Determine which of the users was this one in the round
 				res.write(addToCSV);
@@ -311,16 +312,16 @@ module.exports = function(app){
 				checkDone();
 			}
 		  , createQueryStream = function(skip){
-		  		var query = Confession.find().populate('recentEvents').sort('date');
-		  		if(skip){
-			  		query.skip(skip);
-		  		}
-		  		hasFoundConfession = false;
-		  		stream = query.stream();
+				var query = Confession.find().populate('recentEvents').sort('date');
+				if(skip){
+					query.skip(skip);
+				}
+				hasFoundConfession = false;
+				stream = query.stream();
 				stream.on('data', queryDataFunction);
 				stream.on('error', queryErrorFunction);
 				stream.on('close', queryCloseFunction); //.run(function(err, games){
-		  	};
+			};
 		createQueryStream();
 		return;
 	});
