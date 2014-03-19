@@ -20,6 +20,7 @@
     "bootstrap-datetimepicker": "~0.0.11",
     "bootbox": "3.3.0",
     "bootstrap-datepicker": "~1.2.0",
+    "seiyria-bootstrap-slider": "~1.9.5",
     "async": "~0.2.5"
   }
 }

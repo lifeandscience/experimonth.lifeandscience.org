@@ -5,27 +5,29 @@ block body
 		form(method="POST")#playerForm.form-horizontal
 			fieldset
 				legend #{title}
-						
+
 				.control-group
 					label.control-label(for="text") Question Text:
 					.controls
 						input#text.span5(type="text", placeholder="How much wood would a woodchuck chuck?", name="text", value=question.text)
 						p.help-block The text of this question (how the user will be prompted).
-						
+
 				.control-group
 					label.control-label(for="type") Type:
 					.controls
 						select#type.span5(name="type")
 							option(value='multiple-choice', selected=(question.type == 'multiple-choice')) Multiple-Choice
+							option(value='likert-style', selected=(question.type == 'likert-style')) Likert-style
 							option(value='open', selected=(question.type == 'open')) Open-ended
-						p.help-block The type of question this is. If you pick "Multiple-Choice", you _must_ fill in the 'Choices' box as indicated or weird things will happen.
-				
+						p.help-block The type of question this is. If you pick "Multiple-Choice", you _must_ fill in the 'Choices' box as indicated or weird things will happen. If you pick "Likert-style", the 'Choices' box will be used for the one or two phrases presented at the end of the slider.
+
 				.control-group
 					label.control-label(for="choices_string") Choices:
 					.controls
 						input#choices_string.span5(type="text", placeholder="ten wood, 20 wood, 30, more", name="choices_string", value=question.choices_string)
-						p.help-block What are the choices in the case of a multiple-choice question? Supply these as a comma-separated string.
-				
+						p.help-block What are the choices in the case of a multiple-choice question? Or, if "Likert-style", what are the one or two phrases presented at the ends of the slider. If only one is provided, it'll be shown at the left end; if two are provided, the second will be shown at the right end. If more than two are provided, the extras will be ignored.
+						p.help-block Supply these as a comma-separated string.
+
 				//.control-group
 				//	label.control-label(for="required") Required:
 				//	.controls
@@ -33,13 +35,13 @@ block body
 				//			input#open(type="checkbox", name="required", checked=question.required)
 				//			|  Is this profile question required?
 				//		p.help-block If this profile question is required, users won't be included in gameplay until they've answered this question.
-						
+
 				.control-group
 					label.control-label(for="slug") Slug:
 					.controls
 						input#slug.span5(type="text", placeholder="simple-identifier", name="slug", value=question.slug)
 						p.help-block The slug for this question; used for uniquely identifying this question, so try to make sure it is unique compared to other questions.
-		
+
 			.form-actions
 				button.btn.btn-primary(type="submit") Submit
 				|  

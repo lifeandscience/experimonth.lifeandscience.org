@@ -23,6 +23,18 @@
 							- for choice, j in question.choices
 								option(value=choice, selected=(answer && choice == answer.value))
 									| #{choice}
+				- else if(question.type == 'likert-style')
+					.controls
+						div.slider-container
+							input.slider(type="text", value=(answer ? answer.value : 50), data-slider-min="0", data-slider-max="100", data-slider-step="1", data-slider-value=(answer ? answer.value : 50), data-slider-orientation="horizontal", data-slider-selection="after", name="value", id="slider-"+question._id)
+						//.slider-marks
+						//	- for(var k=0; k<=10; k++)
+						//		span.slider-tick-mark(class=(k == 10 ? 'last' : ''))
+						if question.choices && question.choices.length > 0
+							span.slider-label-left #{question.choices[0]}
+						if question.choices && question.choices.length > 1
+							span.slider-label-right #{question.choices[1]}
+
 			input.btn.btn-primary.pull-right(type="submit", name="submit", value="Submit")
 			|  
 			input.btn.pull-right(type="submit", name="submit", value="Choose not to answer")

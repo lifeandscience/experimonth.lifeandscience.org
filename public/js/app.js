@@ -309,6 +309,14 @@ jQuery(function(){
 		});
 		return false;
 	});
+	
+	if(jQuery('.slider').length){
+		jQuery('.slider').each(function(){
+			jQuery(this).slider({
+				tooltip: 'hide'
+			});
+		});
+	}
 });
 
 

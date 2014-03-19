@@ -4,7 +4,7 @@ var mongoose = require('mongoose')
 
 var ProfileQuestionSchema = new Schema({
 	text: String
-  , type: {type: String, enum: ['open', 'multiple-choice'], default: 'open'}
+  , type: {type: String, enum: ['open', 'likert-style', 'multiple-choice'], default: 'open'}
   , choices: [String]
   , published: {type: Boolean, default: false}
   , publishDate: {type: Date, default: function(){ return Date.now(); }}

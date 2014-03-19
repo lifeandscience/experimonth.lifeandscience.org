@@ -12206,6 +12206,43 @@ footer {
   color: #730202;
 }
 /* Profile Page */
+.slider-label-left {
+  width: 110px;
+  float: left;
+  clear: both;
+}
+.slider-label-right {
+  width: 110px;
+  float: left;
+  text-align: right;
+}
+.slider-tick-mark {
+  display: inline-block;
+  width: 1px;
+  height: 10px;
+  background-color: black;
+  float: left;
+  margin-right: 21px;
+}
+.slider-tick-mark.last {
+  margin-right: 0;
+}
+.question .controls {
+  overflow: auto;
+}
+/*
+span.slider-label {
+	display: inline-block;
+	width: 20%;
+	padding: 0 10px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.slider-container {
+	display: inline-block;
+	width: 60%;
+}
 /*
 #userForm {
 	background: transparent url('../img/profile_bracket.gif') scroll no-repeat 380px center;
