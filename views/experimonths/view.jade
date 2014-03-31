@@ -13,12 +13,15 @@ block body
 					th ID
 					th Email
 					th Last Played
+					th
 			tbody
 				each user, i in experimonth.users
 					tr
 						td #{user._id}
 						td #{user.email}
 						td #{locals.moment(user.lastPlayed).format('YYYY-MM-DD hh:mm A')}
+						td
+							a.btn.btn-danger(href='/experimonths/unenroll/'+user._id+'/'+experimonth._id) Unenroll
 		//- if(pages > 1)
 		//	.pagination
 		//		ul

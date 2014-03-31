@@ -118,70 +118,60 @@ module.exports = function(app){
 		});
 	});
 	
-	app.get('/experimonths/unenroll/:id', auth.authorize(2), function(req, res){
-		if(req.user.experimonths.indexOf(req.param('id')) == -1){
-			req.flash('info', 'You are not enrolled in this Experimonth.');
-			res.redirect('back');
-			return;
-		}
-		ExperimonthEnrollment.find({experimonth: req.param('id'), user: req.user._id}).exec(function(err, enrollment){
+	var unenrollUserFromExperimonth = function(user, experimonthID, req, res, callback){
+		ExperimonthEnrollment.find({experimonth: experimonthID, user: user._id}).exec(function(err, enrollment){
 			if(err || !enrollment || enrollment.length == 0){
-				req.flash('error', 'Error finding Enrollment in the Experimonth with ID '+req.param('id')+'. '+err);
+				req.flash('error', 'Error finding Enrollment in the Experimonth with ID '+experimonthID+' and userID '+user._id+'. '+err);
 				res.redirect('back');
+				if(callback){
+					callback('Error finding Enrollment in the Experimonth with ID '+experimonthID+' and userID '+user._id+'. '+err);
+				}
 				return;
 			}
 			enrollment = enrollment[0];
 			console.log('enrollment: ', enrollment);
 
-			Experimonth.findById(req.param('id')).exec(function(err, experimonth){
+			Experimonth.findById(experimonthID).exec(function(err, experimonth){
 				if(err || !experimonth){
-					req.flash('error', 'Error finding Experimonth with ID '+req.param('id')+'. '+err);
+					req.flash('error', 'Error finding Experimonth with ID '+experimonthID+'. '+err);
 					res.redirect('back');
+					if(callback){
+						callback('Error finding Experimonth with ID '+experimonthID+'. '+err);
+					}
 					return;
 				}
 				if(experimonth.enrollments.indexOf(enrollment._id.toString()) != -1){
 					console.log('removing enrollment from experimonth.');
 					experimonth.enrollments.splice(experimonth.enrollments.indexOf(enrollment._id.toString()), 1);
 				}
-				if(experimonth.users.indexOf(req.user._id.toString()) != -1){
+				if(experimonth.users.indexOf(user._id.toString()) != -1){
 					console.log('removing user from experimonth.');
-					experimonth.users.splice(experimonth.users.indexOf(req.user._id.toString()), 1);
+					experimonth.users.splice(experimonth.users.indexOf(user._id.toString()), 1);
 				}
-		/*
-				if(!experimonth.open){
-					req.flash('error', 'This Experimonth is not open for enrollment.');
-					res.redirect('back');
-					return;
-				}
-		*/
-		/*
-				if(experimonth.players.length >= experimonth.playerLimit){
-					req.flash('error', 'Player limit reached for this Experimonth.');
-					res.redirect('back');
-					return;
-				}
-		*/
-				
-		
-		/* 		experimonth.players.push(req.user._id); */
 				experimonth.save(function(err){
 					if(err){
-						req.flash('error', 'Error saving Experimonth with ID '+req.param('id')+'. '+err);
+						req.flash('error', 'Error saving Experimonth with ID '+experimonthID+'. '+err);
 						res.redirect('back');
+						if(callback){
+							callback('Error saving Experimonth with ID '+experimonthID+'. '+err);
+						}
 						return;
 					}
-					if(req.user.experimonths.indexOf(req.param('id')) != -1){
+					if(user.experimonths.indexOf(experimonthID) != -1){
 						console.log('removing experimonth from user.');
-						req.user.experimonths.splice(req.user.experimonths.indexOf(req.param('id')), 1);
+						user.experimonths.splice(user.experimonths.indexOf(experimonthID), 1);
 					}
-					if(req.user.enrollments.indexOf(enrollment._id.toString()) != -1){
+					if(user.enrollments.indexOf(enrollment._id.toString()) != -1){
 						console.log('removing enrollment from user.');
-						req.user.enrollments.splice(req.user.enrollments.indexOf(enrollment._id.toString()), 1);
+						user.enrollments.splice(user.enrollments.indexOf(enrollment._id.toString()), 1);
 					}
-					req.user.save(function(err){
+					user.save(function(err){
 						if(err){
-							req.flash('error', 'Error saving user with ID '+req.user._id+'. '+err);
+							req.flash('error', 'Error saving user with ID '+user._id+'. '+err);
 							res.redirect('back');
+							if(callback){
+								callback('Error saving user with ID '+user._id+'. '+err);
+							}
 							return;
 						}
 						
@@ -189,12 +179,19 @@ module.exports = function(app){
 							if(err){
 								req.flash('error', 'Error removing enrollment with ID '+enrollment._id+'. '+err);
 								res.redirect('back');
+								if(callback){
+									callback('Error removing enrollment with ID '+enrollment._id+'. '+err);
+								}
 								return;
 							}
 							
-							req.user.reCheckProfileQuestions(null, function(err){
-								req.flash('info', 'You were un-enrolled successfully.');
-								res.redirect('back');
+							user.reCheckProfileQuestions(null, function(err){
+								if(callback){
+									callback(null, experimonth);
+								}else{
+									req.flash('info', 'You were un-enrolled successfully.');
+									res.redirect('back');
+								}
 							});
 						});
 					});
@@ -203,7 +200,36 @@ module.exports = function(app){
 			
 			// http://app.dev:8000/experimonths/unenroll/513f596f40a9834325000001
 		});
-		return;
+	}
+	
+	app.get('/experimonths/unenroll/:userID/:experimonthID', auth.authorize(2, 10), function(req, res){
+		User.find({_id: req.param('userID')}).exec(function(err, users){
+			if(err || !users || users.length == 0){
+				req.flash('info', 'User not found');
+				res.redirect('back');
+				return;
+			}
+			var user = users[0]
+			return unenrollUserFromExperimonth(user, req.param('experimonthID'), req, res, function(err, experimonth){
+				if(!err && experimonth){
+					// Send an email?
+					req.flash('info', user.email+' was un-enrolled successfully.');
+					res.redirect('back');
+					
+					var message = 'You\'ve been unenrolled from '+experimonth.name+' either because you requested it, or because you haven\'t been playing several days in a row. If you want to keep playing or believe this was done in error, please reply to this email and we\'ll activate you for tomorrow\'s game.';
+					Notification.notify('success', ['web', 'email'], 'You\'ve been unenrolled from '+experimonth.name, message, user, null);
+				}
+			});
+		});
+	});
+	
+	app.get('/experimonths/unenroll/:id', auth.authorize(2), function(req, res){
+		if(req.user.experimonths.indexOf(req.param('id')) == -1){
+			req.flash('info', 'You are not enrolled in this Experimonth.');
+			res.redirect('back');
+			return;
+		}
+		return unenrollUserFromExperimonth(req.user, req.param('id'), req, res);
 	});
 	
 	/*
