@@ -212,7 +212,7 @@ module.exports = function(app){
 				
 				if(req.user){
 					// Find 5 recent events from the current user
-					return Event.find({user: req.user._id}).sort('date').limit(5).exec(function(err, events){
+					return Event.find({user: req.user._id}).sort('-date').limit(5).exec(function(err, events){
 						if(!err && events && events.length){
 							item.recentEvents = events;
 						}
