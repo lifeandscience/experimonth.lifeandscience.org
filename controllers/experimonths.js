@@ -426,7 +426,7 @@ module.exports = function(app){
 			'Content-Type': 'text/tsv',
 			'Content-Disposition': 'attachment;filename=experimonth-'+req.params.id+'.tsv'
 		});
-		var csv = 'Event ID\tEvent Timestamp\tEvent Name\tEvent Value\tStudy ID\n';
+		var csv = 'Event ID\tEvent Timestamp\tEvent Name\tEvent Value\tStudy ID\tfrenemy:moodAtGameStart - Stressed\tfrenemy:moodAtGameStart - Happy\tfrenemy:moodAtGameStart - Tired\n';
 		res.write(csv);
 
 		var numEvents = 0
@@ -467,7 +467,24 @@ module.exports = function(app){
 				}else{
 					addToCSV += event.value;
 				}
-				addToCSV += '\t' + User.getStudyID(event.user) + '\n';
+				addToCSV += '\t' + User.getStudyID(event.user) + '\t';
+				if(event.name === 'frenemy:moodAtGameStart'){
+					var val = JSON.parse(event.value);
+					if(val.stressed){
+						addToCSV += val.stressed;
+					}
+					addToCSV += '\t';
+					if(val.happy){
+						addToCSV += val.happy;
+					}
+					addToCSV += '\t';
+					if(val.tired){
+						addToCSV += val.tired;
+					}
+				}else{
+					addToCSV += '\t\t';
+				}
+				addToCSV += '\n';
 
 				// Determine which of the users was this one in the round
 				res.write(addToCSV);
