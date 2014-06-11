@@ -118,90 +118,6 @@ module.exports = function(app){
 		});
 	});
 	
-	var unenrollUserFromExperimonth = function(user, experimonthID, req, res, callback){
-		ExperimonthEnrollment.find({experimonth: experimonthID, user: user._id}).exec(function(err, enrollment){
-			if(err || !enrollment || enrollment.length == 0){
-				req.flash('error', 'Error finding Enrollment in the Experimonth with ID '+experimonthID+' and userID '+user._id+'. '+err);
-				res.redirect('back');
-				if(callback){
-					callback('Error finding Enrollment in the Experimonth with ID '+experimonthID+' and userID '+user._id+'. '+err);
-				}
-				return;
-			}
-			enrollment = enrollment[0];
-			console.log('enrollment: ', enrollment);
-
-			Experimonth.findById(experimonthID).exec(function(err, experimonth){
-				if(err || !experimonth){
-					req.flash('error', 'Error finding Experimonth with ID '+experimonthID+'. '+err);
-					res.redirect('back');
-					if(callback){
-						callback('Error finding Experimonth with ID '+experimonthID+'. '+err);
-					}
-					return;
-				}
-				if(experimonth.enrollments.indexOf(enrollment._id.toString()) != -1){
-					console.log('removing enrollment from experimonth.');
-					experimonth.enrollments.splice(experimonth.enrollments.indexOf(enrollment._id.toString()), 1);
-				}
-				if(experimonth.users.indexOf(user._id.toString()) != -1){
-					console.log('removing user from experimonth.');
-					experimonth.users.splice(experimonth.users.indexOf(user._id.toString()), 1);
-				}
-				experimonth.save(function(err){
-					if(err){
-						req.flash('error', 'Error saving Experimonth with ID '+experimonthID+'. '+err);
-						res.redirect('back');
-						if(callback){
-							callback('Error saving Experimonth with ID '+experimonthID+'. '+err);
-						}
-						return;
-					}
-					if(user.experimonths.indexOf(experimonthID) != -1){
-						console.log('removing experimonth from user.');
-						user.experimonths.splice(user.experimonths.indexOf(experimonthID), 1);
-					}
-					if(user.enrollments.indexOf(enrollment._id.toString()) != -1){
-						console.log('removing enrollment from user.');
-						user.enrollments.splice(user.enrollments.indexOf(enrollment._id.toString()), 1);
-					}
-					user.save(function(err){
-						if(err){
-							req.flash('error', 'Error saving user with ID '+user._id+'. '+err);
-							res.redirect('back');
-							if(callback){
-								callback('Error saving user with ID '+user._id+'. '+err);
-							}
-							return;
-						}
-						
-						enrollment.remove(function(err){
-							if(err){
-								req.flash('error', 'Error removing enrollment with ID '+enrollment._id+'. '+err);
-								res.redirect('back');
-								if(callback){
-									callback('Error removing enrollment with ID '+enrollment._id+'. '+err);
-								}
-								return;
-							}
-							
-							user.reCheckProfileQuestions(null, function(err){
-								if(callback){
-									callback(null, experimonth);
-								}else{
-									req.flash('info', 'You were un-enrolled successfully.');
-									res.redirect('back');
-								}
-							});
-						});
-					});
-				});
-			});
-			
-			// http://app.dev:8000/experimonths/unenroll/513f596f40a9834325000001
-		});
-	}
-	
 	app.get('/experimonths/unenroll/:userID/:experimonthID', auth.authorize(2, 10), function(req, res){
 		User.find({_id: req.param('userID')}).exec(function(err, users){
 			if(err || !users || users.length == 0){
@@ -210,7 +126,7 @@ module.exports = function(app){
 				return;
 			}
 			var user = users[0]
-			return unenrollUserFromExperimonth(user, req.param('experimonthID'), req, res, function(err, experimonth){
+			return user.unenrollUserFromExperimonth(req.param('experimonthID'), req, res, function(err, experimonth){
 				if(!err && experimonth){
 					// Send an email?
 					req.flash('info', user.email+' was un-enrolled successfully.');
@@ -229,7 +145,7 @@ module.exports = function(app){
 			res.redirect('back');
 			return;
 		}
-		return unenrollUserFromExperimonth(req.user, req.param('id'), req, res);
+		return req.user.unenrollUserFromExperimonth(req.param('id'), req, res);
 	});
 	
 	/*

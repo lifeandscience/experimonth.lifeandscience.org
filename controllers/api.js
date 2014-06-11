@@ -77,6 +77,28 @@ module.exports = function(app){
 			});
 		});
 	});
+    app.get('/api/1/experimonths/unenrollUser/:experimonthID/:userID', auth.clientAuthorize, function(req, res){
+        if(!req.param('experimonthID')){
+            res.json(400, {'error': 'Missing Experimonth ID.'});
+            return;
+        }
+        if(!req.param('userID')){
+            res.json(400, {'error': 'Missing User ID.'});
+            return;
+        }
+        User.findById(req.param('userID')).exec(function(err, user){
+            if(err || !user){
+                return res.json(400, {'error': 'User doesn\'t exist.'});
+            }
+            user.unenrollUserFromExperimonth(req.param('experimonthID'), null, null, function(err, experimonth){
+                if(err){
+                    res.json(400, {'error': 'Error unenrolling user: ' + err});
+                    return;
+                }
+                res.json(experimonth);
+            });
+        });
+    });
 	
 	app.get('/api/1/profile/answerForUserAndQuestion/:userID/:questionID', auth.clientAuthorize, function(req, res){
 		if(!req.param('userID')){
