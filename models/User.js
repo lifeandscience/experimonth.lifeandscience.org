@@ -571,6 +571,42 @@ UserSchema.methods.unenrollUserFromExperimonth = function(experimonthID, req, re
     });
 }
 
+
+UserSchema.pre('save', function(next){
+    if(this.modifiedPaths().indexOf('email') != -1){
+        var email = this.email;
+        console.log('subscribing', email, 'to mailchimp list!');
+        var MailChimpAPI = require('mailchimp').MailChimpAPI;
+        var apiKey = process.env.MAILCHIMP_API_KEY;
+        var listID = process.env.MAILCHIMP_LIST_ID;
+        if(!apiKey || !listID){
+            console.log('no MAILCHIMP_API_KEY or MAILCHIMP_LIST_ID :(');
+            return next();
+        }
+
+        try { 
+            var api = new MailChimpAPI(apiKey, { version : '2.0' });
+        } catch (error) {
+            console.log('Error starting up the mailchimp API:', error.message);
+            return next();
+        }
+
+        api.call('lists', 'subscribe', {
+            id: listID,
+            email: {
+                email: this.email
+            }
+        }, function (error, data) {
+            if (error){
+                console.log('Failure to subscribe', email, error.message);
+            }
+            next();
+        });
+        return;
+    }
+    next();
+});
+
 User = mongoose.model('User', UserSchema);
 User.reCheckAllUsersProfileQuestions();
 exports = User;
