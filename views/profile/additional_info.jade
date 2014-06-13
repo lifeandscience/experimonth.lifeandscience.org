@@ -25,7 +25,7 @@ block body
 					each answer, i in answers
 						active = (!haveDoneAQuestion && i == 0)
 						question = answer.question
-						if question.transientRequired
+						if question && question.transientRequired
 							whiteCard = true
 							if question
 								include mixins
@@ -45,7 +45,7 @@ block body
 					each answer, i in answers
 						active = (!haveDoneAQuestion && i == 0)
 						question = answer.question
-						if !question.transientRequired
+						if question && !question.transientRequired
 							whiteCard = true
 							if question
 								include mixins
