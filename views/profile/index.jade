@@ -72,7 +72,8 @@ block body
 									include mixins
 								//mixin do_question(question, null, i == 0)
 
-					a(href="/profile/additional-info"+linkAppend) See and/or edit my previous answers.
+					if (questions && questions.length != 0) || (optionalQuestions && optionalQuestions.length != 0) || (answers && answers.length != 0)
+						a(href="/profile/additional-info"+linkAppend) See and/or edit my previous answers.
 
 					p.big-text Edit your profile details at any time by typing in new information and clicking save.
 
