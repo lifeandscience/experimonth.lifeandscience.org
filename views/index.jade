@@ -196,7 +196,7 @@ block body
 					.span4
 						.white-card.recent-post.clearfix
 							h5.recent-post-header
-								a(href='blog/single_post.html') #{newsPost.title}
+								a(href=newsPost.link) #{newsPost.title}
 							.post-info.clearfix
 								.pull-left
 									d = locals.moment(newsPost.date).clone()
