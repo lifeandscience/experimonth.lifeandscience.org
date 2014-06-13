@@ -9,6 +9,7 @@ block body
 			//if u.email
 			//	img(src='http://www.gravatar.com/avatar/'+u.email_hash)
 			h1 #{title}
+			h4 Required Questions
 			.row#additional-info
 				haveDoneAQuestion = questions && questions.length > 0;
 				if questions && questions.length > 0
@@ -20,6 +21,18 @@ block body
 							- question.transientRequired = true
 							include mixins
 						//mixin do_question(question, null, i == 0)
+				if answers && answers.length > 0
+					each answer, i in answers
+						active = (!haveDoneAQuestion && i == 0)
+						question = answer.question
+						if question.transientRequired
+							whiteCard = true
+							if question
+								include mixins
+							//mixin do_question(answer.question, answer, !haveDoneAQuestion && i == 0)
+			hr
+			h4 Optional Questions
+			.row#additional-info
 				if optionalQuestions && optionalQuestions.length > 0
 					answer = null
 					each question, i in optionalQuestions
@@ -32,7 +45,8 @@ block body
 					each answer, i in answers
 						active = (!haveDoneAQuestion && i == 0)
 						question = answer.question
-						whiteCard = true
-						if question
-							include mixins
-						//mixin do_question(answer.question, answer, !haveDoneAQuestion && i == 0)
+						if !question.transientRequired
+							whiteCard = true
+							if question
+								include mixins
+							//mixin do_question(answer.question, answer, !haveDoneAQuestion && i == 0)

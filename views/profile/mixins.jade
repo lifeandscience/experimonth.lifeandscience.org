@@ -7,12 +7,12 @@
 			.control-group
 				label.control-label(for="value")
 					| #{question.text}
-					if question.transientRequired
-						|  
-						div.pull-right.label.label-info Required
 					if answer && answer.no_answer
 						|  
 						div.pull-right.label.label-warning No Answer
+					if question.transientRequired
+						|  
+						div.pull-right.label.label-info Required
 				- if(question.type == 'open')
 					.controls
 						input.input-block-level(type="text", name="value", value=(answer ? answer.value : false))
