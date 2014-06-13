@@ -85,7 +85,9 @@ block body
 		.container
 			.row
 				.span6
-					h3.section-header Confessions
+					h3.section-header
+						| Confessions
+						a.pull-right(href="/confessional") View all
 					.testimonials
 						.testimonials-users.row.hidden-phone
 							for confession, i in confessions
