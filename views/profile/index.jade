@@ -42,7 +42,7 @@ block body
 										- var isPassed = locals.moment(enrollment.experimonth.endDate).isBefore()
 										tr(class=(isPassed ? 'experimonth passed' : 'experimonth'))
 											td
-												if !isPassed && enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url
+												if !isPassed && enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url && locals.moment().isAfter(locals.moment(enrollment.experimonth.startDate))
 													a(href=enrollment.experimonth.kindPopulated.url+'/play') #{enrollment.experimonth.name}
 												else
 													| #{enrollment.experimonth.name}

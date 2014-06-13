@@ -20,7 +20,7 @@ module.exports = {
 		app.get('/', function(req, res){
 			async.parallel({
 				experimonths: function(callback){
-					Experimonth.findEnrollableExperimonths().limit(4).exec(callback);
+					Experimonth.findEnrollableExperimonths().limit(4).populate('kind').exec(callback);
 				}
 			  , confessions: function(callback){
 					Confession.find({active: true, promoted: true}).sort('-date').limit(6).exec(callback);
