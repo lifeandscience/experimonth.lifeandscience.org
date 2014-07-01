@@ -381,7 +381,7 @@ UserSchema.methods.reCheckProfileQuestions = function(questions, callback){
 				}
 			}
 			
-			if(requiredQuestionIds.length > 0 || optionalQuestionIds.length > 0){
+			if(requiredQuestionIds.length > 0){ // || optionalQuestionIds.length > 0){
 				t.hasAnsweredAllRequiredQuestions = false;
 			}else{
 				t.hasAnsweredAllRequiredQuestions = true;
