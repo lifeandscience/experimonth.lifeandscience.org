@@ -12601,3 +12601,17 @@ table.currently-recruiting .em-description {
   -o-transition: margin 0.5s ease, opacity 0.1s;
   transition: margin 0.5s ease, opacity 0.1s;
 }
+.register .span10 img {
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+.register .span10 p.big-text {
+  margin-top: 0;
+}
+.register .span10.step1 p.big-text {
+  margin-top: 20px;
+}
+.register .span10.step3 p.big-text {
+  margin-top: 10px;
+}
