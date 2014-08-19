@@ -11608,6 +11608,9 @@ body .notifications h5 {
 .btn-default:active {
   background-color: #cfd9db;
 }
+.slider.hide-handle .slider-handle {
+  display: none;
+}
 .white-card {
   padding: 20px;
   background-color: #fff;

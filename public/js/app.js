@@ -224,6 +224,10 @@ jQuery(function(){
 				var input = thisForm.find('input[name="value"]');
 				var val = null;
 				if(input && (val = input.val())){
+					if(input.hasClass('slider') && input.data('has-not-changed')){
+						// This is a slider and it hasn't been changed from the default value
+						return callback();
+					}
 					// Submit this form!
 					jQuery.ajax({
 						type: "POST",
@@ -312,9 +316,14 @@ jQuery(function(){
 	
 	if(jQuery('.slider').length){
 		jQuery('.slider').each(function(){
-			jQuery(this).slider({
+			var t = jQuery(this).slider({
 				tooltip: 'hide'
+			}).data('has-not-changed', 'true').on('slideStop', function(){
+				jQuery(this).data('has-not-changed', null).parent().removeClass('hide-handle');
 			});
+			if(t.hasClass('hide-handle')){
+				t.parent().addClass('hide-handle');
+			}
 		});
 	}
 });
