@@ -12604,17 +12604,24 @@ table.currently-recruiting .em-description {
   -o-transition: margin 0.5s ease, opacity 0.1s;
   transition: margin 0.5s ease, opacity 0.1s;
 }
-.register .span10 img {
+.register .span8 img {
   float: left;
+  margin-left: 20px;
   margin-right: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 40px;
 }
-.register .span10 p.big-text {
+.register .span8 img + img {
+  margin-left: 0;
+}
+.register .span8 p.big-text {
   margin-top: 0;
 }
-.register .span10.step1 p.big-text {
-  margin-top: 20px;
-}
-.register .span10.step3 p.big-text {
+.register .span8.step1 p.big-text {
   margin-top: 10px;
+}
+.register .span8.step3 p.big-text {
+  margin-top: 10px;
+}
+.register .span8.step3 img {
+  min-width: 75px;
 }
