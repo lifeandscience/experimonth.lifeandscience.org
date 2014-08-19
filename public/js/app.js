@@ -326,6 +326,10 @@ jQuery(function(){
 			}
 		});
 	}
+	
+	jQuery('.user-profile h3').on('click', function(){
+		jQuery(this).find('.icon').toggleClass('icon-plus-sign').toggleClass('icon-minus-sign');
+	});
 });
 
 

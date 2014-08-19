@@ -15,7 +15,8 @@ var util = require('util')
   , Notification = mongoose.model('Notification')
   , ProfileQuestion = mongoose.model('ProfileQuestion')
   , ProfileAnswer = mongoose.model('ProfileAnswer')
-  , async = require('async');
+  , async = require('async'),
+    _ = require('underscore');
 
 module.exports = function(app){
 	
@@ -390,12 +391,37 @@ module.exports = function(app){
 							percentage = questionsToIgnore.length / (questions.length+optionalQuestions.length+questionsToIgnore.length);
 							percentage = Math.round(percentage * 100);
 						}
-						res.render('profile', {title: 'Your Experimonth Profile is '+percentage+'% Complete', u: user, enrollments: enrollments, questions: questions, optionalQuestions: optionalQuestions, answers: answers, timezones: utilities.getTimezones()/* , games: games */, events: results.events, emails: results.emails, notifications: results.notifications, linkAppend: (user == req.user ? '' : '/'+user._id)});
+                        var enrollmentCategories = _.groupBy(enrollments, function(enrollment){
+                            if(moment(enrollment.experimonth.endDate).isBefore()){
+                                return 'past';
+                            }
+                            if(moment(enrollment.experimonth.startDate).isAfter()){
+                                return 'future';
+                            }
+                            return 'present';
+                        });
+						res.render('profile', {
+                            title: 'Your Experimonth Profile is '+percentage+'% Complete', 
+                            u: user, 
+                            enrollments: enrollments, 
+                            recruiting: enrollmentCategories.future ? enrollmentCategories.future : [],
+                            currentlyEnrolled: enrollmentCategories.present ? enrollmentCategories.present : [],
+                            previouslyEnrolled: enrollmentCategories.past ? enrollmentCategories.past : [],
+                            questions: questions, 
+                            optionalQuestions: optionalQuestions, 
+                            answers: answers, 
+                            timezones: utilities.getTimezones(),
+                            /* games: games, */
+                            events: results.events,
+                            emails: results.emails,
+                            notifications: results.notifications,
+                            linkAppend: (user == req.user ? '' : '/'+user._id)
+                        });
 					});
 				});
 			});
 		});
-	}
+	};
 	app.get('/profile', auth.authorize(1, 0, null, true), function(req, res){
 //		console.log('user.timezone', utilities.getTimezoneFromOffset(req.user.timezone));
 		req.flash('question');

@@ -22,35 +22,110 @@ block body
 		else 
 			//if u.email
 			//	img(src='http://www.gravatar.com/avatar/'+u.email_hash)
-			h1 #{title}
+			h1 
+				| #{title}
+				if (questions && questions.length != 0) || (optionalQuestions && optionalQuestions.length != 0) || (answers && answers.length != 0)
+					a(href="/profile/additional-info"+linkAppend) Enter or change my answers.
 			
 			.row
 				.span8
 					
-					if enrollments && enrollments.length > 0
-						p.big-text You are currently enrolled in the following Experimonths:
-						table.table
-							thead
-								tr
-									th Name
-									th Start Date
-									th End Date
-									th
-							tbody
-								each enrollment, i in enrollments
-									if enrollment.experimonth
-										- var isPassed = locals.moment(enrollment.experimonth.endDate).isBefore()
-										tr(class=(isPassed ? 'experimonth passed' : 'experimonth'))
-											td
-												if !isPassed && enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url && locals.moment().isAfter(locals.moment(enrollment.experimonth.startDate))
-													a(href=enrollment.experimonth.kindPopulated.url+'/play') #{enrollment.experimonth.name}
-												else
-													| #{enrollment.experimonth.name}
-											td #{locals.moment(enrollment.experimonth.startDate).utc().format('MMMM Do, YYYY')}
-											td #{locals.moment(enrollment.experimonth.endDate).utc().format('MMMM Do, YYYY')}
-											td
-												if !isPassed && enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url
-													a.btn.btn-warning(href="/experimonths/unenroll/#{enrollment.experimonth._id}", data-bootbox-confirm="<p>Are you sure you want to un-enroll from this Experimonth?</p>") Un-enroll
+					if recruiting && recruiting.length > 0
+						//- p.big-text You are currently enrolled in the following Experimonths:
+						h3(data-toggle="collapse", data-target=".table-recruiting")
+							i.icon.icon-minus-sign
+							|  Currently Recruiting
+						.table-recruiting.collapse.in
+							table.table
+								thead
+									tr
+										th Name
+										th Start Date
+										th End Date
+										th
+								tbody
+									each enrollment, i in recruiting
+										if enrollment.experimonth
+											- var isPassed = locals.moment(enrollment.experimonth.endDate).isBefore()
+											tr.experimonth
+												td
+													if !isPassed && enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url && locals.moment().isAfter(locals.moment(enrollment.experimonth.startDate))
+														a(href=enrollment.experimonth.kindPopulated.url+'/play') #{enrollment.experimonth.name}
+													else
+														| #{enrollment.experimonth.name}
+													
+													if enrollment.experimonth.description
+														|  
+														a.em-description(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+enrollment.experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+enrollment.experimonth.name+'</h1>'+enrollment.experimonth.description.replace(/\n/g, '<br/>')+'</div></div>') [description]
+												td #{locals.moment(enrollment.experimonth.startDate).utc().format('MMMM Do, YYYY')}
+												td #{locals.moment(enrollment.experimonth.endDate).utc().format('MMMM Do, YYYY')}
+												td
+													if !isPassed && enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url
+														a.btn.btn-warning(href="/experimonths/unenroll/#{enrollment.experimonth._id}", data-bootbox-confirm="<p>Are you sure you want to un-enroll from this Experimonth?</p>") Un-enroll
+
+					if currentlyEnrolled && currentlyEnrolled.length > 0
+						//- p.big-text You are currently enrolled in the following Experimonths:
+						h3(data-toggle="collapse", data-target=".table-currentlyEnrolled")
+							i.icon.icon-plus-sign
+							|  Currently Enrolled
+						.table-currentlyEnrolled.collapse
+							table.table
+								thead
+									tr
+										th Name
+										th Start Date
+										th End Date
+										th
+								tbody
+									each enrollment, i in currentlyEnrolled
+										if enrollment.experimonth
+											- var isPassed = locals.moment(enrollment.experimonth.endDate).isBefore()
+											tr.experimonth
+												td
+													if !isPassed && enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url && locals.moment().isAfter(locals.moment(enrollment.experimonth.startDate))
+														a(href=enrollment.experimonth.kindPopulated.url+'/play') #{enrollment.experimonth.name}
+													else
+														| #{enrollment.experimonth.name}
+													
+													if enrollment.experimonth.description
+														|  
+														a.em-description(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+enrollment.experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+enrollment.experimonth.name+'</h1>'+enrollment.experimonth.description.replace(/\n/g, '<br/>')+'</div></div>', data-bootbox-custom-action-button=(enrollment.experimonth.kindPopulated ? "Visit" : null), data-bootbox-custom-action=(enrollment.experimonth.kindPopulated ? enrollment.experimonth.kindPopulated.url : null)) [description]
+												td #{locals.moment(enrollment.experimonth.startDate).utc().format('MMMM Do, YYYY')}
+												td #{locals.moment(enrollment.experimonth.endDate).utc().format('MMMM Do, YYYY')}
+												td
+													if enrollment.experimonth.kindPopulated
+														a.btn(href=enrollment.experimonth.kindPopulated.url+'/play') Visit
+													if !isPassed && enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url
+														a.btn.btn-warning(href="/experimonths/unenroll/#{enrollment.experimonth._id}", data-bootbox-confirm="<p>Are you sure you want to un-enroll from this Experimonth?</p>") Un-enroll
+
+					if previouslyEnrolled && previouslyEnrolled.length > 0
+						//- p.big-text You are currently enrolled in the following Experimonths:
+						h3(data-toggle="collapse", data-target=".table-previouslyEnrolled")
+							i.icon.icon-plus-sign
+							|  Previously Enrolled
+						.table-previouslyEnrolled.collapse
+							table.table
+								thead
+									tr
+										th Name
+										th Start Date
+										th End Date
+								tbody
+									each enrollment, i in previouslyEnrolled
+										if enrollment.experimonth
+											- var isPassed = locals.moment(enrollment.experimonth.endDate).isBefore()
+											tr.experimonth
+												td
+													if !isPassed && enrollment.experimonth.kindPopulated && enrollment.experimonth.kindPopulated.url && locals.moment().isAfter(locals.moment(enrollment.experimonth.startDate))
+														a(href=enrollment.experimonth.kindPopulated.url+'/play') #{enrollment.experimonth.name}
+													else
+														| #{enrollment.experimonth.name}
+													
+													if enrollment.experimonth.description
+														|  
+														a.em-description(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+enrollment.experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+enrollment.experimonth.name+'</h1>'+enrollment.experimonth.description.replace(/\n/g, '<br/>')+'</div></div>') [description]
+												td #{locals.moment(enrollment.experimonth.startDate).utc().format('MMMM Do, YYYY')}
+												td #{locals.moment(enrollment.experimonth.endDate).utc().format('MMMM Do, YYYY')}
 
 					.row
 						haveDoneAQuestion = questions && questions.length > 0;
@@ -72,10 +147,8 @@ block body
 									include mixins
 								//mixin do_question(question, null, i == 0)
 
-					if (questions && questions.length != 0) || (optionalQuestions && optionalQuestions.length != 0) || (answers && answers.length != 0)
-						a(href="/profile/additional-info"+linkAppend) See and/or edit my previous answers.
-
-					p.big-text Edit your profile details at any time by typing in new information and clicking save.
+					h3 Contact Information
+					p.big-text Edit your contact details at any time by typing in new information and clicking save.
 
 					// h2 Opt Out
 					// p If you'd prefer, you can opt-out of your data being used in the analysis of the results of each Experimonth.
