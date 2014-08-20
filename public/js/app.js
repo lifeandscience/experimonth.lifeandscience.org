@@ -292,7 +292,7 @@ jQuery(function(){
 				data: thisForm.serialize(),
 				success: function(data){
 					if(data && data.message){
-						bootbox.alert(data.message);
+						// bootbox.alert(data.message);
 						if(data.message == 'Thanks for your answer.'){
 							if(jQuery('#additional-info').length == 0){
 								thisForm.parent().parent().remove();
