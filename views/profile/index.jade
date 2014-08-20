@@ -127,9 +127,12 @@ block body
 												td #{locals.moment(enrollment.experimonth.startDate).utc().format('MMMM Do, YYYY')}
 												td #{locals.moment(enrollment.experimonth.endDate).utc().format('MMMM Do, YYYY')}
 
-					.row
-						haveDoneAQuestion = questions && questions.length > 0;
-						if questions && questions.length > 0
+					haveDoneAQuestion = questions && questions.length > 0;
+					if questions && questions.length > 0
+						.row
+							.span12
+								h4 Required Questions
+						.row
 							answer = null
 							each question, i in questions
 								active = (i == 0)
@@ -138,7 +141,11 @@ block body
 									- question.transientRequired = true
 									include mixins
 								//mixin do_question(question, null, i == 0)
-						if optionalQuestions && optionalQuestions.length > 0
+					if optionalQuestions && optionalQuestions.length > 0
+						.row
+							.span12
+								h4 Optional Questions
+						.row
 							answer = null
 							each question, i in optionalQuestions
 								active = (i == 0)
