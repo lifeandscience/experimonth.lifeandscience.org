@@ -30,10 +30,10 @@ block body
 							if question
 								include mixins
 							//mixin do_question(answer.question, answer, !haveDoneAQuestion && i == 0)
-			hr
-			h4 Optional Questions
-			.row#additional-info
-				if optionalQuestions && optionalQuestions.length > 0
+			if optionalQuestions && optionalQuestions.length > 0
+				hr
+				h4 Optional Questions
+				.row#additional-info
 					answer = null
 					each question, i in optionalQuestions
 						active = (i == 0)
@@ -41,12 +41,12 @@ block body
 						if question
 							include mixins
 						//mixin do_question(question, null, i == 0)
-				if answers && answers.length > 0
-					each answer, i in answers
-						active = (!haveDoneAQuestion && i == 0)
-						question = answer.question
-						if !question || !question.transientRequired
-							whiteCard = true
-							if question
-								include mixins
-							//mixin do_question(answer.question, answer, !haveDoneAQuestion && i == 0)
+					if answers && answers.length > 0
+						each answer, i in answers
+							active = (!haveDoneAQuestion && i == 0)
+							question = answer.question
+							if !question || !question.transientRequired
+								whiteCard = true
+								if question
+									include mixins
+								//mixin do_question(answer.question, answer, !haveDoneAQuestion && i == 0)
