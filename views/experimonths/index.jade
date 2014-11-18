@@ -4,53 +4,59 @@ block body
 	#container-inner
 		h1 #{title}
 		
-		table.table.table-striped.currently-recruiting
-			thead
-				tr
-					th Experimonth
-					th.begins Begins on...
-					th.open Open Spots
-					th.enroll Enroll
-			tbody
-				u = user()
-				each experimonth, i in experimonths
-					if experimonth.open || (u && u.role == 10)
-						tr
-							td
-								span.em-name #{experimonth.name}
-								if experimonth.description
-									|  
-									a.em-description(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+experimonth.description.replace(/\n/g, '<br/>')+'</div></div>', data-bootbox-custom-action-button=(u ? (experimonth.users.indexOf(u._id.toString()) != -1 ? "Visit" : "Enroll") : "Get Started"), data-bootbox-custom-action=(u ? (experimonth.users.indexOf(u._id.toString()) == -1 ? "/experimonths/enroll/#{experimonth._id}" : experimonth.kind.url) : '/register')) [description]
-							td #{locals.moment(experimonth.startDate).utc().format('MMM. D, YYYY')}
-							td
-								if experimonth.unlimited || (experimonth.users.length / experimonth.userLimit) > 0.5
-									|  Plenty Left
-								else
-									|  #{experimonth.userLimit - experimonth.users.length} Left
-							td
-								if !experimonth.published
-									| [unpublished]
-								else if !experimonth.open
-									| [not open]
-								
-								else if u
-									if experimonth.users.indexOf(u._id.toString()) != -1
-										if experimonth.kind && experimonth.kind.url && locals.moment().isAfter(locals.moment(experimonth.startDate))
-											a.btn(href=experimonth.kind.url+'/play') Visit
-										a.btn.btn-warning(href="/experimonths/unenroll/#{experimonth._id}", data-bootbox-confirm="<p>Are you sure you want to un-enroll from this Experimonth?</p>") Un-enroll
+		if experimonths.length == 0
+			p 
+				| We are not currently recruiting for any Experimonths. You can sign up 
+				a(href="http://science.experimonth.com/get-notified") here
+				|  to be notified when new projects are launched.
+		else
+			table.table.table-striped.currently-recruiting
+				thead
+					tr
+						th Experimonth
+						th.begins Begins on...
+						th.open Open Spots
+						th.enroll Enroll
+				tbody
+					u = user()
+					each experimonth, i in experimonths
+						if experimonth.open || (u && u.role == 10)
+							tr
+								td
+									span.em-name #{experimonth.name}
+									if experimonth.description
+										|  
+										a.em-description(href="#", data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+experimonth.description.replace(/\n/g, '<br/>')+'</div></div>', data-bootbox-custom-action-button=(u ? (experimonth.users.indexOf(u._id.toString()) != -1 ? "Visit" : "Enroll") : "Get Started"), data-bootbox-custom-action=(u ? (experimonth.users.indexOf(u._id.toString()) == -1 ? "/experimonths/enroll/#{experimonth._id}" : experimonth.kind.url) : '/register')) [description]
+								td #{locals.moment(experimonth.startDate).utc().format('MMM. D, YYYY')}
+								td
+									if experimonth.unlimited || (experimonth.users.length / experimonth.userLimit) > 0.5
+										|  Plenty Left
 									else
-										a.btn.btn-primary(href=(enrollGoesToProfile ? '/profile' : "/experimonths/enroll/#{experimonth._id}")) Enroll
-								else
-									a.btn.btn-primary(href="/register") Get Started
-		//- if(pages > 1)
-		//	.pagination
-		//		ul
-		//			- if(page > 0)
-		//				li
-		//					a(href=baseurl+'/'+(page-1)) Prev
-		//			- for(var i=0; i<pages; i++)
-		//				li(class=(i == page ? 'active' : null))
-		//					a(href=baseurl+'/'+i) #{i+1}
-		//			- if(page < pages-1)
-		//				li
-		//					a(href=baseurl+'/'+(page+1)) Next
+										|  #{experimonth.userLimit - experimonth.users.length} Left
+								td
+									if !experimonth.published
+										| [unpublished]
+									else if !experimonth.open
+										| [not open]
+									
+									else if u
+										if experimonth.users.indexOf(u._id.toString()) != -1
+											if experimonth.kind && experimonth.kind.url && locals.moment().isAfter(locals.moment(experimonth.startDate))
+												a.btn(href=experimonth.kind.url+'/play') Visit
+											a.btn.btn-warning(href="/experimonths/unenroll/#{experimonth._id}", data-bootbox-confirm="<p>Are you sure you want to un-enroll from this Experimonth?</p>") Un-enroll
+										else
+											a.btn.btn-primary(href=(enrollGoesToProfile ? '/profile' : "/experimonths/enroll/#{experimonth._id}")) Enroll
+									else
+										a.btn.btn-primary(href="/register") Get Started
+			//- if(pages > 1)
+			//	.pagination
+			//		ul
+			//			- if(page > 0)
+			//				li
+			//					a(href=baseurl+'/'+(page-1)) Prev
+			//			- for(var i=0; i<pages; i++)
+			//				li(class=(i == page ? 'active' : null))
+			//					a(href=baseurl+'/'+i) #{i+1}
+			//			- if(page < pages-1)
+			//				li
+			//					a(href=baseurl+'/'+(page+1)) Next

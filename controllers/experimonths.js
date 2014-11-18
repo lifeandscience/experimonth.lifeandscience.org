@@ -29,6 +29,7 @@ module.exports = function(app){
 		var params = {};
 		if(!req.user || req.user.role < 10){
 			params.published = true;
+            params.open = true;
 		}
 		Experimonth.find(params).sort('startDate').populate('kind').exec(function(err, experimonths){
 			res.render('experimonths', {title: 'Currently Recruiting', experimonths: experimonths});

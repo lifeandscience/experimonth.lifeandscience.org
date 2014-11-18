@@ -67,25 +67,32 @@ block body
 			.row
 				.span12
 					h3.section-header Currently Recruiting...
-				u = user()
-				for experimonth, i in currentlyRecruiting
-					.span4
-						.framed-post
-							figure
-								figcaption
-									.fp-show-always
-										if experimonth.image
-											.fp-featured-img
-												img(src=experimonth.image)
-									.fp-show-on-hover
-										h5.fp-title #{experimonth.name}
-										.fp-buttons
-											a.btn.fp-details-btn(
-												href="#", 
-												data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+(experimonth.description ? experimonth.description.replace(/\n/g, '<br/>') : '')+'</div></div>', 
-												data-bootbox-custom-action-button=(u ? (experimonth.users.indexOf(u._id.toString()) != -1 ? (locals.moment().isAfter(locals.moment(experimonth.startDate)) ? "Visit" : null) : "Enroll") : "Get Started"), 
-												data-bootbox-custom-action=(u ? (experimonth.users.indexOf(u._id.toString()) == -1 ? "/experimonths/enroll/#{experimonth._id}" : (locals.moment().isAfter(locals.moment(experimonth.startDate)) ? experimonth.kind.url : null)) : '/register')
-											) Learn More
+				if currentlyRecruiting.length == 0
+					.span12
+						p 
+							| We are not currently recruiting for any Experimonths. You can sign up 
+							a(href="http://science.experimonth.com/get-notified") here
+							|  to be notified when new projects are launched.
+				else
+					u = user()
+					for experimonth, i in currentlyRecruiting
+						.span4
+							.framed-post
+								figure
+									figcaption
+										.fp-show-always
+											if experimonth.image
+												.fp-featured-img
+													img(src=experimonth.image)
+										.fp-show-on-hover
+											h5.fp-title #{experimonth.name}
+											.fp-buttons
+												a.btn.fp-details-btn(
+													href="#", 
+													data-bootbox-custom='<div class="em-modal"><div class="left"><img src="'+experimonth.image+'" /></div><div class="right"><h1>Experimonth: '+experimonth.name+'</h1>'+(experimonth.description ? experimonth.description.replace(/\n/g, '<br/>') : '')+'</div></div>', 
+													data-bootbox-custom-action-button=(u ? (experimonth.users.indexOf(u._id.toString()) != -1 ? (locals.moment().isAfter(locals.moment(experimonth.startDate)) ? "Visit" : null) : "Enroll") : "Get Started"), 
+													data-bootbox-custom-action=(u ? (experimonth.users.indexOf(u._id.toString()) == -1 ? "/experimonths/enroll/#{experimonth._id}" : (locals.moment().isAfter(locals.moment(experimonth.startDate)) ? experimonth.kind.url : null)) : '/register')
+												) Learn More
 	section.section-wrapper
 		.container
 			.row
