@@ -38,6 +38,9 @@ module.exports = {
 		app.get('/what-is-this', function(req, res){
 			res.render('what-is-this', { title: 'What Is This?' });
 		});
+        app.get('/history', function(req, res){
+            res.render('history', {title: 'History'});
+        })
 		app.get('/feedback', function(req, res){
 			res.render('feedback', { title: 'Feedback', email: null, text: null });
 		});
