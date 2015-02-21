@@ -180,6 +180,10 @@ app.configure(function(){
 			  , 'link': fullURL+'/what-is-this'
 			},
 			{
+				'name': 'History'
+			  , 'link': fullURL+'/history'
+			},
+			{
 				'name': 'Currently Recruiting'
 			  , 'link': fullURL+'/currently-recruiting'
 			},
